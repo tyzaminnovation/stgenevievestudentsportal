@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>St. Genevieve Student Portal</title>
+<style>
+  :root {
+    --green: #7A1C2E;
+    --green-light: #F5E6E9;
+    --green-dark: #4A0D1A;
+    --amber: #C0884A;
+    --amber-light: #FDF3E7;
+    --purple: #9B4D62;
+    --purple-light: #F7EAEd;
+    --coral: #B5451B;
+    --coral-light: #FAEAE5;
+    --blue: #7A1C2E;
+    --blue-light: #F5E6E9;
+    --gray-100: #FAF7F2;
+    --gray-200: #EDE8E0;
+    --gray-400: #A89880;
+    --gray-700: #5C4A3A;
+    --gray-900: #2C1A10;
+    --white: #FFFDF8;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --cream: #FAF7F2;
+    --cream-dark: #EDE8E0;
+    --wine: #7A1C2E;
+    --wine-dark: #4A0D1A;
+    --wine-light: #F5E6E9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--gray-900);
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #4A0D1A 0%, #7A1C2E 55%, #B5728A 100%);
+    padding: 1rem;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 24px 64px rgba(74,13,26,0.28);
+  }
+
+  .school-logo {
+    width: 64px; height: 64px;
+    background: var(--wine-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 1.25rem;
+  }
+
+  .login-card h1 {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--wine-dark);
+    margin-bottom: 4px;
+  }
+
+  .login-card .tagline {
+    text-align: center;
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 2rem;
+  }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .field-wrap { margin-bottom: 1rem; }
+
+  input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    background: var(--cream);
+    color: var(--gray-900);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus { border-color: var(--green); background: var(--white); }
+
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 0.5rem;
+  }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .login-error {
+    color: var(--coral);
+    font-size: 13px;
+    text-align: center;
+    margin-top: 0.75rem;
+    display: none;
+  }
+
+  /* ── APP SHELL ── */
+  #app { display: none; min-height: 100vh; }
+
+  .topbar {
+    background: var(--wine-dark);
+    color: white;
+    padding: 0 1.5rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo { font-size: 22px; }
+  .topbar-title { font-size: 16px; font-weight: 700; color: white; }
+  .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .student-badge {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .btn-logout {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--white);
+    border-bottom: 1.5px solid var(--gray-200);
+    display: flex;
+    padding: 0 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-400);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .nav-tab:hover:not(.active) { color: var(--gray-700); }
+
+  /* ── MAIN CONTENT ── */
+  .main { padding: 1.5rem; max-width: 860px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── DASHBOARD ── */
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 100%);
+    color: white;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .welcome-avatar {
+    width: 56px; height: 56px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .welcome-text h2 { font-size: 20px; font-weight: 700; }
+  .welcome-text p { font-size: 13px; opacity: 0.85; margin-top: 3px; }
+
+  .encourage-card {
+    background: var(--amber-light);
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    font-size: 14px;
+    color: #7A1C2E;
+    line-height: 1.55;
+  }
+  .encourage-card strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--amber); margin-bottom: 4px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+    border: 1.5px solid var(--gray-200);
+  }
+  .stat-card .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .stat-card .stat-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+
+  /* ── PROGRESS ── */
+  .progress-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--gray-700);
+  }
+
+  .subject-progress-card {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200);
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+  }
+
+  .subj-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .subj-name { font-size: 15px; font-weight: 600; }
+  .subj-score { font-size: 14px; font-weight: 700; }
+
+  .progress-bar-bg {
+    background: var(--gray-200);
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.8s ease;
+  }
+
+  .score-history {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .score-pill {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: var(--gray-700);
+  }
+
+  /* ── SUBJECTS / EXAMS ── */
+  .grade-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--wine);
+    background: var(--wine-light);
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+  .subject-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-200);
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .subject-card:hover { border-color: var(--green); transform: translateY(-2px); }
+  .subject-card .subj-icon { font-size: 28px; margin-bottom: 10px; }
+  .subject-card .subj-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .subject-card .subj-meta { font-size: 12px; color: var(--gray-400); }
+  .subject-card .exam-count {
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--wine);
+    background: var(--wine-light);
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+  }
+
+  /* ── EXAM LIST ── */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--wine);
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    padding: 6px 0;
+  }
+  .back-btn:hover { color: var(--green-dark); }
+
+  .exam-card {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200);
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .exam-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .exam-info p { font-size: 12px; color: var(--gray-400); }
+
+  .exam-status {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .exam-status.done { background: var(--green-light); color: var(--green-dark); }
+  .exam-status.pending { background: var(--amber-light); color: #7A1C2E; }
+  .exam-status.locked { background: var(--gray-100); color: var(--gray-400); }
+
+  .btn-start-exam {
+    padding: 8px 18px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-start-exam:hover { background: var(--green-dark); }
+
+  /* ── EXAM MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(74,13,26,0.55);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-box {
+    background: var(--white);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: var(--cream);
+    border: none;
+    border-radius: 50%;
+    width: 34px; height: 34px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-700);
+  }
+  .modal-close:hover { background: var(--gray-200); }
+
+  .modal-box h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .modal-box .modal-meta { font-size: 13px; color: var(--gray-400); margin-bottom: 1.5rem; }
+
+  .question-block {
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .question-block p { font-size: 15px; font-weight: 600; margin-bottom: 0.75rem; line-height: 1.5; }
+
+  .options-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--white);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .option-label:hover { border-color: var(--green); background: var(--green-light); }
+  .option-label input[type="radio"] { accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; }
+  .option-label.selected { border-color: var(--green); background: var(--green-light); }
+  .option-label.correct { border-color: #7A1C2E; background: #F5E6E9; }
+  .option-label.wrong { border-color: var(--coral); background: var(--coral-light); }
+
+  .submit-exam-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background 0.2s;
+  }
+  .submit-exam-btn:hover { background: var(--green-dark); }
+
+  .result-banner {
+    background: var(--wine-light);
+    border: 2px solid var(--wine);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .result-banner .result-score {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--wine-dark);
+  }
+  .result-banner .result-label { font-size: 14px; color: var(--green); font-weight: 600; }
+  .result-banner .result-msg { font-size: 13px; color: var(--gray-700); margin-top: 6px; }
+
+  /* ── PROFILE ── */
+  .profile-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-200);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px;
+    background: var(--wine-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    margin-bottom: 1rem;
+  }
+  .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .profile-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
+  .profile-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-400); display: block; margin-bottom: 4px; }
+  .profile-field span { font-size: 15px; font-weight: 600; color: var(--gray-700); }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .main { padding: 1rem; }
+    .topbar { padding: 0 1rem; }
+    .welcome-banner { flex-direction: column; text-align: center; }
+    .exam-card { flex-direction: column; align-items: flex-start; }
+    .modal-box { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="school-logo">🌟</div>
+    <h1>St. Genevieve</h1>
+    <p class="tagline">Student Learning Portal</p>
+
+    <div class="field-wrap">
+      <div class="field-label">Student ID</div>
+      <input type="text" id="login-id" placeholder="e.g. SGP-G2-001" autocomplete="off" autocapitalize="characters" style="letter-spacing:0.05em;font-weight:600">
+      <input type="text" id="login-name" style="display:none">
+      <select id="login-class" style="display:none"><option value="Grade 2">Grade 2</option></select>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Enter Portal →</button>
+    <p class="login-error" id="login-error">Please fill in all fields to continue.</p>
+    <p style="text-align:center;font-size:12px;color:#A89880;margin-top:1.25rem;">Use the Student ID given to you by your teacher.</p>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">🌟</span>
+      <div>
+        <div class="topbar-title">St. Genevieve</div>
+        <div class="topbar-sub">Student Portal</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="student-badge" id="topbar-student"></span>
+      <button class="btn-logout" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">🏠 Home</div>
+    <div class="nav-tab" onclick="showSection('progress', this)">📈 My Progress</div>
+    <div class="nav-tab" onclick="showSection('subjects', this)">📚 Subjects</div>
+    <div class="nav-tab" onclick="showSection('profile', this)">👤 Profile</div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="section-dashboard">
+      <div class="welcome-banner">
+        <div class="welcome-avatar">🎒</div>
+        <div class="welcome-text">
+          <h2 id="welcome-name">Welcome back!</h2>
+          <p id="welcome-sub">Keep going — every lesson brings you closer to your goals.</p>
+        </div>
+      </div>
+
+      <div class="encourage-card" id="encourage-card">
+        <strong>💬 Today's Boost</strong>
+        <span id="encourage-text">You are capable of amazing things. Every question you answer is a step forward!</span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--wine)" id="stat-done">0</div>
+          <div class="stat-label">Exams Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#C0884A" id="stat-avg">—</div>
+          <div class="stat-label">Average Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--purple)" id="stat-best">—</div>
+          <div class="stat-label">Best Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--coral)" id="stat-pending">0</div>
+          <div class="stat-label">Exams Pending</div>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <h3>Your subjects at a glance</h3>
+        <div id="dashboard-subjects"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="section" id="section-progress">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:1rem;">My Progress</h2>
+      <div id="progress-list"></div>
+    </div>
+
+    <!-- SUBJECTS -->
+    <div class="section" id="section-subjects">
+      <div id="subjects-view">
+        <div class="grade-label" id="grade-badge"></div>
+        <div class="subjects-grid" id="subjects-grid"></div>
+      </div>
+      <div id="exams-view" style="display:none">
+        <div class="back-btn" onclick="backToSubjects()">← Back to subjects</div>
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px" id="exam-subject-title"></h2>
+        <p style="font-size:13px;color:var(--gray-400);margin-bottom:1.25rem" id="exam-subject-sub"></p>
+        <div id="exams-list"></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="section" id="section-profile">
+      <div class="profile-card">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-row">
+          <div class="profile-field"><label>Student ID</label><span id="profile-id"></span></div>
+          <div class="profile-field"><label>Class</label><span id="profile-class"></span></div>
+          <div class="profile-field"><label>School</label><span>St. Genevieve Primary</span></div>
+        </div>
+      </div>
+      <div class="profile-card" style="background:var(--green-light);border-color:var(--green)">
+        <p style="font-size:14px;color:var(--wine-dark);line-height:1.6">
+          🌟 <strong>Keep it up!</strong> Your teachers are proud of the effort you put in every day. Learning is a journey, and you are doing great. Remember: mistakes help your brain grow stronger!
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EXAM MODAL -->
+<div class="modal-overlay" id="exam-modal" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeExam()">✕</button>
+    <div id="exam-modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+
+// ── STUDENT ROSTER ─────────────────────────────────────────────────────────
+const STUDENTS = [
+  { name: "Alva Atieno",    id: "SGP-G2-001", grade: "Grade 2" },
+  { name: "Ari Raore",      id: "SGP-G2-002", grade: "Grade 2" },
+  { name: "Velma Nyambura", id: "SGP-G2-003", grade: "Grade 2" },
+  { name: "Kyla Mumbe",     id: "SGP-G2-004", grade: "Grade 2" },
+  { name: "Roy Waweru",     id: "SGP-G2-005", grade: "Grade 2" },
+  { name: "Patience Myra",  id: "SGP-G2-006", grade: "Grade 2" },
+  // ADD MORE STUDENTS HERE
+];
+
+const ENCOURAGEMENTS = [
+  "You are capable of amazing things. Every question you answer is a step forward!",
+  "Mistakes are proof that you are trying. Keep going — you've got this! 💪",
+  "Every expert was once a beginner. Today you are one step closer to greatness.",
+  "Your brain grows stronger with every problem you solve. Keep pushing!",
+  "Hard work beats talent when talent doesn't work hard. You're working hard — that matters!",
+  "Believe in yourself. You are smarter than you think and braver than you feel.",
+  "One question at a time, one exam at a time — you're building something amazing.",
+  "Learning is a superpower, and you are a superhero in training! 🦸",
+];
+
+const SUBJECTS = [
+  { id: "math",      name: "Mathematics", icon: "➕", color: "var(--green)"  },
+  { id: "kiswahili", name: "Kiswahili",   icon: "🇰🇪", color: "#9B4D62"      },
+  { id: "english",   name: "English",     icon: "📖", color: "#C0884A"      },
+  // ADD MORE SUBJECTS HERE
+];
+
+// Exam bank — add more exams here as objects in the arrays
+const EXAMS = {
+  math: [
+    {
+      id: "math-pp2-t1",
+      title: "Term 1 Assessment",
+      desc: "Numbers 1–20, basic counting",
+      grades: ["PP2"],
+      questions: [
+        { q: "How many apples are in 3 groups of 2?", opts: ["4","5","6","7"], ans: 2 },
+        { q: "What number comes after 15?", opts: ["13","14","16","17"], ans: 2 },
+        { q: "Which number is the biggest?", opts: ["9","12","7","4"], ans: 1 },
+        { q: "5 + 3 = ?", opts: ["7","8","9","10"], ans: 1 },
+        { q: "Count: ⭐⭐⭐⭐⭐⭐. How many stars?", opts: ["4","5","6","7"], ans: 2 },
+      ]
+    },
+    {
+      id: "math-pp2-t2",
+      title: "Term 2 Assessment",
+      desc: "Shapes and simple addition",
+      grades: ["PP2"],
+      questions: [
+        { q: "A square has how many sides?", opts: ["3","4","5","6"], ans: 1 },
+        { q: "2 + 2 = ?", opts: ["3","4","5","6"], ans: 1 },
+        { q: "Which shape is round?", opts: ["Square","Triangle","Circle","Rectangle"], ans: 2 },
+        { q: "10 - 3 = ?", opts: ["6","7","8","9"], ans: 1 },
+        { q: "A triangle has how many corners?", opts: ["2","3","4","5"], ans: 1 },
+      ]
+    },
+    {
+      id: "math-g1-t1",
+      title: "Term 1 Assessment",
+      desc: "Addition and subtraction up to 30",
+      grades: ["Grade 1"],
+      questions: [
+        { q: "12 + 8 = ?", opts: ["18","19","20","21"], ans: 2 },
+        { q: "25 - 10 = ?", opts: ["14","15","16","17"], ans: 1 },
+        { q: "What is 5 × 2?", opts: ["7","8","10","12"], ans: 2 },
+        { q: "Which number is even?", opts: ["3","5","7","8"], ans: 3 },
+        { q: "30 - 15 = ?", opts: ["13","14","15","16"], ans: 2 },
+      ]
+    },
+    {
+      id: "math-g2-t1",
+      title: "Term 1 Assessment",
+      desc: "Multiplication and division basics",
+      grades: ["Grade 2"],
+      questions: [
+        { q: "3 × 4 = ?", opts: ["10","11","12","13"], ans: 2 },
+        { q: "20 ÷ 4 = ?", opts: ["3","4","5","6"], ans: 2 },
+        { q: "What is the value of 6²?", opts: ["12","18","36","42"], ans: 2 },
+        { q: "Half of 50 is?", opts: ["20","25","30","35"], ans: 1 },
+        { q: "7 × 6 = ?", opts: ["40","41","42","43"], ans: 2 },
+      ]
+    },
+    {
+      id: "math-g3-t1",
+      title: "Term 1 Assessment",
+      desc: "Fractions and number patterns",
+      grades: ["Grade 3"],
+      questions: [
+        { q: "What is ½ of 80?", opts: ["30","35","40","45"], ans: 2 },
+        { q: "What fraction of a week is 3 days?", opts: ["1/3","3/7","1/2","2/5"], ans: 1 },
+        { q: "Continue the pattern: 2, 4, 8, 16, ___", opts: ["18","24","32","30"], ans: 2 },
+        { q: "What is 1/4 expressed as a percentage?", opts: ["20%","25%","30%","40%"], ans: 1 },
+        { q: "56 ÷ 8 = ?", opts: ["6","7","8","9"], ans: 1 },
+      ]
+    },
+    {
+      id: "math-g4-t1",
+      title: "Term 1 Assessment",
+      desc: "Long multiplication, area and perimeter",
+      grades: ["Grade 4"],
+      questions: [
+        { q: "What is the perimeter of a square with side 7 cm?", opts: ["21 cm","28 cm","35 cm","14 cm"], ans: 1 },
+        { q: "Area of a rectangle 8m × 5m?", opts: ["26 m²","35 m²","40 m²","45 m²"], ans: 2 },
+        { q: "15 × 12 = ?", opts: ["160","170","180","190"], ans: 2 },
+        { q: "What is 3/5 of 100?", opts: ["30","45","60","75"], ans: 2 },
+        { q: "Round 4,567 to the nearest hundred?", opts: ["4,500","4,600","4,570","4,000"], ans: 1 },
+      ]
+    },
+    {
+      id: "math-g5-t1",
+      title: "Term 1 Assessment",
+      desc: "Percentages, decimals, averages",
+      grades: ["Grade 5"],
+      questions: [
+        { q: "What is 20% of 250?", opts: ["40","45","50","55"], ans: 2 },
+        { q: "0.75 as a fraction is?", opts: ["7/5","3/4","3/5","4/5"], ans: 1 },
+        { q: "Average of 10, 20, 30 is?", opts: ["15","20","25","30"], ans: 1 },
+        { q: "What is 2.5 × 4?", opts: ["8","9","10","11"], ans: 2 },
+        { q: "Which is largest: 3/4, 0.7, 70%, 2/3?", opts: ["3/4","0.7","70%","2/3"], ans: 0 },
+      ]
+    },
+    {
+      id: "math-g6-t1",
+      title: "Term 1 Assessment",
+      desc: "Algebra, ratio, and geometry",
+      grades: ["Grade 6"],
+      questions: [
+        { q: "If x + 7 = 15, what is x?", opts: ["6","7","8","9"], ans: 2 },
+        { q: "Ratio of 12:16 in simplest form?", opts: ["3:4","4:5","2:3","6:8"], ans: 0 },
+        { q: "Area of a triangle with base 10 cm and height 6 cm?", opts: ["30 cm²","60 cm²","32 cm²","28 cm²"], ans: 0 },
+        { q: "What is 15% of 200?", opts: ["25","30","35","40"], ans: 1 },
+        { q: "Solve: 3y = 27. What is y?", opts: ["7","8","9","10"], ans: 2 },
+      ]
+    },
+  ],
+  kiswahili: [
+    {
+      id: "kisw-g2-2026",
+      title: "Kiswahili — Mtihani wa Mwaka 2026",
+      desc: "Kusoma, Sarufi, Ufahamu, Uandishi",
+      grades: ["Grade 2"],
+      deadline: "2026-06-20",
+      questions: [
+        // SEHEMU YA A — KUSIKIA NA KUZUNGUMZA
+        { q: "Kusoma kwa sauti — Jibu swali: Mtoto alipewa zawadi gani na baba yake?", opts: ["Nguo nyeupe","Zawadi ya pesa","Nguo nyeupe na mbuzi","Chakula"], ans: 2 },
+        { q: "Nani alimpa mtoto zawadi tele?", opts: ["Mama","Baba","Mwalimu","Dada"], ans: 1 },
+        { q: "Mtoto alivyovaa nguo ya rangi gani?", opts: ["Nyekundu","Nyeupe","Bluu","Njano"], ans: 1 },
+        { q: "Baba alimpa zawadi ngapi?", opts: ["Moja","Mbili","Tatu","Nne"], ans: 1 },
+        { q: "Nani alimfurahisha mtoto zaidi?", opts: ["Shangazi","Baba","Chifu","Mama"], ans: 1 },
+        // SEHEMU YA B — UFAHAMU (Kusoma kwa Sauti)
+        { q: "Akaka alitumia nini kusafiri yeye na familia yake kwenda hospitalini?", opts: ["Baiskeli","Pikipiki","Basi","Mguu"], ans: 2 },
+        { q: "Nani alisema 'Nadhani basi hili linaenda kwa kasi'?", opts: ["Akaka","Lucy","Dereva","Daktari"], ans: 1 },
+        { q: "Lucy alikuwa akivaa nini alipokuwa akitembea kwenda dukani?", opts: ["Suruali nyekundu","Gauni nyekundu","Kanzu nyeupe","Shati la bluu"], ans: 1 },
+        { q: "Ni nini kilifanyika kwa basi hilo baadaye?", opts: ["Lilisimama stendi","Liliharibika","Lilikwenda hospitali","Lilipotea"], ans: 0 },
+        { q: "Wapi Lucy na mama yake walikuwa wanaenda?", opts: ["Hospitalini","Shuleni","Dukani","Nyumbani"], ans: 2 },
+        // SEHEMU YA B — KUSOMA KWA SAUTI (Maswali)
+        { q: "Punda hutusaidia vipi? (Mwanafunzi ajibu)", opts: ["Kubeba mizigo","Kupiga kelele","Kucheza michezo","Kusaidia kupika"], ans: 0 },
+        { q: "Taja wanyoma wawili wa nyumbani:", opts: ["Simba na tembo","Ng'ombe na kuku","Chui na fisi","Nyati na mbwa"], ans: 1 },
+        { q: "Mnyama anayetoa maziwa ni:", opts: ["Kuku","Ng'ombe","Kondoo","Nguruwe"], ans: 1 },
+        { q: "Kuku ana faidagani kwetu?", opts: ["Anatupa nyama na mayai","Anatupa maziwa","Anatucheza","Anatuimbia"], ans: 0 },
+        { q: "Mayai hutoka kwa mnyama gani?", opts: ["Ng'ombe","Mbuzi","Kuku","Kondoo"], ans: 2 },
+        // SEHEMU YA C — SARUFI
+        { q: "Familia yetu ni ___. Chagua jibu sahihi (kubwa, mkubwa, mrefu):", opts: ["kubwa","mkubwa","mrefu","nzuri"], ans: 0 },
+        { q: "Mti huu ni ___. Chagua jibu sahihi (kitamu, motomu):", opts: ["kitamu","motomu","kubwa","mrefu"], ans: 1 },
+        { q: "Nyinyi milwashatao. Andika majibu ya vifaa vya sebuleni — kiti ni vifaa vya:", opts: ["Jikoni","Bafuni","Sebuleni","Chumbani"], ans: 2 },
+        { q: "Tumia 'huu': ___ ni mti mzuri.", opts: ["Huu","Huyu","Hawa","Hizi"], ans: 0 },
+        { q: "Tumia 'huyu': ___ ni mtoto mzuri.", opts: ["Huu","Huyu","Hawa","Hizi"], ans: 1 },
+        // SEHEMU YA D — UANDISHI
+        { q: "Watoto wanapenda kucheza nje. Haki ya watoto hii inaitwa:", opts: ["Haki ya chakula","Haki ya mchezo","Haki ya elimu","Haki ya mavazi"], ans: 1 },
+        { q: "Watoto wanapenda kusomea vitabu. Haki hii ni:", opts: ["Haki ya mchezo","Haki ya chakula","Haki ya elimu","Haki ya nyumba"], ans: 2 },
+        { q: "Chora haki ya watoto — Chakula ni muhimu kwa sababu:", opts: ["Inatupatia nguvu","Inatufanya wachovu","Haina umuhimu","Inatudhuru"], ans: 0 },
+        { q: "Nyumba inatupatia:", opts: ["Njaa","Makao salama","Uchovu","Hofu"], ans: 1 },
+        { q: "Andika sentensi moja kuhusu familia yako — Familia yangu ni:", opts: ["ndogo na yenye furaha","mbaya","ya hasira","ya huzuni"], ans: 0 },
+      ]
+    },
+  ],
+  english: [
+    {
+      id: "eng-g2-2026",
+      title: "English Language — 2026 Assessment",
+      desc: "Listening, Comprehension, Language Use, Writing",
+      grades: ["Grade 2"],
+      deadline: "2026-06-20",
+      questions: [
+        // SECTION A — LISTENING AND SPEAKING
+        { q: "What would you like to talk about? (accidents at home) — Which sharp object can cut us?", opts: ["Spoon","Knife","Fork","Plate"], ans: 1 },
+        { q: "What can happen when we play with fire?", opts: ["We get cold","We get wet","We get burned","We get lost"], ans: 2 },
+        { q: "What can happen when we play on the road?", opts: ["We can get hit by a car","We can get wet","We can sleep","We can eat"], ans: 0 },
+        { q: "Climbing trees can cause which accident?", opts: ["Drowning","Falling and getting hurt","Burning","Cutting"], ans: 1 },
+        { q: "Where is Lulu placing her books in the story?", opts: ["On the table","Under the desk","On the shelf","In her bag"], ans: 2 },
+        // SECTION B — COMPREHENSION
+        { q: "What was Lucy wearing when she walked to the shop?", opts: ["A blue dress","A red dress","A green dress","A white dress"], ans: 1 },
+        { q: "Who said 'I think this bus is speeding'?", opts: ["Lucy","Lucy's mother","The driver","A passenger"], ans: 1 },
+        { q: "Where were Lucy and her mother going?", opts: ["To school","To the hospital","To the shop","To the market"], ans: 2 },
+        { q: "What did the driver say when Lucy's mother spoke?", opts: ["He stopped the bus","He said 'This driver could be sleepy'","He agreed","He ignored them"], ans: 1 },
+        { q: "Whose class is arranging books on the shelf?", opts: ["Lucy's class","Cheche's class","Lulu's class","The teacher's class"], ans: 1 },
+        { q: "How many books fit on one shelf?", opts: ["5","8","10","12"], ans: 2 },
+        { q: "Where does Lulu place her books?", opts: ["On the desk","On the shelf","In the bag","Under the table"], ans: 1 },
+        // SECTION C — LANGUAGE USE
+        { q: "Match: Boy — opposite is:", opts: ["Man","Girl","Baby","Mother"], ans: 1 },
+        { q: "Match: Bull — opposite is:", opts: ["Ram","Cow","Hen","Ewe"], ans: 1 },
+        { q: "Match: Father — opposite is:", opts: ["Son","Brother","Mother","Uncle"], ans: 2 },
+        { q: "Use 'beside', 'above' or 'below' — Put your hand ___ your head:", opts: ["beside","above","below","through"], ans: 1 },
+        { q: "You can stand ___ the tank:", opts: ["beside","above","at","through"], ans: 0 },
+        { q: "The boat stopped ___ the bridge:", opts: ["beside","above","at","below"], ans: 3 },
+        { q: "Add '-er' to 'tall': A tortoise is ___ than a frog:", opts: ["taller","taller","tallest","tall"], ans: 0 },
+        { q: "Add '-er' to 'cold': Today is ___ than yesterday:", opts: ["more cold","coldest","colder","cold"], ans: 2 },
+        { q: "Write the plural of 'One Banana' — Many:", opts: ["Banana","Bananas","Bananae","Bananies"], ans: 1 },
+        { q: "Write the plural of 'One Duster' — Many:", opts: ["Dusters","Dusteres","Duster","Dusties"], ans: 0 },
+        { q: "Write the plural of 'One Potato' — Many:", opts: ["Potatos","Potatoe","Potatoes","Potatoies"], ans: 2 },
+        // SECTION D — WRITING
+        { q: "Complete the sentence using 'This' or 'These': ___ is a flower.", opts: ["This","These","Those","That"], ans: 0 },
+        { q: "Complete: ___ are trees.", opts: ["This","These","That","A"], ans: 1 },
+        { q: "Complete: ___ are eggs (the picture shows eggs).", opts: ["This","A","These","That"], ans: 2 },
+        { q: "Complete: The ___ is playing. (children / child)", opts: ["children","child","childs","childrens"], ans: 1 },
+        { q: "Complete: The ___ are playing. (children / child)", opts: ["child","children","childs","childrens"], ans: 1 },
+      ]
+    },
+  ],
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let student = null;
+let scores = {}; // { examId: { score, total, pct } }
+let currentExam = null;
+let answers = {};
+let submitted = false;
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function doLogin() {
+  const inputId = document.getElementById('login-id').value.trim().toUpperCase();
+  const err = document.getElementById('login-error');
+
+  // Look up student by ID
+  const found = STUDENTS.find(s => s.id.toUpperCase() === inputId);
+
+  if (!found) {
+    err.textContent = 'Student ID not found. Please check with your teacher.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+
+  student = { name: found.name, id: found.id, grade: found.grade };
+
+  // Auto-fill the class dropdown to match (visual only)
+  document.getElementById('login-class').value = found.grade;
+
+  // Load saved scores from localStorage
+  const saved = localStorage.getItem('stg_scores_' + found.id);
+  scores = saved ? JSON.parse(saved) : {};
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  renderAll();
+}
+
+function doLogout() {
+  student = null;
+  scores = {};
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  
+  document.getElementById('login-id').value = '';
+  
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function showSection(id, tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  tab.classList.add('active');
+  if (id === 'subjects') resetSubjectsView();
+}
+
+// ── RENDER ALL ────────────────────────────────────────────────────────────────
+function renderAll() {
+  document.getElementById('topbar-student').textContent = student.name.split(' ')[0] + ' · ' + student.grade;
+  document.getElementById('welcome-name').textContent = 'Welcome, ' + student.name.split(' ')[0] + '! 👋';
+  document.getElementById('welcome-sub').textContent = student.grade + ' · St. Genevieve Primary School';
+  document.getElementById('encourage-text').textContent = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
+
+  // Profile
+  document.getElementById('profile-name').textContent = student.name;
+  document.getElementById('profile-id').textContent = student.id;
+  document.getElementById('profile-class').textContent = student.grade;
+  document.getElementById('grade-badge').textContent = student.grade;
+
+  renderStats();
+  renderDashboardSubjects();
+  renderProgress();
+  renderSubjectsGrid();
+}
+
+function getMyExams(subjectId) {
+  if (!EXAMS[subjectId]) return [];
+  return EXAMS[subjectId].filter(e => e.grades.includes(student.grade));
+}
+
+function getDeadlineLabel(exam) {
+  if (!exam.deadline) return null;
+  const d = new Date(exam.deadline);
+  const now = new Date();
+  const diff = Math.ceil((d - now) / (1000*60*60*24));
+  if (diff < 0) return { text: 'Deadline passed', col: '#B5451B' };
+  if (diff === 0) return { text: 'Due today!', col: '#B5451B' };
+  if (diff === 1) return { text: 'Due tomorrow', col: '#C0884A' };
+  return { text: 'Due ' + d.toLocaleDateString('en-KE', {weekday:'long', month:'short', day:'numeric'}), col: '#5C4A3A' };
+}
+
+function renderStats() {
+  const allMyExams = SUBJECTS.flatMap(s => getMyExams(s.id));
+  const done = allMyExams.filter(e => scores[e.id]);
+  const pcts = done.map(e => scores[e.id].pct);
+  const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
+  const best = pcts.length ? Math.round(Math.max(...pcts)) : null;
+  document.getElementById('stat-done').textContent = done.length;
+  document.getElementById('stat-avg').textContent = avg !== null ? avg + '%' : '—';
+  document.getElementById('stat-best').textContent = best !== null ? best + '%' : '—';
+  document.getElementById('stat-pending').textContent = allMyExams.length - done.length;
+}
+
+function renderDashboardSubjects() {
+  const el = document.getElementById('dashboard-subjects');
+  el.innerHTML = '';
+  const myMath = getMyExams('math');
+  const done = myMath.filter(e => scores[e.id]);
+  const pct = myMath.length ? Math.round((done.length / myMath.length) * 100) : 0;
+  const avgPct = done.length ? Math.round(done.reduce((a,e) => a + scores[e.id].pct, 0) / done.length) : 0;
+  el.innerHTML = subjectProgressHTML('Mathematics', '➕', pct, avgPct, done.length, myMath.length, '#7A1C2E');
+}
+
+function subjectProgressHTML(name, icon, completePct, avgScore, done, total, color) {
+  return `
+  <div class="subject-progress-card">
+    <div class="subj-header">
+      <div class="subj-name">${icon} ${name}</div>
+      <div class="subj-score" style="color:${color}">${avgScore > 0 ? avgScore + '% avg' : 'Not started'}</div>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" style="width:${completePct}%;background:${color}"></div>
+    </div>
+    <p style="font-size:12px;color:var(--gray-400);margin-top:6px">${done} of ${total} exams completed</p>
+  </div>`;
+}
+
+function renderProgress() {
+  const el = document.getElementById('progress-list');
+  el.innerHTML = SUBJECTS.map(s => {
+    const myExams = getMyExams(s.id);
+    if (!myExams.length) return '';
+    const done = myExams.filter(e => scores[e.id]);
+    const pcts = done.map(e => scores[e.id].pct);
+    const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : 0;
+    const completePct = myExams.length ? Math.round((done.length / myExams.length) * 100) : 0;
+    let historyHTML = '';
+    if (done.length) {
+      historyHTML = '<div class="score-history">' + done.map(e => {
+        const p = scores[e.id].pct;
+        const col = p >= 70 ? s.color : p >= 50 ? '#C0884A' : '#B5451B';
+        return '<span class="score-pill" style="background:'+col+'20;color:'+col+';font-weight:700">'+e.title+': '+Math.round(p)+'%</span>';
+      }).join('') + '</div>';
+    } else {
+      historyHTML = '<p style="font-size:13px;color:var(--gray-400);margin-top:8px">No exams completed yet.</p>';
+    }
+    return '<div class="subject-progress-card"><div class="subj-header"><div class="subj-name">'+s.icon+' '+s.name+'</div><div class="subj-score" style="color:'+s.color+'">'+(avg > 0 ? avg+'% avg' : '—')+'</div></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:'+completePct+'%;background:'+s.color+'"></div></div><p style="font-size:12px;color:var(--gray-400);margin-top:6px">'+done.length+' of '+myExams.length+' exams completed ('+completePct+'%)</p>'+historyHTML+'</div>';
+  }).join('');
+}
+
+function renderSubjectsGrid() {
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = SUBJECTS.map(s => {
+    const myExams = getMyExams(s.id);
+    const done = myExams.filter(e => scores[e.id]).length;
+    const deadlineTag = (myExams.length && myExams[0].deadline)
+      ? '<div style="margin-top:6px;font-size:11px;color:#B5451B;font-weight:700">&#9200; Due Friday 20 Jun</div>'
+      : '';
+    const card = '<div class="subject-card" onclick="openSubject(\'' + s.id + '\',\'' + s.name + '\',\'' + s.icon + '\')" style="border-top:3px solid ' + s.color + '">'
+      + '<div class="subj-icon">' + s.icon + '</div>'
+      + '<div class="subj-title">' + s.name + '</div>'
+      + '<div class="subj-meta">' + done + '/' + myExams.length + ' exams done</div>'
+      + '<div class="exam-count" style="background:' + s.color + '20;color:' + s.color + '">' + myExams.length + ' exam' + (myExams.length !== 1 ? 's' : '') + '</div>'
+      + deadlineTag
+      + '</div>';
+    return card;
+  }).join('') + '<div class="subject-card" style="opacity:0.45;pointer-events:none"><div class="subj-icon">&#128300;</div><div class="subj-title">Science</div><div class="subj-meta">Coming soon</div></div>';
+}
+
+// ── SUBJECTS / EXAMS ─────────────────────────────────────────────────────────
+function openSubject(subjectId, name, icon) {
+  document.getElementById('subjects-view').style.display = 'none';
+  document.getElementById('exams-view').style.display = 'block';
+  document.getElementById('exam-subject-title').textContent = icon + ' ' + name;
+  document.getElementById('exam-subject-sub').textContent = student.grade + ' · St. Genevieve Primary School';
+
+  const exams = getMyExams(subjectId);
+  const list = document.getElementById('exams-list');
+  list.innerHTML = '';
+
+  if (!exams.length) {
+    list.innerHTML = '<p style="color:var(--gray-400);font-size:14px">No exams available for your class yet.</p>';
+    return;
+  }
+
+  exams.forEach(exam => {
+    const done = scores[exam.id];
+    const dl = getDeadlineLabel(exam);
+    const deadlineHTML = dl ? `<span style="font-size:11px;font-weight:700;color:${dl.col}">⏰ ${dl.text}</span>` : '';
+    const statusHTML = done
+      ? `<span class="exam-status done">✓ ${Math.round(done.pct)}%</span>`
+      : `<span class="exam-status pending">Pending</span>`;
+    const btnHTML = done
+      ? `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')" style="background:#9B4D62">Review</button>`
+      : `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')">Start Exam →</button>`;
+    list.innerHTML += `
+    <div class="exam-card">
+      <div class="exam-info">
+        <h4>${exam.title}</h4>
+        <p>${exam.desc} · ${exam.questions.length} questions</p>
+        ${deadlineHTML}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        ${statusHTML}
+        ${btnHTML}
+      </div>
+    </div>`;
+  });
+}
+
+function backToSubjects() {
+  document.getElementById('subjects-view').style.display = 'block';
+  document.getElementById('exams-view').style.display = 'none';
+}
+
+function resetSubjectsView() {
+  document.getElementById('subjects-view').style.display = 'block';
+  document.getElementById('exams-view').style.display = 'none';
+}
+
+// ── EXAM MODAL ────────────────────────────────────────────────────────────────
+function startExam(subjectId, examId) {
+  const exam = EXAMS[subjectId].find(e => e.id === examId);
+  currentExam = { ...exam, subjectId };
+  answers = {};
+  submitted = !!scores[examId];
+
+  document.getElementById('exam-modal').style.display = 'flex';
+  renderExamModal();
+}
+
+function renderExamModal() {
+  const exam = currentExam;
+  const already = scores[exam.id];
+  let html = `<h2>${exam.title}</h2>
+  <p class="modal-meta">${student.grade} · ${exam.desc} · ${exam.questions.length} questions</p>`;
+
+  if (already && submitted) {
+    html += `<div class="result-banner">
+      <div class="result-score">${Math.round(already.pct)}%</div>
+      <div class="result-label">${already.score} / ${already.total} correct</div>
+      <div class="result-msg">${getResultMsg(already.pct)}</div>
+    </div>`;
+  }
+
+  exam.questions.forEach((q, i) => {
+    html += `<div class="question-block">
+      <p>${i + 1}. ${q.q}</p>
+      <div class="options-list">`;
+    q.opts.forEach((opt, j) => {
+      let cls = '';
+      if (submitted) {
+        if (j === q.ans) cls = 'correct';
+        else if (answers[i] === j && j !== q.ans) cls = 'wrong';
+      } else if (answers[i] === j) cls = 'selected';
+
+      html += `<label class="option-label ${cls}" onclick="${submitted ? '' : `selectAnswer(${i},${j},this)`}">
+        <input type="radio" name="q${i}" ${answers[i]===j?'checked':''} ${submitted?'disabled':''}> ${opt}
+      </label>`;
+    });
+    html += `</div></div>`;
+  });
+
+  if (!submitted) {
+    html += `<button class="submit-exam-btn" onclick="submitExam()">Submit Exam</button>`;
+  } else {
+    html += `<button class="submit-exam-btn" style="background:#A89880" onclick="closeExam()">Close</button>`;
+  }
+
+  document.getElementById('exam-modal-content').innerHTML = html;
+}
+
+function selectAnswer(qi, ai, el) {
+  answers[qi] = ai;
+  const block = el.closest('.question-block');
+  block.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function submitExam() {
+  const exam = currentExam;
+  let correct = 0;
+  exam.questions.forEach((q, i) => {
+    if (answers[i] === q.ans) correct++;
+  });
+  const pct = (correct / exam.questions.length) * 100;
+  scores[exam.id] = { score: correct, total: exam.questions.length, pct };
+  localStorage.setItem('stg_scores_' + student.id, JSON.stringify(scores));
+  submitted = true;
+  renderExamModal();
+  renderStats();
+  renderDashboardSubjects();
+  renderProgress();
+  renderSubjectsGrid();
+}
+
+function getResultMsg(pct) {
+  if (pct >= 80) return "🌟 Excellent work! You're a star — keep it up!";
+  if (pct >= 60) return "👍 Good job! A little more practice and you'll be even better!";
+  if (pct >= 40) return "💪 You tried hard! Review the questions and give it another go.";
+  return "🤗 Don't give up! Every try makes you stronger. Ask your teacher for help.";
+}
+
+function closeExam() {
+  document.getElementById('exam-modal').style.display = 'none';
+  currentExam = null;
+  // Refresh the exam list
+  const title = document.getElementById('exam-subject-title').textContent;
+  const sub = SUBJECTS.find(s => title.includes(s.name));
+  if (sub) openSubject(sub.id, sub.name, sub.icon);
+}
+</script>
+</body>
+</html>
