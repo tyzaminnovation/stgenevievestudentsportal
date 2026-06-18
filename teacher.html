@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>St. Genevieve Teacher Portal</title>
+<style>
+  :root {
+    --wine: #7A1C2E;
+    --wine-dark: #4A0D1A;
+    --wine-light: #F5E6E9;
+    --amber: #C0884A;
+    --amber-light: #FDF3E7;
+    --purple: #9B4D62;
+    --coral: #B5451B;
+    --coral-light: #FAEAE5;
+    --cream: #FAF7F2;
+    --gray-200: #EDE8E0;
+    --gray-400: #A89880;
+    --gray-700: #5C4A3A;
+    --gray-900: #2C1A10;
+    --white: #FFFDF8;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--cream); color: var(--gray-900); min-height: 100vh; }
+
+  /* LOGIN */
+  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, #4A0D1A 0%, #7A1C2E 55%, #B5728A 100%); padding: 1rem; }
+  .login-card { background: var(--white); border-radius: 20px; padding: 2.5rem 2rem; width: 100%; max-width: 400px; box-shadow: 0 24px 64px rgba(74,13,26,0.28); }
+  .school-logo { width: 64px; height: 64px; background: var(--wine-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 1.25rem; }
+  .login-card h1 { font-size: 22px; font-weight: 700; text-align: center; color: var(--wine-dark); margin-bottom: 4px; }
+  .login-card .tagline { text-align: center; font-size: 13px; color: var(--gray-400); margin-bottom: 2rem; }
+  .field-label { font-size: 12px; font-weight: 600; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .field-wrap { margin-bottom: 1rem; }
+  input[type="text"], textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 15px; background: var(--cream); color: var(--gray-900); outline: none; transition: border-color 0.2s; font-family: inherit; }
+  input:focus, textarea:focus { border-color: var(--wine); background: var(--white); }
+  .btn-primary { width: 100%; padding: 13px; background: var(--wine); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+  .btn-primary:hover { background: var(--wine-dark); }
+  .login-error { color: var(--coral); font-size: 13px; text-align: center; margin-top: 0.75rem; display: none; }
+
+  /* APP SHELL */
+  #app { display: none; min-height: 100vh; }
+  .topbar { background: var(--wine-dark); color: white; padding: 0 1.5rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo { font-size: 22px; }
+  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .teacher-badge { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 600; }
+  .btn-logout { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+  .btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+  .nav-tabs { background: var(--white); border-bottom: 1.5px solid var(--gray-200); display: flex; padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab { padding: 14px 18px; font-size: 14px; font-weight: 600; color: var(--gray-400); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .nav-tab.active { color: var(--wine); border-bottom-color: var(--wine); }
+  .nav-tab:hover:not(.active) { color: var(--gray-700); }
+
+  .main { padding: 1.5rem; max-width: 1000px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  h2.page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  p.page-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 1.25rem; }
+
+  /* DASHBOARD STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--white); border-radius: var(--radius-sm); padding: 1.1rem; text-align: center; border: 1.5px solid var(--gray-200); }
+  .stat-card .stat-num { font-size: 28px; font-weight: 700; margin-bottom: 3px; }
+  .stat-card .stat-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+
+  .panel { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--gray-200); padding: 1.25rem; margin-bottom: 1.25rem; }
+  .panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 1rem; color: var(--gray-700); }
+
+  /* TABLE */
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.data-table th { text-align: left; padding: 8px 10px; color: var(--gray-400); font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; border-bottom: 2px solid var(--gray-200); }
+  table.data-table td { padding: 10px 10px; border-bottom: 1px solid var(--gray-200); }
+  table.data-table tr:last-child td { border-bottom: none; }
+  table.data-table tr:hover { background: var(--cream); }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .pill.pending { background: var(--amber-light); color: #7A1C2E; }
+  .pill.released { background: var(--wine-light); color: var(--wine-dark); }
+  .pill.none { background: var(--gray-200); color: var(--gray-400); }
+
+  .btn-sm { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; }
+  .btn-sm.wine { background: var(--wine); color: white; }
+  .btn-sm.wine:hover { background: var(--wine-dark); }
+  .btn-sm.outline { background: transparent; color: var(--wine); border: 1.5px solid var(--wine); }
+  .btn-sm.outline:hover { background: var(--wine-light); }
+
+  /* EXAM CARDS for "Create Exam" listing */
+  .exam-manage-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .exam-manage-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .exam-manage-card p { font-size: 12px; color: var(--gray-400); }
+
+  /* FORM */
+  .form-row { margin-bottom: 1rem; }
+  .form-row label { display: block; font-size: 12px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 15px; background: var(--cream); color: var(--gray-900); outline: none; font-family: inherit; }
+  select:focus { border-color: var(--wine); background: var(--white); }
+
+  .question-builder { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 0.75rem; border: 1.5px solid var(--gray-200); }
+  .question-builder .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .question-builder .q-header span { font-weight: 700; font-size: 13px; color: var(--wine); }
+  .question-builder .remove-q { background: none; border: none; color: var(--coral); cursor: pointer; font-size: 12px; font-weight: 600; }
+  .opt-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .opt-row input[type="radio"] { accent-color: var(--wine); flex-shrink: 0; }
+  .opt-row input[type="text"] { flex: 1; padding: 8px 10px; font-size: 13px; }
+
+  .btn-add-q { background: var(--white); border: 1.5px dashed var(--gray-400); color: var(--gray-700); border-radius: var(--radius-sm); padding: 10px; width: 100%; cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 1rem; }
+  .btn-add-q:hover { border-color: var(--wine); color: var(--wine); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(74,13,26,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-box { background: var(--white); border-radius: 18px; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--cream); border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gray-700); }
+  .modal-close:hover { background: var(--gray-200); }
+  .modal-box h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .modal-box .modal-meta { font-size: 13px; color: var(--gray-400); margin-bottom: 1.5rem; }
+
+  .review-q { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+  .review-q p.q-text { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .review-opt { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; font-size: 13px; margin-bottom: 4px; }
+  .review-opt.correct-ans { background: #F5E6E9; color: var(--wine-dark); font-weight: 600; }
+  .review-opt.student-wrong { background: var(--coral-light); color: var(--coral); font-weight: 600; }
+  .override-toggle { margin-top: 8px; font-size: 12px; }
+  .override-toggle label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-right: 16px; color: var(--gray-700); }
+  .override-toggle input { accent-color: var(--wine); }
+
+  .remarks-area { width: 100%; min-height: 80px; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical; }
+  .remarks-area:focus { border-color: var(--wine); outline: none; }
+
+  .empty-state { text-align: center; padding: 2rem 1rem; color: var(--gray-400); font-size: 14px; }
+
+  /* REPORT CARD PRINT */
+  .report-card { background: var(--white); border: 2px solid var(--wine); border-radius: var(--radius); padding: 1.5rem; }
+  .report-header { text-align: center; border-bottom: 2px solid var(--wine-light); padding-bottom: 1rem; margin-bottom: 1rem; }
+  .report-header h2 { color: var(--wine-dark); font-size: 20px; }
+  .report-header p { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+  .report-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 1.25rem; font-size: 13px; }
+  .report-meta-grid div span:first-child { color: var(--gray-400); font-weight: 600; margin-right: 6px; }
+  table.report-table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; }
+  table.report-table th { background: var(--wine-light); color: var(--wine-dark); padding: 8px 10px; font-size: 12px; text-align: left; }
+  table.report-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-200); font-size: 13px; }
+  .report-remarks { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem; font-size: 13px; line-height: 1.6; }
+  .report-remarks strong { display: block; margin-bottom: 6px; color: var(--wine); font-size: 12px; text-transform: uppercase; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #report-print-area, #report-print-area * { visibility: visible; }
+    #report-print-area { position: absolute; left: 0; top: 0; width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .main { padding: 1rem; }
+    .topbar { padding: 0 1rem; }
+    table.data-table { font-size: 12px; }
+    .report-meta-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="school-logo">🍎</div>
+    <h1>St. Genevieve</h1>
+    <p class="tagline">Teacher Portal</p>
+    <div class="field-wrap">
+      <div class="field-label">Teacher ID</div>
+      <input type="text" id="login-id" placeholder="e.g. SGP-T-G2" autocomplete="off" autocapitalize="characters" style="letter-spacing:0.05em;font-weight:600">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Enter Portal →</button>
+    <p class="login-error" id="login-error">Teacher ID not found.</p>
+    <p style="text-align:center;font-size:12px;color:#A89880;margin-top:1.25rem;">Use the Teacher ID given to you by the school administration.</p>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">🍎</span>
+      <div>
+        <div class="topbar-title">St. Genevieve</div>
+        <div class="topbar-sub">Teacher Portal</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="teacher-badge" id="topbar-teacher"></span>
+      <button class="btn-logout" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">🏠 Dashboard</div>
+    <div class="nav-tab" onclick="showSection('results', this)">📊 Review Results</div>
+    <div class="nav-tab" onclick="showSection('create', this)">✏️ Create Exam</div>
+    <div class="nav-tab" onclick="showSection('students', this)">👥 Students</div>
+    <div class="nav-tab" onclick="showSection('reports', this)">🧾 Report Cards</div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="section-dashboard">
+      <h2 class="page-title" id="dash-title">Welcome back!</h2>
+      <p class="page-sub" id="dash-sub"></p>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" style="color:var(--wine)" id="stat-students">0</div><div class="stat-label">Students</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--coral)" id="stat-pending-count">0</div><div class="stat-label">Awaiting Review</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-released-count">0</div><div class="stat-label">Released Results</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-class-avg">—</div><div class="stat-label">Class Average</div></div>
+      </div>
+
+      <div class="panel">
+        <h3>Class average by subject</h3>
+        <div id="subject-averages"></div>
+      </div>
+
+      <div class="panel">
+        <h3>⏳ Needs your attention</h3>
+        <div id="pending-preview"></div>
+      </div>
+    </div>
+
+    <!-- REVIEW RESULTS -->
+    <div class="section" id="section-results">
+      <h2 class="page-title">Review Results</h2>
+      <p class="page-sub">Auto-graded submissions appear here. Review, override if needed, add remarks, then release to students.</p>
+      <div class="form-row" style="max-width:300px">
+        <label>Filter by subject</label>
+        <select id="results-subject-filter" onchange="renderResultsList()">
+          <option value="all">All subjects</option>
+        </select>
+      </div>
+      <div id="results-list"></div>
+    </div>
+
+    <!-- CREATE EXAM -->
+    <div class="section" id="section-create">
+      <h2 class="page-title">Create Exam</h2>
+      <p class="page-sub">Build a new exam for your class — it appears on the student portal immediately after saving.</p>
+
+      <div class="panel">
+        <h3>Existing exams for your class</h3>
+        <div id="manage-exams-list"></div>
+      </div>
+
+      <div class="panel">
+        <h3>New exam</h3>
+        <div class="form-row">
+          <label>Subject</label>
+          <select id="new-exam-subject"></select>
+        </div>
+        <div class="form-row">
+          <label>Exam Title</label>
+          <input type="text" id="new-exam-title" placeholder="e.g. Mid-Term Assessment">
+        </div>
+        <div class="form-row">
+          <label>Description</label>
+          <input type="text" id="new-exam-desc" placeholder="e.g. Covers chapters 1-4">
+        </div>
+        <div class="form-row">
+          <label>Deadline (optional)</label>
+          <input type="text" id="new-exam-deadline" placeholder="YYYY-MM-DD, e.g. 2026-06-26">
+        </div>
+
+        <div id="question-builder-list"></div>
+        <button class="btn-add-q" onclick="addQuestionBuilder()">+ Add Question</button>
+        <button class="btn-primary" onclick="saveNewExam()">Save Exam</button>
+        <p id="create-exam-msg" style="font-size:13px;color:var(--coral);margin-top:0.5rem;display:none;"></p>
+      </div>
+    </div>
+
+    <!-- STUDENTS -->
+    <div class="section" id="section-students">
+      <h2 class="page-title">Students — <span id="students-grade-label"></span></h2>
+      <p class="page-sub">Every student enrolled in your class.</p>
+      <div class="panel">
+        <table class="data-table" id="students-table">
+          <thead><tr><th>Name</th><th>Student ID</th><th>Results Released</th><th>Average Score</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REPORT CARDS -->
+    <div class="section" id="section-reports">
+      <h2 class="page-title">Report Cards</h2>
+      <p class="page-sub">Select a student to view, print, or download their report card.</p>
+      <div class="form-row" style="max-width:340px">
+        <label>Select Student</label>
+        <select id="report-student-select" onchange="renderReportCard()"></select>
+      </div>
+      <div id="report-card-area"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="review-modal" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeReviewModal()">✕</button>
+    <div id="review-modal-content"></div>
+  </div>
+</div>
+
+<script src="portal-data.js"></script>
+<script>
+let teacher = null;
+let questionBuilderCount = 0;
+let currentReview = null; // { studentId, examId, exam, submission }
+
+// ── LOGIN ──
+function doLogin() {
+  const inputId = document.getElementById('login-id').value.trim().toUpperCase();
+  const err = document.getElementById('login-error');
+  const found = TEACHERS.find(t => t.id.toUpperCase() === inputId);
+  if (!found) {
+    err.textContent = 'Teacher ID not found. Please check with the school administration.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  teacher = { name: found.name, id: found.id, grade: found.grade };
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+}
+
+function doLogout() {
+  teacher = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-id').value = '';
+}
+
+function showSection(id, tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  tab.classList.add('active');
+  if (id === 'results') renderResultsList();
+  if (id === 'create') renderManageExams();
+  if (id === 'students') renderStudentsTable();
+  if (id === 'reports') renderReportSelector();
+}
+
+async function initApp() {
+  document.getElementById('topbar-teacher').textContent = teacher.name + ' · ' + teacher.grade;
+  document.getElementById('dash-title').textContent = 'Welcome, ' + teacher.name + '! 👋';
+  document.getElementById('dash-sub').textContent = teacher.grade + ' · St. Genevieve Primary School';
+
+  populateSubjectFilters();
+  await renderDashboard();
+}
+
+function populateSubjectFilters() {
+  const filterSel = document.getElementById('results-subject-filter');
+  const newExamSel = document.getElementById('new-exam-subject');
+  filterSel.innerHTML = '<option value="all">All subjects</option>' + SUBJECTS.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
+  newExamSel.innerHTML = SUBJECTS.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
+}
+
+function getClassStudents() {
+  return STUDENTS.filter(s => s.grade === teacher.grade);
+}
+
+function getClassExams() {
+  // every exam across all subjects available to this teacher's grade
+  const result = [];
+  SUBJECTS.forEach(s => {
+    (EXAMS[s.id] || []).forEach(e => {
+      if (e.grades.includes(teacher.grade)) result.push({ ...e, subjectId: s.id, subjectName: s.name, subjectIcon: s.icon, subjectColor: s.color });
+    });
+  });
+  return result;
+}
+
+// ── DASHBOARD ──
+async function renderDashboard() {
+  const students = getClassStudents();
+  const subs = await Store.getAllForGrade(teacher.grade);
+  const pending = subs.filter(s => s.status === 'pending');
+  const released = subs.filter(s => s.status === 'released');
+  const pcts = released.map(s => (s.finalScore/s.finalTotal)*100);
+  const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
+
+  document.getElementById('stat-students').textContent = students.length;
+  document.getElementById('stat-pending-count').textContent = pending.length;
+  document.getElementById('stat-released-count').textContent = released.length;
+  document.getElementById('stat-class-avg').textContent = avg !== null ? avg + '%' : '—';
+
+  // Subject averages
+  const subEl = document.getElementById('subject-averages');
+  const classExams = getClassExams();
+  let subHtml = '';
+  for (const s of SUBJECTS) {
+    const examsForSub = classExams.filter(e => e.subjectId === s.id);
+    if (!examsForSub.length) continue;
+    const relForSub = released.filter(r => examsForSub.some(e => e.id === r.examId));
+    const subPcts = relForSub.map(r => (r.finalScore/r.finalTotal)*100);
+    const subAvg = subPcts.length ? Math.round(subPcts.reduce((a,b)=>a+b,0)/subPcts.length) : 0;
+    subHtml += `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px">
+        <span style="font-weight:600">${s.icon} ${s.name}</span>
+        <span style="font-weight:700;color:${s.color}">${subPcts.length ? subAvg + '%' : 'No data yet'}</span>
+      </div>
+      <div style="background:var(--gray-200);height:8px;border-radius:8px;overflow:hidden">
+        <div style="width:${subAvg}%;height:100%;background:${s.color};border-radius:8px"></div>
+      </div>
+    </div>`;
+  }
+  subEl.innerHTML = subHtml || '<p class="empty-state">No subjects set up for this class yet.</p>';
+
+  // Pending preview (max 4)
+  const previewEl = document.getElementById('pending-preview');
+  if (!pending.length) {
+    previewEl.innerHTML = '<p class="empty-state">🎉 Nothing waiting for review right now!</p>';
+  } else {
+    let rows = '';
+    pending.slice(0, 5).forEach(sub => {
+      const st = STUDENTS.find(s => s.id === sub.studentId);
+      const exam = classExams.find(e => e.id === sub.examId);
+      rows += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-200)">
+        <div>
+          <strong style="font-size:14px">${st ? st.name : sub.studentId}</strong>
+          <div style="font-size:12px;color:var(--gray-400)">${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</div>
+        </div>
+        <button class="btn-sm wine" onclick="showSection('results', document.querySelector('[onclick*=results]'))">Review →</button>
+      </div>`;
+    });
+    previewEl.innerHTML = rows;
+  }
+}
+
+// ── REVIEW RESULTS ──
+async function renderResultsList() {
+  const filter = document.getElementById('results-subject-filter').value;
+  const subs = await Store.getAllForGrade(teacher.grade);
+  const classExams = getClassExams();
+  const filtered = filter === 'all' ? subs : subs.filter(s => s.subjectId === filter);
+
+  // sort: pending first, then released, newest first
+  filtered.sort((a, b) => {
+    if (a.status !== b.status) return a.status === 'pending' ? -1 : 1;
+    return new Date(b.submittedAt) - new Date(a.submittedAt);
+  });
+
+  const listEl = document.getElementById('results-list');
+  if (!filtered.length) {
+    listEl.innerHTML = '<div class="panel"><p class="empty-state">No submissions yet for this filter.</p></div>';
+    return;
+  }
+
+  let rows = '';
+  filtered.forEach(sub => {
+    const st = STUDENTS.find(s => s.id === sub.studentId);
+    const exam = classExams.find(e => e.id === sub.examId);
+    const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
+    rows += `<tr>
+      <td>${st ? st.name : sub.studentId}</td>
+      <td>${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</td>
+      <td>${sub.finalScore}/${sub.finalTotal} (${pct}%)</td>
+      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? '⏳ Pending' : '✓ Released'}</span></td>
+      <td><button class="btn-sm outline" onclick="openReview('${sub.studentId}','${sub.examId}')">${sub.status === 'pending' ? 'Review' : 'View / Edit'}</button></td>
+    </tr>`;
+  });
+
+  listEl.innerHTML = `<div class="panel"><table class="data-table">
+    <thead><tr><th>Student</th><th>Exam</th><th>Score</th><th>Status</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+async function openReview(studentId, examId) {
+  const sub = await Store.getSubmission(studentId, examId);
+  const classExams = getClassExams();
+  const exam = classExams.find(e => e.id === examId);
+  const student = STUDENTS.find(s => s.id === studentId);
+  currentReview = { studentId, examId, exam, submission: sub, student };
+
+  document.getElementById('review-modal').style.display = 'flex';
+  renderReviewModal();
+}
+
+function renderReviewModal() {
+  const { exam, submission, student } = currentReview;
+  const pct = Math.round((submission.finalScore/submission.finalTotal)*100);
+
+  let html = `<h2>${exam.title}</h2>
+  <p class="modal-meta">${student.name} (${student.id}) · ${exam.subjectIcon} ${exam.subjectName} · Submitted ${new Date(submission.submittedAt).toLocaleString('en-KE', {dateStyle:'medium', timeStyle:'short'})}</p>
+  <div style="background:var(--wine-light);border-radius:12px;padding:1rem;text-align:center;margin-bottom:1.25rem">
+    <div style="font-size:32px;font-weight:800;color:var(--wine-dark)" id="review-live-score">${submission.finalScore}/${submission.finalTotal} (${pct}%)</div>
+    <div style="font-size:12px;color:var(--wine)">Auto-graded score — adjust below if needed</div>
+  </div>`;
+
+  exam.questions.forEach((q, i) => {
+    const studentAns = submission.answers[i];
+    const isOverridden = submission.overrides && submission.overrides.hasOwnProperty(i);
+    const markedCorrect = isOverridden ? submission.overrides[i] : (studentAns === q.ans);
+
+    html += `<div class="review-q">
+      <p class="q-text">${i+1}. ${escapeHTML(q.q)}</p>`;
+    q.opts.forEach((opt, j) => {
+      let cls = '';
+      if (j === q.ans) cls = 'correct-ans';
+      if (studentAns === j && j !== q.ans) cls = 'student-wrong';
+      const marker = studentAns === j ? '👉 ' : '';
+      html += `<div class="review-opt ${cls}">${marker}${escapeHTML(opt)}${j === q.ans ? ' (correct answer)' : ''}</div>`;
+    });
+    html += `<div class="override-toggle">
+      <label><input type="radio" name="override-${i}" ${markedCorrect ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
+      <label><input type="radio" name="override-${i}" ${!markedCorrect ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
+    </div>
+    </div>`;
+  });
+
+  html += `<div class="form-row" style="margin-top:1rem">
+    <label>Teacher Remarks</label>
+    <textarea class="remarks-area" id="review-remarks" placeholder="e.g. Great improvement this term! Needs more practice with subtraction.">${submission.remarks || ''}</textarea>
+  </div>`;
+
+  if (submission.status === 'released') {
+    html += `<div style="display:flex;gap:10px;margin-top:1rem">
+      <button class="btn-sm wine" style="flex:1;padding:12px" onclick="saveAndRelease()">Save Changes</button>
+      <button class="btn-sm outline" style="flex:1;padding:12px" onclick="unrelease()">Pull Back for Review</button>
+    </div>`;
+  } else {
+    html += `<button class="btn-primary" onclick="saveAndRelease()">Release Result to Student</button>`;
+  }
+
+  document.getElementById('review-modal-content').innerHTML = html;
+}
+
+async function setOverride(qIndex, markCorrect) {
+  const { studentId, examId, exam } = currentReview;
+  const updated = await Store.overrideAnswer(studentId, examId, qIndex, markCorrect, exam);
+  currentReview.submission = updated;
+  const pct = Math.round((updated.finalScore/updated.finalTotal)*100);
+  document.getElementById('review-live-score').textContent = `${updated.finalScore}/${updated.finalTotal} (${pct}%)`;
+}
+
+async function saveAndRelease() {
+  const { studentId, examId } = currentReview;
+  const remarks = document.getElementById('review-remarks').value;
+  await Store.saveRemarks(studentId, examId, remarks);
+  await Store.releaseResult(studentId, examId);
+  closeReviewModal();
+  await renderDashboard();
+  await renderResultsList();
+}
+
+async function unrelease() {
+  const { studentId, examId } = currentReview;
+  await Store.unreleaseResult(studentId, examId);
+  closeReviewModal();
+  await renderDashboard();
+  await renderResultsList();
+}
+
+function closeReviewModal() {
+  document.getElementById('review-modal').style.display = 'none';
+  currentReview = null;
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ── CREATE EXAM ──
+function addQuestionBuilder() {
+  questionBuilderCount++;
+  const id = questionBuilderCount;
+  const container = document.getElementById('question-builder-list');
+  const div = document.createElement('div');
+  div.className = 'question-builder';
+  div.id = 'qb-' + id;
+  div.innerHTML = `
+    <div class="q-header"><span>Question ${id}</span><button class="remove-q" onclick="document.getElementById('qb-${id}').remove()">Remove</button></div>
+    <div class="form-row"><input type="text" placeholder="Question text" id="qb-${id}-text"></div>
+    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="0" checked><input type="text" placeholder="Option A" id="qb-${id}-opt0"></div>
+    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="1"><input type="text" placeholder="Option B" id="qb-${id}-opt1"></div>
+    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="2"><input type="text" placeholder="Option C" id="qb-${id}-opt2"></div>
+    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="3"><input type="text" placeholder="Option D" id="qb-${id}-opt3"></div>
+    <p style="font-size:11px;color:var(--gray-400)">Select the radio button next to the correct answer.</p>
+  `;
+  container.appendChild(div);
+}
+
+function saveNewExam() {
+  const msgEl = document.getElementById('create-exam-msg');
+  const subjectId = document.getElementById('new-exam-subject').value;
+  const title = document.getElementById('new-exam-title').value.trim();
+  const desc = document.getElementById('new-exam-desc').value.trim();
+  const deadline = document.getElementById('new-exam-deadline').value.trim();
+
+  if (!title) { msgEl.textContent = 'Please enter an exam title.'; msgEl.style.display = 'block'; return; }
+
+  const builders = document.querySelectorAll('.question-builder');
+  if (!builders.length) { msgEl.textContent = 'Please add at least one question.'; msgEl.style.display = 'block'; return; }
+
+  const questions = [];
+  for (const b of builders) {
+    const id = b.id.replace('qb-', '');
+    const qText = document.getElementById(`qb-${id}-text`).value.trim();
+    const opts = [0,1,2,3].map(i => document.getElementById(`qb-${id}-opt${i}`).value.trim());
+    const correctRadio = b.querySelector(`input[name="qb-${id}-correct"]:checked`);
+    if (!qText || opts.some(o => !o)) { msgEl.textContent = 'Please fill in all question fields and options.'; msgEl.style.display = 'block'; return; }
+    questions.push({ q: qText, opts, ans: parseInt(correctRadio.value) });
+  }
+
+  const examId = subjectId + '-' + teacher.grade.toLowerCase().replace(/\s+/g,'') + '-' + Date.now();
+  const newExam = { id: examId, title, desc: desc || '', grades: [teacher.grade], questions };
+  if (deadline) newExam.deadline = deadline;
+
+  if (!EXAMS[subjectId]) EXAMS[subjectId] = [];
+  EXAMS[subjectId].push(newExam);
+
+  msgEl.style.color = 'var(--wine)';
+  msgEl.textContent = '✓ Exam saved! It is now visible to students. (Note: in demo mode this resets on page reload — once connected to the live database it will persist permanently.)';
+  msgEl.style.display = 'block';
+
+  document.getElementById('new-exam-title').value = '';
+  document.getElementById('new-exam-desc').value = '';
+  document.getElementById('new-exam-deadline').value = '';
+  document.getElementById('question-builder-list').innerHTML = '';
+  questionBuilderCount = 0;
+
+  renderManageExams();
+}
+
+function renderManageExams() {
+  const el = document.getElementById('manage-exams-list');
+  const classExams = getClassExams();
+  if (!classExams.length) {
+    el.innerHTML = '<p class="empty-state">No exams created yet for your class.</p>';
+    return;
+  }
+  el.innerHTML = classExams.map(e => `
+    <div class="exam-manage-card">
+      <div>
+        <h4>${e.subjectIcon} ${e.title}</h4>
+        <p>${e.subjectName} · ${e.desc || 'No description'} · ${e.questions.length} questions</p>
+      </div>
+      <span class="pill released">${e.subjectName}</span>
+    </div>
+  `).join('');
+}
+
+// ── STUDENTS ──
+async function renderStudentsTable() {
+  document.getElementById('students-grade-label').textContent = teacher.grade;
+  const students = getClassStudents();
+  const subs = await Store.getAllForGrade(teacher.grade);
+  const tbody = document.querySelector('#students-table tbody');
+
+  let rows = '';
+  for (const st of students) {
+    const stSubs = subs.filter(s => s.studentId === st.id);
+    const released = stSubs.filter(s => s.status === 'released');
+    const pcts = released.map(s => (s.finalScore/s.finalTotal)*100);
+    const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
+    rows += `<tr>
+      <td><strong>${st.name}</strong></td>
+      <td>${st.id}</td>
+      <td>${released.length}</td>
+      <td>${avg !== null ? avg + '%' : '—'}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = rows;
+}
+
+// ── REPORT CARDS ──
+function renderReportSelector() {
+  const sel = document.getElementById('report-student-select');
+  const students = getClassStudents();
+  sel.innerHTML = '<option value="">Select a student…</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+}
+
+async function renderReportCard() {
+  const studentId = document.getElementById('report-student-select').value;
+  const areaEl = document.getElementById('report-card-area');
+  if (!studentId) { areaEl.innerHTML = ''; return; }
+
+  const student = STUDENTS.find(s => s.id === studentId);
+  const subs = (await Store.getAllForStudent(studentId)).filter(s => s.status === 'released');
+  const classExams = getClassExams();
+
+  let rows = '';
+  let allRemarks = [];
+  subs.forEach(sub => {
+    const exam = classExams.find(e => e.id === sub.examId);
+    const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
+    rows += `<tr>
+      <td>${exam ? exam.subjectIcon + ' ' + exam.subjectName : '—'}</td>
+      <td>${exam ? exam.title : sub.examId}</td>
+      <td>${sub.finalScore}/${sub.finalTotal}</td>
+      <td>${pct}%</td>
+    </tr>`;
+    if (sub.remarks) allRemarks.push(`${exam ? exam.title : sub.examId}: ${sub.remarks}`);
+  });
+
+  const pcts = subs.map(s => (s.finalScore/s.finalTotal)*100);
+  const overallAvg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
+
+  areaEl.innerHTML = `
+    <div style="margin-bottom:1rem;display:flex;gap:10px">
+      <button class="btn-sm wine" onclick="window.print()">🖨️ Print Report Card</button>
+    </div>
+    <div class="report-card" id="report-print-area">
+      <div class="report-header">
+        <h2>St. Genevieve Primary School</h2>
+        <p>Official Student Report Card</p>
+      </div>
+      <div class="report-meta-grid">
+        <div><span>Student Name:</span>${student.name}</div>
+        <div><span>Student ID:</span>${student.id}</div>
+        <div><span>Class:</span>${student.grade}</div>
+        <div><span>Overall Average:</span>${overallAvg !== null ? overallAvg + '%' : 'No results yet'}</div>
+      </div>
+      ${rows ? `<table class="report-table">
+        <thead><tr><th>Subject</th><th>Exam</th><th>Score</th><th>Percentage</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>` : '<p class="empty-state">No released results yet for this student.</p>'}
+      ${allRemarks.length ? `<div class="report-remarks"><strong>📝 Teacher's Remarks</strong>${allRemarks.map(r => `<p style="margin-bottom:6px">${escapeHTML(r)}</p>`).join('')}</div>` : ''}
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
