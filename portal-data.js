@@ -13,19 +13,53 @@
 
 // ───────────────────────── STUDENTS ─────────────────────────
 const STUDENTS = [
+  // ── PP2 ──
+  { name: "Shadrack",   id: "SGP-PP2-001", grade: "PP2" },
+  { name: "Tiffany",    id: "SGP-PP2-002", grade: "PP2" },
+  { name: "Kyra",       id: "SGP-PP2-003", grade: "PP2" },
+  { name: "Victor",     id: "SGP-PP2-004", grade: "PP2" },
+  { name: "Ariannah",   id: "SGP-PP2-005", grade: "PP2" },
+  { name: "Lyon",       id: "SGP-PP2-006", grade: "PP2" },
+  { name: "Destiny",    id: "SGP-PP2-007", grade: "PP2" },
+  { name: "Aishavine",  id: "SGP-PP2-008", grade: "PP2" },
+  { name: "Patience",   id: "SGP-PP2-009", grade: "PP2" },
+  { name: "Ashley",     id: "SGP-PP2-010", grade: "PP2" },
+
+  // ── Grade 1 ──
+  { name: "Dennis O.",  id: "SGP-G1-001", grade: "Grade 1" },
+  { name: "Emmanuel",   id: "SGP-G1-002", grade: "Grade 1" },
+  { name: "Kai",        id: "SGP-G1-003", grade: "Grade 1" },
+  { name: "Dennis M.",  id: "SGP-G1-004", grade: "Grade 1" },
+
+  // ── Grade 2 ──
   { name: "Alva Atieno",    id: "SGP-G2-001", grade: "Grade 2" },
   { name: "Ari Raore",      id: "SGP-G2-002", grade: "Grade 2" },
   { name: "Velma Nyambura", id: "SGP-G2-003", grade: "Grade 2" },
   { name: "Kyla Mumbe",     id: "SGP-G2-004", grade: "Grade 2" },
   { name: "Roy Waweru",     id: "SGP-G2-005", grade: "Grade 2" },
   { name: "Patience Myra",  id: "SGP-G2-006", grade: "Grade 2" },
+
+  // ── Grade 3 ──
+  { name: "Lloyd",     id: "SGP-G3-001", grade: "Grade 3" },
+  { name: "Joy",       id: "SGP-G3-002", grade: "Grade 3" },
+  { name: "Fredricho", id: "SGP-G3-003", grade: "Grade 3" },
+
+  // ── Grade 4 ──
+  { name: "Kourtney",  id: "SGP-G4-001", grade: "Grade 4" },
+
   // ADD MORE STUDENTS HERE
 ];
 
 // ───────────────────────── TEACHERS ─────────────────────────
 const TEACHERS = [
-  { name: "Grade 2 Class Teacher", id: "SGP-T-G2", grade: "Grade 2" },
-  // ADD MORE CLASS TEACHERS HERE — one per grade, e.g. { name: "...", id: "SGP-T-G3", grade: "Grade 3" }
+  { name: "PP2 Class Teacher",     id: "SGP-T-PP2", grade: "PP2"     },
+  { name: "Grade 1 Class Teacher", id: "SGP-T-G1",  grade: "Grade 1" },
+  { name: "Grade 2 Class Teacher", id: "SGP-T-G2",  grade: "Grade 2" },
+  { name: "Grade 3 Class Teacher", id: "SGP-T-G3",  grade: "Grade 3" },
+  { name: "Grade 4 Class Teacher", id: "SGP-T-G4",  grade: "Grade 4" },
+  { name: "Grade 5 Class Teacher", id: "SGP-T-G5",  grade: "Grade 5" },
+  { name: "Grade 6 Class Teacher", id: "SGP-T-G6",  grade: "Grade 6" },
+  // ADD MORE TEACHERS HERE
 ];
 
 // ───────────────────────── ENCOURAGEMENTS ─────────────────────────
@@ -42,9 +76,10 @@ const ENCOURAGEMENTS = [
 
 // ───────────────────────── SUBJECTS ─────────────────────────
 const SUBJECTS = [
-  { id: "math",      name: "Mathematics", icon: "➕", color: "#7A1C2E" },
-  { id: "kiswahili", name: "Kiswahili",   icon: "🇰🇪", color: "#9B4D62" },
-  { id: "english",   name: "English",     icon: "📖", color: "#C0884A" },
+  { id: "math",      name: "Mathematics",        icon: "➕", color: "#7A1C2E" },
+  { id: "kiswahili", name: "Kiswahili",           icon: "🇰🇪", color: "#9B4D62" },
+  { id: "english",   name: "English",             icon: "📖", color: "#C0884A" },
+  { id: "re",        name: "Religious Education", icon: "✝️", color: "#5B4A8A" },
   // ADD MORE SUBJECTS HERE
 ];
 
@@ -178,6 +213,31 @@ const EXAMS = {
         { q: "Complete: The ___ is playing. (children / child)", opts: ["children","child","childs","childrens"], ans: 1 },
         { q: "Complete: The ___ are playing. (children / child)", opts: ["child","children","childs","childrens"], ans: 1 },
       ] },
+  ],
+  re: [
+    {
+      id: "re-pp2-endterm2026",
+      title: "Religious Education — End Term 2026",
+      desc: "PP2 Religious Education Examination",
+      grades: ["PP2"],
+      questions: [
+        { q: "Who created you?", opts: ["God created me","My parents created me","Teachers created me","Nobody created me"], ans: 0 },
+        { q: "We go to church on ___.", opts: ["Sunday","Monday","Tuesday","Wednesday"], ans: 0 },
+        { q: "Who is the father of Jesus?", opts: ["King Herod","Joseph","God / Joseph","Moses"], ans: 2 },
+        { q: "Who is the mother of Jesus?", opts: ["Elizabeth","Ruth","Mary","Martha"], ans: 2 },
+        { q: "We should ___ our parents.", opts: ["obey","fear","ignore","shout at"], ans: 0 },
+        { q: "When given a gift we should say ___.", opts: ["sorry","thank you","goodbye","hello"], ans: 1 },
+        { q: "We should ___ what we have with others.", opts: ["share","steal","hide","keep"], ans: 0 },
+        { q: "Which of these is one of God\'s creations?", opts: ["A car","A phone","The sun ☀️","A house"], ans: 2 },
+        { q: "Which of these is one of God\'s creations?", opts: ["A television","A fish 🐟","A shoe","A pen"], ans: 1 },
+        { q: "Which of these is one of God\'s creations?", opts: ["A road","A building","A bird 🐦","A book"], ans: 2 },
+        { q: "Which of these is one of God\'s creations?", opts: ["A tree 🌳","A table","A chair","A clock"], ans: 0 },
+        { q: "Which of these is one of God\'s creations?", opts: ["A lamp","The moon 🌙","A window","A door"], ans: 1 },
+        { q: "The Bible is a holy book. It teaches us about ___.", opts: ["Sports","God and how to live","Cooking","Science"], ans: 1 },
+        { q: "God created the world in ___ days.", opts: ["5","6","7","8"], ans: 1 },
+        { q: "On which day did God rest?", opts: ["The 5th day","The 6th day","The 7th day","The 8th day"], ans: 2 },
+      ]
+    },
   ],
 };
 
