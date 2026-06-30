@@ -181,6 +181,19 @@
 
   .submit-exam-btn { width: 100%; padding: 13px; background: var(--wine); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: background 0.2s; }
   .submit-exam-btn:hover { background: var(--wine-dark); }
+  .draw-canvas { border: 2px solid var(--gray-200); border-radius: var(--radius-sm); background: white; touch-action: none; width: 100%; max-width: 500px; display: block; }
+  .draw-clear-btn { margin-top: 8px; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: 1.5px solid var(--gray-400); background: white; cursor: pointer; }
+  .match-cols { display: flex; gap: 1.5rem; margin-top: 0.5rem; }
+  .match-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .match-item { padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; cursor: pointer; background: white; }
+  .match-item.selected { border-color: var(--wine); background: var(--wine-light); }
+  .match-item.linked { border-color: var(--amber); background: var(--amber-light); }
+  .match-item.disabled { cursor: default; opacity: 0.7; }
+  .match-pairs-readout { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+  .passage-box { background: var(--wine-light); border-left: 4px solid var(--wine); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 14px; line-height: 1.6; color: var(--gray-900); white-space: pre-wrap; }
+  .passage-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--wine); margin-bottom: 6px; }
+  .essay-textarea { width: 100%; min-height: 120px; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical; }
+  .essay-textarea:focus { border-color: var(--wine); outline: none; }
 
   .result-banner { background: var(--wine-light); border: 2px solid var(--wine); border-radius: var(--radius); padding: 1.25rem; text-align: center; margin-bottom: 1.25rem; }
   .result-banner .result-score { font-size: 42px; font-weight: 800; color: var(--wine-dark); }
@@ -622,25 +635,44 @@ function renderExamModal(submission) {
     }
   }
 
+  let lastPassage = null;
   exam.questions.forEach((q, i) => {
-    html += `<div class="question-block"><p>${i + 1}. ${escapeHTML(q.q)}</p><div class="options-list">`;
-    q.opts.forEach((opt, j) => {
-      let cls = '';
-      if (submission && submission.status === 'released') {
-        if (j === q.ans) cls = 'correct';
-        if (answers[i] === j && j !== q.ans) cls = 'wrong';
-        const overridden = submission.overrides && submission.overrides.hasOwnProperty(i);
-        if (overridden && submission.overrides[i] && answers[i] === j) cls = 'correct';
-        if (overridden && !submission.overrides[i] && answers[i] === j) cls = 'wrong';
-      } else if (answers[i] === j) {
-        cls = 'selected';
-      }
-      const disabled = examLocked ? 'disabled' : '';
-      html += `<label class="option-label ${cls}" onclick="${examLocked ? '' : `selectAnswer(${i},${j},this)`}">
-        <input type="radio" name="q${i}" ${answers[i]===j?'checked':''} ${disabled}> ${escapeHTML(opt)}
-      </label>`;
-    });
-    html += `</div></div>`;
+    const type = q.type || 'mcq';
+
+    if (q.passage && q.passage !== lastPassage) {
+      html += `<div class="passage-box"><div class="passage-label">📖 Reading Passage</div>${escapeHTML(q.passage)}</div>`;
+    }
+    lastPassage = q.passage || null;
+
+    html += `<div class="question-block"><p>${i + 1}. ${escapeHTML(q.q)}</p>`;
+
+    if (type === 'drawing') {
+      html += renderDrawingQuestion(i, submission);
+    } else if (type === 'matching') {
+      html += renderMatchingQuestion(q, i, submission);
+    } else if (type === 'essay') {
+      html += renderEssayQuestion(i, submission);
+    } else {
+      html += `<div class="options-list">`;
+      q.opts.forEach((opt, j) => {
+        let cls = '';
+        if (submission && submission.status === 'released') {
+          if (j === q.ans) cls = 'correct';
+          if (answers[i] === j && j !== q.ans) cls = 'wrong';
+          const overridden = submission.overrides && submission.overrides.hasOwnProperty(i);
+          if (overridden && submission.overrides[i] && answers[i] === j) cls = 'correct';
+          if (overridden && !submission.overrides[i] && answers[i] === j) cls = 'wrong';
+        } else if (answers[i] === j) {
+          cls = 'selected';
+        }
+        const disabled = examLocked ? 'disabled' : '';
+        html += `<label class="option-label ${cls}" onclick="${examLocked ? '' : `selectAnswer(${i},${j},this)`}">
+          <input type="radio" name="q${i}" ${answers[i]===j?'checked':''} ${disabled}> ${escapeHTML(opt)}
+        </label>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
   });
 
   if (!examLocked) {
@@ -650,6 +682,152 @@ function renderExamModal(submission) {
   }
 
   document.getElementById('exam-modal-content').innerHTML = html;
+
+  // Canvas + matching need to be wired up AFTER the HTML is in the DOM
+  exam.questions.forEach((q, i) => {
+    const type = q.type || 'mcq';
+    if (type === 'drawing' && !examLocked) initDrawingCanvas(i);
+    if (type === 'matching' && !examLocked) initMatching(q, i);
+  });
+}
+
+// ── ESSAY / SHORT-ANSWER QUESTIONS ──
+function renderEssayQuestion(i, submission) {
+  if (examLocked) {
+    const text = answers[i];
+    return text
+      ? `<div class="passage-box" style="background:var(--cream);border-left-color:var(--gray-400)">${escapeHTML(text)}</div>`
+      : `<p style="color:var(--gray-400);font-size:13px">No answer submitted.</p>`;
+  }
+  return `<textarea class="essay-textarea" id="essay-${i}" placeholder="Type your answer here…" oninput="answers[${i}]=this.value">${escapeHTML(answers[i] || '')}</textarea>`;
+}
+
+// ── DRAWING QUESTIONS ──
+function renderDrawingQuestion(i, submission) {
+  if (examLocked) {
+    const dataUrl = answers[i];
+    if (!dataUrl) return `<p style="color:var(--gray-400);font-size:13px">No drawing submitted.</p>`;
+    return `<img src="${dataUrl}" style="max-width:100%;border:1.5px solid var(--gray-200);border-radius:8px" alt="Your drawing">`;
+  }
+  return `
+    <canvas class="draw-canvas" id="canvas-${i}" width="500" height="300"></canvas>
+    <button type="button" class="draw-clear-btn" onclick="clearCanvas(${i})">Clear</button>
+  `;
+}
+
+function initDrawingCanvas(i) {
+  const canvas = document.getElementById(`canvas-${i}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#2C1A10';
+  let drawing = false;
+
+  function pos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+
+  function start(e) { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); e.preventDefault(); }
+  function move(e) { if (!drawing) return; const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); saveCanvas(i); e.preventDefault(); }
+  function end() { drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start);
+  canvas.addEventListener('touchmove', move);
+  canvas.addEventListener('touchend', end);
+}
+
+function saveCanvas(i) {
+  const canvas = document.getElementById(`canvas-${i}`);
+  if (canvas) answers[i] = canvas.toDataURL('image/png');
+}
+
+function clearCanvas(i) {
+  const canvas = document.getElementById(`canvas-${i}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  answers[i] = null;
+}
+
+// ── MATCHING QUESTIONS ──
+// Stored on the exam as q.pairs = [{left, right}, ...] (correct order).
+// Right side is shuffled for display; student clicks a left item then a
+// right item to link them. Saved answer = { leftIndex: shuffledRightIndex }.
+let matchShuffles = {}; // questionIndex -> shuffled right array (with original index)
+
+function shuffle_(arr) {
+  const a = arr.map((v, idx) => ({ v, idx }));
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderMatchingQuestion(q, i, submission) {
+  if (examLocked) {
+    const studentAns = answers[i] || {};
+    let rows = q.pairs.map((p, li) => {
+      const matchedRightIdx = studentAns[li];
+      const matchedRightText = matchedRightIdx !== undefined && matchedRightIdx !== null
+        ? (matchShuffles[i] ? (matchShuffles[i].find(x => x.idx === matchedRightIdx) || {}).v : q.pairs[matchedRightIdx] && q.pairs[matchedRightIdx].right)
+        : null;
+      return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} → ${matchedRightText ? escapeHTML(matchedRightText) : '<em>no answer</em>'}</div>`;
+    }).join('');
+    return `<div>${rows}</div>`;
+  }
+
+  if (!matchShuffles[i]) matchShuffles[i] = shuffle_(q.pairs.map(p => p.right));
+  const shuffled = matchShuffles[i];
+
+  let html = `<div class="match-cols">
+    <div class="match-col">${q.pairs.map((p, li) => `<div class="match-item" data-side="left" data-qi="${i}" data-li="${li}" onclick="matchClick(${i},'left',${li})">${escapeHTML(p.left)}</div>`).join('')}</div>
+    <div class="match-col">${shuffled.map((r, si) => `<div class="match-item" data-side="right" data-qi="${i}" data-si="${si}" onclick="matchClick(${i},'right',${si})">${escapeHTML(r.v)}</div>`).join('')}</div>
+  </div>
+  <p class="match-pairs-readout">Tap an item on the left, then its matching item on the right.</p>`;
+  return html;
+}
+
+let matchSelections = {}; // questionIndex -> { left: leftIndex|null }
+
+function initMatching(q, i) {
+  if (!answers[i]) answers[i] = {};
+  if (!matchSelections[i]) matchSelections[i] = { left: null };
+}
+
+function matchClick(qi, side, idx) {
+  if (!matchSelections[qi]) matchSelections[qi] = { left: null };
+  const sel = matchSelections[qi];
+
+  if (side === 'left') {
+    sel.left = idx;
+    document.querySelectorAll(`.match-item[data-qi="${qi}"][data-side="left"]`).forEach(el => el.classList.remove('selected'));
+    document.querySelector(`.match-item[data-qi="${qi}"][data-side="left"][data-li="${idx}"]`).classList.add('selected');
+    return;
+  }
+
+  // side === 'right'
+  if (sel.left === null || sel.left === undefined) return; // must pick left first
+  if (!answers[qi]) answers[qi] = {};
+  answers[qi][sel.left] = idx;
+
+  // visually mark both as linked
+  const leftEl = document.querySelector(`.match-item[data-qi="${qi}"][data-side="left"][data-li="${sel.left}"]`);
+  if (leftEl) { leftEl.classList.remove('selected'); leftEl.classList.add('linked'); }
+  const rightEl = document.querySelector(`.match-item[data-qi="${qi}"][data-side="right"][data-si="${idx}"]`);
+  if (rightEl) rightEl.classList.add('linked');
+
+  sel.left = null;
 }
 
 function escapeHTML(str) {
@@ -668,7 +846,12 @@ function selectAnswer(qi, ai, el) {
 async function submitExam() {
   const exam = currentExam;
   let correct = 0;
-  exam.questions.forEach((q, i) => { if (answers[i] === q.ans) correct++; });
+  exam.questions.forEach((q, i) => {
+    const type = q.type || 'mcq';
+    if (type === 'mcq' && answers[i] === q.ans) correct++;
+    // drawing/matching are never auto-graded — they start at 0/incorrect
+    // until the teacher reviews and marks them correct manually.
+  });
 
   await Store.submitExam(student.id, exam.id, exam.subjectId, answers, correct, exam.questions.length);
   examLocked = true;
