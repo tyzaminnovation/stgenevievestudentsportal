@@ -263,7 +263,7 @@
 
       <div class="panel">
         <h3>📥 Import questions</h3>
-        <p style="font-size:12px;color:var(--gray-400);margin-bottom:0.75rem">Paste exam questions here (Claude can read an uploaded PDF/photo of an exam in chat and generate this for you in the exact format below — including drawing and matching questions). Review everything below before saving.</p>
+        <p style="font-size:12px;color:var(--gray-400);margin-bottom:0.75rem">Paste exam questions here in JSON format, then review everything below before saving.</p>
         <textarea class="import-box" id="import-json" placeholder='[{"type":"mcq","q":"5 + 3 = ?","opts":["7","8","9","10"],"ans":1}, {"type":"drawing","q":"Draw a triangle."}, {"type":"matching","q":"Match the animal to its sound.","pairs":[{"left":"Dog","right":"Bark"},{"left":"Cat","right":"Meow"}]}]'></textarea>
         <button class="btn-sm wine" onclick="importQuestionsJSON()">Import into question builder</button>
         <p id="import-msg" style="font-size:12px;color:var(--coral);margin-top:0.5rem;display:none;"></p>
