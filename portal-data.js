@@ -79,6 +79,7 @@ const SUBJECTS = [
   { id: "kiswahili", name: "Kiswahili",           icon: "🇰🇪", color: "#9B4D62" },
   { id: "english",   name: "English",             icon: "📖", color: "#C0884A" },
   { id: "re",        name: "Religious Education", icon: "✝️", color: "#5B4A8A" },
+   { id: "environmental", name: "Environmental Activities", icon: "🌍", color: "#4A7A5B" },
   // ADD MORE SUBJECTS HERE
 ];
 
