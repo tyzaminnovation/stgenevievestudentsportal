@@ -342,7 +342,7 @@ let answers = {};
 let examLocked = false; // true once submitted, even if pending
 
 // ── LOGIN ──
-function doLogin() {
+async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
   const found = STUDENTS.find(s => s.id.toUpperCase() === inputId);
@@ -357,6 +357,7 @@ function doLogin() {
 
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  await loadAllExams();
   renderAll();
 }
 
