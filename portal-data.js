@@ -1,14 +1,13 @@
 /* ============================================================
    ST. GENEVIEVE PORTAL — SHARED DATA & STORAGE LAYER
-   This file is loaded by both student-portal.html and teacher-portal.html
-   so both apps see the same students, exams, and submitted results.
+   This file is loaded by both index.html (student portal) and
+   teacher.html (teacher portal) so both apps see the same
+   students, exams, and submitted results.
 
-   STORAGE NOTE:
-   Right now this uses localStorage as a DEMO stand-in for a real shared
-   database, so you can click through the whole flow on one device.
-   When ready to go live with real cross-device sync, replace the
-   functions inside `Store` with Firebase calls — everything else
-   (UI, grading, release flow) stays exactly the same.
+   LIVE MODE: this is backed by a Google Apps Script web app
+   (see AppsScript_Code.gs) which reads/writes a Google Sheet —
+   that's what makes data sync across different devices/browsers.
+   Set SCRIPT_URL below to your deployed Apps Script web app URL.
    ============================================================ */
 
 // ───────────────────────── STUDENTS ─────────────────────────
@@ -83,7 +82,11 @@ const SUBJECTS = [
   // ADD MORE SUBJECTS HERE
 ];
 
-// ───────────────────────── EXAMS ─────────────────────────
+// ───────────────────────── EXAMS (seed/fallback) ─────────────────────────
+// NOTE: This is now just the STARTING set. Once your Apps Script backend
+// is live, exams created via the teacher "Create Exam" form are saved
+// there and merged in at runtime — see loadAllExams() below. EXAMS stays
+// as a fallback in case the backend is unreachable (e.g. offline demo).
 const EXAMS = {
   math: [
     { id: "math-pp2-t1", title: "Term 1 Assessment", desc: "Numbers 1–20, basic counting", grades: ["PP2"],
@@ -241,129 +244,137 @@ const EXAMS = {
   ],
 };
 
+// PASTE YOUR APPS SCRIPT WEB APP URL HERE (ends in /exec):
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyOq0jpvS0vl_oQV5fZoUi28z2QvqipOjFH3X9nL4Ua0l44k6HLVIlRF8Edf5tkPPI/exec';
+
+async function scriptGet_(action, params) {
+  const qs = new URLSearchParams({ action, ...(params || {}) }).toString();
+  const res = await fetch(`${SCRIPT_URL}?${qs}`);
+  return res.json();
+}
+
+// Sent as text/plain (NOT application/json) on purpose — this avoids a
+// CORS preflight request, which Apps Script web apps don't handle well.
+// The script still parses the body as JSON on its end.
+async function scriptPost_(action, payload) {
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  return res.json();
+}
+
+// In-memory cache of submissions for this page load (refreshed on each
+// write, and on each render call) — avoids hammering the API on every
+// single read.
+let _subCache = null;
+async function allSubmissions_(forceRefresh) {
+  if (_subCache && !forceRefresh) return _subCache;
+  try {
+    const data = await scriptGet_('getSubmissions');
+    _subCache = data.ok ? data.submissions : [];
+  } catch (e) {
+    console.error('Could not reach Apps Script backend for submissions:', e);
+    _subCache = [];
+  }
+  return _subCache;
+}
+
 /* ============================================================
    STORE — the swappable data layer.
-   DEMO MODE: backed by localStorage so the whole flow (submit →
-   pending → teacher review/override → release → student sees result)
-   works right now on one device/browser for testing.
-
-   TO GO LIVE: replace the body of each function below with the
-   equivalent Firebase call. Function signatures stay the same so
-   nothing else in the app needs to change.
+   LIVE MODE: backed by the Apps Script web app (set SCRIPT_URL
+   above). All reads/writes go through `fetch`, so submit →
+   pending → teacher review/override → release → student sees
+   result works across any device, not just one browser.
    ============================================================ */
-
 const Store = {
-  _key() { return 'sgp_submissions_v1'; },
-
-  _all() {
-    try {
-      const raw = localStorage.getItem(this._key());
-      return raw ? JSON.parse(raw) : {};
-    } catch (e) { return {}; }
-  },
-
-  _saveAll(data) {
-    localStorage.setItem(this._key(), JSON.stringify(data));
-  },
-
-  // Submission key: studentId + "_" + examId
-  _subKey(studentId, examId) { return studentId + '__' + examId; },
-
-  // Student submits an exam — auto-graded, status = pending
   async submitExam(studentId, examId, subjectId, answers, autoScore, autoTotal) {
-    const all = this._all();
-    const key = this._subKey(studentId, examId);
-    all[key] = {
-      studentId, examId, subjectId,
-      answers,                     // { questionIndex: chosenOptionIndex }
-      autoScore, autoTotal,        // system's auto-grade
-      finalScore: autoScore,       // teacher can override; starts same as auto
-      finalTotal: autoTotal,
-      status: 'pending',           // 'pending' | 'released'
-      remarks: '',
-      submittedAt: new Date().toISOString(),
-      releasedAt: null,
-    };
-    this._saveAll(all);
-    return all[key];
+    const data = await scriptPost_('submitExam', { studentId, examId, subjectId, answers, autoScore, autoTotal });
+    await allSubmissions_(true);
+    return data.submission;
   },
 
-  // Get one submission
   async getSubmission(studentId, examId) {
-    const all = this._all();
-    return all[this._subKey(studentId, examId)] || null;
+    const all = await allSubmissions_();
+    return all.find(s => s.studentId === studentId && s.examId === examId) || null;
   },
 
-  // Get all submissions for a student (released only — for student view)
   async getReleasedForStudent(studentId) {
-    const all = this._all();
-    return Object.values(all).filter(s => s.studentId === studentId && s.status === 'released');
+    const all = await allSubmissions_();
+    return all.filter(s => s.studentId === studentId && s.status === 'released');
   },
 
-  // Get ALL submissions for a student regardless of status (for "pending" badges)
   async getAllForStudent(studentId) {
-    const all = this._all();
-    return Object.values(all).filter(s => s.studentId === studentId);
+    const all = await allSubmissions_();
+    return all.filter(s => s.studentId === studentId);
   },
 
-  // Get all submissions for a whole grade (for teacher dashboard)
   async getAllForGrade(grade) {
-    const all = this._all();
+    const all = await allSubmissions_();
     const studentIds = STUDENTS.filter(s => s.grade === grade).map(s => s.id);
-    return Object.values(all).filter(s => studentIds.includes(s.studentId));
+    return all.filter(s => studentIds.includes(s.studentId));
   },
 
-  // Teacher overrides a specific question's correctness, recalculates score
   async overrideAnswer(studentId, examId, questionIndex, markCorrect, exam) {
-    const all = this._all();
-    const key = this._subKey(studentId, examId);
-    const sub = all[key];
-    if (!sub) return null;
-    if (!sub.overrides) sub.overrides = {};
-    sub.overrides[questionIndex] = markCorrect; // true/false override
-    // Recalculate final score using overrides where present, auto-grade otherwise
-    let correct = 0;
-    exam.questions.forEach((q, i) => {
-      if (sub.overrides && sub.overrides.hasOwnProperty(i)) {
-        if (sub.overrides[i]) correct++;
-      } else {
-        if (sub.answers[i] === q.ans) correct++;
-      }
-    });
-    sub.finalScore = correct;
-    sub.finalTotal = exam.questions.length;
-    this._saveAll(all);
-    return sub;
+    const data = await scriptPost_('overrideAnswer', { studentId, examId, questionIndex, markCorrect, questions: exam.questions });
+    await allSubmissions_(true);
+    return data.submission;
   },
 
-  // Teacher saves remarks
   async saveRemarks(studentId, examId, remarks) {
-    const all = this._all();
-    const key = this._subKey(studentId, examId);
-    if (!all[key]) return null;
-    all[key].remarks = remarks;
-    this._saveAll(all);
-    return all[key];
+    const data = await scriptPost_('saveRemarks', { studentId, examId, remarks });
+    await allSubmissions_(true);
+    return data.submission;
   },
 
-  // Teacher releases the result to the student
   async releaseResult(studentId, examId) {
-    const all = this._all();
-    const key = this._subKey(studentId, examId);
-    if (!all[key]) return null;
-    all[key].status = 'released';
-    all[key].releasedAt = new Date().toISOString();
-    this._saveAll(all);
-    return all[key];
+    const data = await scriptPost_('releaseResult', { studentId, examId });
+    await allSubmissions_(true);
+    return data.submission;
   },
 
-  // Teacher un-releases (pulls a result back for further review)
   async unreleaseResult(studentId, examId) {
-    const all = this._all();
-    const key = this._subKey(studentId, examId);
-    if (!all[key]) return null;
-    all[key].status = 'pending';
-    this._saveAll(all);
-    return all[key];
+    const data = await scriptPost_('unreleaseResult', { studentId, examId });
+    await allSubmissions_(true);
+    return data.submission;
   },
 };
+
+/* ============================================================
+   EXAM SYNC — merges teacher-created exams (saved to the
+   Apps Script backend) into the EXAMS object so they show up
+   on every device, not just the one that created them.
+   Call `await loadAllExams()` once on page load, BEFORE
+   rendering anything, in both index.html and teacher.html.
+   ============================================================ */
+async function loadAllExams() {
+  try {
+    const data = await scriptGet_('getExams');
+    if (data.ok) {
+      data.exams.forEach(exam => {
+        const subjectId = exam.subjectId;
+        if (!EXAMS[subjectId]) EXAMS[subjectId] = [];
+        const idx = EXAMS[subjectId].findIndex(e => e.id === exam.id);
+        const examNoSubject = { id: exam.id, title: exam.title, desc: exam.desc, grades: exam.grades, questions: exam.questions };
+        if (exam.deadline) examNoSubject.deadline = exam.deadline;
+        if (idx >= 0) EXAMS[subjectId][idx] = examNoSubject;
+        else EXAMS[subjectId].push(examNoSubject);
+      });
+    }
+  } catch (e) {
+    console.error('Could not reach Apps Script backend for exams — using built-in exams only:', e);
+  }
+}
+
+// Called by teacher.html's saveNewExam() so new exams are saved to the
+// shared backend (not just the local EXAMS object in memory).
+async function saveExamToBackend(subjectId, exam) {
+  try {
+    await scriptPost_('saveExam', { subjectId, exam });
+    return true;
+  } catch (e) {
+    console.error('Could not save exam to backend:', e);
+    return false;
+  }
+}
