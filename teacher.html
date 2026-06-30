@@ -320,7 +320,7 @@ let questionBuilderCount = 0;
 let currentReview = null; // { studentId, examId, exam, submission }
 
 // ── LOGIN ──
-function doLogin() {
+async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
   const found = TEACHERS.find(t => t.id.toUpperCase() === inputId);
@@ -333,6 +333,7 @@ function doLogin() {
   teacher = { name: found.name, id: found.id, grade: found.grade };
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  await loadAllExams();
   initApp();
 }
 
@@ -598,7 +599,7 @@ function addQuestionBuilder() {
   container.appendChild(div);
 }
 
-function saveNewExam() {
+async function saveNewExam() {
   const msgEl = document.getElementById('create-exam-msg');
   const subjectId = document.getElementById('new-exam-subject').value;
   const title = document.getElementById('new-exam-title').value.trim();
@@ -628,8 +629,15 @@ function saveNewExam() {
   EXAMS[subjectId].push(newExam);
 
   msgEl.style.color = 'var(--wine)';
-  msgEl.textContent = '✓ Exam saved! It is now visible to students. (Note: in demo mode this resets on page reload — once connected to the live database it will persist permanently.)';
+  msgEl.textContent = 'Saving…';
   msgEl.style.display = 'block';
+
+  const saved = await saveExamToBackend(subjectId, newExam);
+
+  msgEl.textContent = saved
+    ? '✓ Exam saved! It is now visible to students on every device.'
+    : '⚠️ Exam saved on this device, but could not reach the shared backend — check that SCRIPT_URL is set correctly in portal-data.js. Students on other devices won\'t see it yet.';
+  msgEl.style.color = saved ? 'var(--wine)' : 'var(--coral)';
 
   document.getElementById('new-exam-title').value = '';
   document.getElementById('new-exam-desc').value = '';
