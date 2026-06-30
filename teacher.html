@@ -113,6 +113,14 @@
 
   .btn-add-q { background: var(--white); border: 1.5px dashed var(--gray-400); color: var(--gray-700); border-radius: var(--radius-sm); padding: 10px; width: 100%; cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 1rem; }
   .btn-add-q:hover { border-color: var(--wine); color: var(--wine); }
+  .qtype-select { margin-bottom: 0.75rem; }
+  .pair-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
+  .pair-row input[type="text"] { flex: 1; padding: 8px 10px; font-size: 13px; }
+  .pair-row .pair-arrow { color: var(--gray-400); font-size: 13px; }
+  .btn-add-pair { background: none; border: 1.5px dashed var(--gray-400); color: var(--gray-700); border-radius: var(--radius-sm); padding: 6px; width: 100%; cursor: pointer; font-size: 12px; margin-bottom: 0.5rem; }
+  .import-box { width: 100%; min-height: 120px; font-family: monospace; font-size: 12px; padding: 10px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); margin-bottom: 0.5rem; }
+  .passage-box-review { background: var(--wine-light); border-left: 4px solid var(--wine); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+  .essay-answer-box { background: var(--cream); border-radius: 8px; padding: 0.85rem 1rem; font-size: 13px; white-space: pre-wrap; margin-bottom: 8px; }
 
   /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(74,13,26,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
@@ -251,6 +259,14 @@
       <div class="panel">
         <h3>Existing exams for your class</h3>
         <div id="manage-exams-list"></div>
+      </div>
+
+      <div class="panel">
+        <h3>📥 Import questions</h3>
+        <p style="font-size:12px;color:var(--gray-400);margin-bottom:0.75rem">Paste exam questions here (Claude can read an uploaded PDF/photo of an exam in chat and generate this for you in the exact format below — including drawing and matching questions). Review everything below before saving.</p>
+        <textarea class="import-box" id="import-json" placeholder='[{"type":"mcq","q":"5 + 3 = ?","opts":["7","8","9","10"],"ans":1}, {"type":"drawing","q":"Draw a triangle."}, {"type":"matching","q":"Match the animal to its sound.","pairs":[{"left":"Dog","right":"Bark"},{"left":"Cat","right":"Meow"}]}]'></textarea>
+        <button class="btn-sm wine" onclick="importQuestionsJSON()">Import into question builder</button>
+        <p id="import-msg" style="font-size:12px;color:var(--coral);margin-top:0.5rem;display:none;"></p>
       </div>
 
       <div class="panel">
@@ -504,25 +520,67 @@ function renderReviewModal() {
     <div style="font-size:12px;color:var(--wine)">Auto-graded score — adjust below if needed</div>
   </div>`;
 
+  let lastPassage = null;
   exam.questions.forEach((q, i) => {
-    const studentAns = submission.answers[i];
+    const type = q.type || 'mcq';
     const isOverridden = submission.overrides && submission.overrides.hasOwnProperty(i);
-    const markedCorrect = isOverridden ? submission.overrides[i] : (studentAns === q.ans);
+
+    if (q.passage && q.passage !== lastPassage) {
+      html += `<div class="passage-box-review"><strong>📖 Reading Passage</strong><br>${escapeHTML(q.passage)}</div>`;
+    }
+    lastPassage = q.passage || null;
 
     html += `<div class="review-q">
       <p class="q-text">${i+1}. ${escapeHTML(q.q)}</p>`;
-    q.opts.forEach((opt, j) => {
-      let cls = '';
-      if (j === q.ans) cls = 'correct-ans';
-      if (studentAns === j && j !== q.ans) cls = 'student-wrong';
-      const marker = studentAns === j ? '👉 ' : '';
-      html += `<div class="review-opt ${cls}">${marker}${escapeHTML(opt)}${j === q.ans ? ' (correct answer)' : ''}</div>`;
-    });
-    html += `<div class="override-toggle">
-      <label><input type="radio" name="override-${i}" ${markedCorrect ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
-      <label><input type="radio" name="override-${i}" ${!markedCorrect ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
-    </div>
-    </div>`;
+
+    if (type === 'mcq') {
+      const studentAns = submission.answers[i];
+      const realMarkedCorrect = isOverridden ? submission.overrides[i] : (studentAns === q.ans);
+      q.opts.forEach((opt, j) => {
+        let cls = '';
+        if (j === q.ans) cls = 'correct-ans';
+        if (studentAns === j && j !== q.ans) cls = 'student-wrong';
+        const marker = studentAns === j ? '👉 ' : '';
+        html += `<div class="review-opt ${cls}">${marker}${escapeHTML(opt)}${j === q.ans ? ' (correct answer)' : ''}</div>`;
+      });
+      html += `<div class="override-toggle">
+        <label><input type="radio" name="override-${i}" ${realMarkedCorrect ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
+        <label><input type="radio" name="override-${i}" ${!realMarkedCorrect ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
+      </div>`;
+    } else if (type === 'essay') {
+      const text = submission.answers[i];
+      html += text
+        ? `<div class="essay-answer-box">${escapeHTML(text)}</div>`
+        : `<p style="font-size:13px;color:var(--gray-400)">No answer submitted.</p>`;
+      html += `<div class="override-toggle">
+        <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
+        <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
+      </div>`;
+    } else if (type === 'drawing') {
+      const dataUrl = submission.answers[i];
+      html += dataUrl
+        ? `<img src="${dataUrl}" style="max-width:100%;border:1.5px solid var(--gray-200);border-radius:8px;margin-bottom:8px" alt="Student drawing">`
+        : `<p style="font-size:13px;color:var(--gray-400)">No drawing submitted.</p>`;
+      html += `<div class="override-toggle">
+        <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
+        <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
+      </div>`;
+    } else if (type === 'matching') {
+      const studentAns = submission.answers[i] || {};
+      let rows = q.pairs.map((p, li) => {
+        const rIdx = studentAns[li];
+        const studentRight = (rIdx !== undefined && rIdx !== null) ? (q.pairs[rIdx] ? q.pairs[rIdx].right : '—') : null;
+        const ok = studentRight === p.right;
+        return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} → <strong style="color:${studentRight ? (ok?'var(--wine)':'var(--coral)') : 'var(--gray-400)'}">${studentRight ? escapeHTML(studentRight) : 'no answer'}</strong> <span style="color:var(--gray-400)">(correct: ${escapeHTML(p.right)})</span></div>`;
+      }).join('');
+      html += rows;
+      html += `<div class="override-toggle">
+        <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
+        <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
+      </div>`;
+    }
+
+    html += `</div>`;
   });
 
   html += `<div class="form-row" style="margin-top:1rem">
@@ -580,23 +638,92 @@ function escapeHTML(str) {
 }
 
 // ── CREATE EXAM ──
-function addQuestionBuilder() {
+function addQuestionBuilder(prefill) {
   questionBuilderCount++;
   const id = questionBuilderCount;
   const container = document.getElementById('question-builder-list');
   const div = document.createElement('div');
   div.className = 'question-builder';
   div.id = 'qb-' + id;
+  const type = (prefill && prefill.type) || 'mcq';
   div.innerHTML = `
     <div class="q-header"><span>Question ${id}</span><button class="remove-q" onclick="document.getElementById('qb-${id}').remove()">Remove</button></div>
-    <div class="form-row"><input type="text" placeholder="Question text" id="qb-${id}-text"></div>
-    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="0" checked><input type="text" placeholder="Option A" id="qb-${id}-opt0"></div>
-    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="1"><input type="text" placeholder="Option B" id="qb-${id}-opt1"></div>
-    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="2"><input type="text" placeholder="Option C" id="qb-${id}-opt2"></div>
-    <div class="opt-row"><input type="radio" name="qb-${id}-correct" value="3"><input type="text" placeholder="Option D" id="qb-${id}-opt3"></div>
-    <p style="font-size:11px;color:var(--gray-400)">Select the radio button next to the correct answer.</p>
+    <div class="form-row">
+      <label>Reading passage (optional — leave blank if not a comprehension question)</label>
+      <textarea id="qb-${id}-passage" placeholder="Paste the reading passage text here if this question refers to one…" style="min-height:70px">${prefill ? escapeHTML(prefill.passage || '') : ''}</textarea>
+    </div>
+    <div class="form-row qtype-select">
+      <label>Question type</label>
+      <select id="qb-${id}-type" onchange="renderQBBody(${id})">
+        <option value="mcq" ${type==='mcq'?'selected':''}>Multiple choice</option>
+        <option value="essay" ${type==='essay'?'selected':''}>Essay / short answer (typed)</option>
+        <option value="drawing" ${type==='drawing'?'selected':''}>Drawing (student draws answer)</option>
+        <option value="matching" ${type==='matching'?'selected':''}>Matching (left ↔ right pairs)</option>
+      </select>
+    </div>
+    <div class="form-row"><input type="text" placeholder="Question text" id="qb-${id}-text" value="${prefill ? escapeHTML(prefill.q || '') : ''}"></div>
+    <div id="qb-${id}-body"></div>
   `;
   container.appendChild(div);
+  renderQBBody(id, prefill);
+}
+
+function renderQBBody(id, prefill) {
+  const typeSel = document.getElementById(`qb-${id}-type`);
+  const type = typeSel.value;
+  const body = document.getElementById(`qb-${id}-body`);
+
+  if (type === 'mcq') {
+    const opts = (prefill && prefill.opts) || ['', '', '', ''];
+    const ans = prefill && typeof prefill.ans === 'number' ? prefill.ans : 0;
+    body.innerHTML = [0,1,2,3].map(i => `
+      <div class="opt-row">
+        <input type="radio" name="qb-${id}-correct" value="${i}" ${ans===i?'checked':''}>
+        <input type="text" placeholder="Option ${String.fromCharCode(65+i)}" id="qb-${id}-opt${i}" value="${escapeHTML(opts[i]||'')}">
+      </div>`).join('') + `<p style="font-size:11px;color:var(--gray-400)">Select the radio button next to the correct answer.</p>`;
+  } else if (type === 'drawing') {
+    body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a blank drawing pad to answer this question. You'll grade it manually when reviewing results.</p>`;
+  } else if (type === 'essay') {
+    body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a text box to type their answer. You'll grade it manually when reviewing results.</p>`;
+  } else if (type === 'matching') {
+    const pairs = (prefill && prefill.pairs && prefill.pairs.length) ? prefill.pairs : [{left:'',right:''},{left:'',right:''}];
+    body.innerHTML = `<div id="qb-${id}-pairs">` + pairs.map((p, i) => pairRowHTML(id, i, p)).join('') + `</div>
+      <button type="button" class="btn-add-pair" onclick="addPairRow(${id})">+ Add pair</button>
+      <p style="font-size:11px;color:var(--gray-400)">The right-hand side will be shuffled for the student. You'll grade matches manually when reviewing.</p>`;
+  }
+}
+
+function pairRowHTML(id, i, pair) {
+  return `<div class="pair-row" id="qb-${id}-pair-${i}">
+    <input type="text" placeholder="Left item" id="qb-${id}-pair${i}-left" value="${escapeHTML(pair.left||'')}">
+    <span class="pair-arrow">↔</span>
+    <input type="text" placeholder="Right item" id="qb-${id}-pair${i}-right" value="${escapeHTML(pair.right||'')}">
+    <button type="button" class="remove-q" onclick="document.getElementById('qb-${id}-pair-${i}').remove()">✕</button>
+  </div>`;
+}
+
+function addPairRow(id) {
+  const container = document.getElementById(`qb-${id}-pairs`);
+  const i = container.children.length;
+  container.insertAdjacentHTML('beforeend', pairRowHTML(id, i, {left:'',right:''}));
+}
+
+function importQuestionsJSON() {
+  const msgEl = document.getElementById('import-msg');
+  const raw = document.getElementById('import-json').value.trim();
+  if (!raw) { msgEl.textContent = 'Paste some question JSON first.'; msgEl.style.display = 'block'; return; }
+  let questions;
+  try {
+    questions = JSON.parse(raw);
+    if (!Array.isArray(questions)) throw new Error('Not an array');
+  } catch (e) {
+    msgEl.textContent = 'Could not parse that as valid JSON. Make sure it\'s a [ ] array of question objects.';
+    msgEl.style.display = 'block';
+    return;
+  }
+  msgEl.style.display = 'none';
+  questions.forEach(q => addQuestionBuilder(q));
+  document.getElementById('import-json').value = '';
 }
 
 async function saveNewExam() {
@@ -614,11 +741,41 @@ async function saveNewExam() {
   const questions = [];
   for (const b of builders) {
     const id = b.id.replace('qb-', '');
+    const type = document.getElementById(`qb-${id}-type`).value;
     const qText = document.getElementById(`qb-${id}-text`).value.trim();
-    const opts = [0,1,2,3].map(i => document.getElementById(`qb-${id}-opt${i}`).value.trim());
-    const correctRadio = b.querySelector(`input[name="qb-${id}-correct"]:checked`);
-    if (!qText || opts.some(o => !o)) { msgEl.textContent = 'Please fill in all question fields and options.'; msgEl.style.display = 'block'; return; }
-    questions.push({ q: qText, opts, ans: parseInt(correctRadio.value) });
+    const passage = document.getElementById(`qb-${id}-passage`).value.trim();
+    if (!qText) { msgEl.textContent = 'Please fill in the question text for every question.'; msgEl.style.display = 'block'; return; }
+
+    if (type === 'mcq') {
+      const opts = [0,1,2,3].map(i => document.getElementById(`qb-${id}-opt${i}`).value.trim());
+      const correctRadio = b.querySelector(`input[name="qb-${id}-correct"]:checked`);
+      if (opts.some(o => !o)) { msgEl.textContent = 'Please fill in all 4 options for every multiple-choice question.'; msgEl.style.display = 'block'; return; }
+      const q = { type: 'mcq', q: qText, opts, ans: parseInt(correctRadio.value) };
+      if (passage) q.passage = passage;
+      questions.push(q);
+    } else if (type === 'essay') {
+      const q = { type: 'essay', q: qText };
+      if (passage) q.passage = passage;
+      questions.push(q);
+    } else if (type === 'drawing') {
+      const q = { type: 'drawing', q: qText };
+      if (passage) q.passage = passage;
+      questions.push(q);
+    } else if (type === 'matching') {
+      const pairContainer = document.getElementById(`qb-${id}-pairs`);
+      const pairRows = pairContainer.querySelectorAll('.pair-row');
+      const pairs = [];
+      for (const row of pairRows) {
+        const left = row.querySelector('input[id$="-left"]').value.trim();
+        const right = row.querySelector('input[id$="-right"]').value.trim();
+        if (!left || !right) { msgEl.textContent = 'Please fill in both sides of every matching pair (or remove empty rows).'; msgEl.style.display = 'block'; return; }
+        pairs.push({ left, right });
+      }
+      if (pairs.length < 2) { msgEl.textContent = 'Matching questions need at least 2 pairs.'; msgEl.style.display = 'block'; return; }
+      const q = { type: 'matching', q: qText, pairs };
+      if (passage) q.passage = passage;
+      questions.push(q);
+    }
   }
 
   const examId = subjectId + '-' + teacher.grade.toLowerCase().replace(/\s+/g,'') + '-' + Date.now();
