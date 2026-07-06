@@ -75,11 +75,13 @@ const ENCOURAGEMENTS = [
 
 // ───────────────────────── SUBJECTS ─────────────────────────
 const SUBJECTS = [
-  { id: "math",      name: "Mathematics",        icon: "➕", color: "#7A1C2E" },
-  { id: "kiswahili", name: "Kiswahili",           icon: "🇰🇪", color: "#9B4D62" },
-  { id: "english",   name: "English",             icon: "📖", color: "#C0884A" },
-  { id: "re",        name: "Religious Education", icon: "✝️", color: "#5B4A8A" },
-   { id: "environmental", name: "Environmental Activities", icon: "🌍", color: "#4A7A5B" },
+  { id: "math",          name: "Mathematics",             icon: "➕", color: "#7A1C2E" },
+  { id: "english",       name: "English",                 icon: "📖", color: "#C0884A" },
+  { id: "kiswahili",     name: "Kiswahili",               icon: "🇰🇪", color: "#9B4D62" },
+  { id: "re",            name: "Religious Education",     icon: "✝️",  color: "#5B4A8A" },
+  { id: "environmental", name: "Environmental Activities",icon: "🌿", color: "#3A7D44" },
+  { id: "creative-arts", name: "Creative Arts",           icon: "🎨", color: "#D4620A" },
+  { id: "psychomotor",   name: "Psychomotor Activities",  icon: "🏃", color: "#1A6B8A" },
   // ADD MORE SUBJECTS HERE
 ];
 
@@ -290,8 +292,11 @@ async function allSubmissions_(forceRefresh) {
    result works across any device, not just one browser.
    ============================================================ */
 const Store = {
-  async submitExam(studentId, examId, subjectId, answers, autoScore, autoTotal) {
-    const data = await scriptPost_('submitExam', { studentId, examId, subjectId, answers, autoScore, autoTotal });
+  // autoScore and autoTotal are no longer sent — the Apps Script
+  // calculates the score server-side using the stored ans values
+  // so students can never read correct answers from the browser.
+  async submitExam(studentId, examId, subjectId, answers) {
+    const data = await scriptPost_('submitExam', { studentId, examId, subjectId, answers });
     await allSubmissions_(true);
     return data.submission;
   },
@@ -366,6 +371,12 @@ async function loadAllExams() {
   } catch (e) {
     console.error('Could not reach Apps Script backend for exams — using built-in exams only:', e);
   }
+
+  // Strip ans from ALL exams (including the hardcoded fallback ones) so
+  // correct answers are never readable in the browser's DevTools.
+  Object.values(EXAMS).forEach(list => list.forEach(exam => {
+    if (exam.questions) exam.questions.forEach(q => { delete q.ans; });
+  }));
 }
 
 // Called by teacher.html's saveNewExam() so new exams are saved to the
