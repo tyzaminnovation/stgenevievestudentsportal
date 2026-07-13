@@ -194,6 +194,14 @@
   .passage-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--wine); margin-bottom: 6px; }
   .essay-textarea { width: 100%; min-height: 120px; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical; }
   .essay-textarea:focus { border-color: var(--wine); outline: none; }
+  .subpart-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .subpart-label { font-size: 14px; font-weight: 600; color: var(--wine-dark); min-width: 28px; }
+  .subpart-input { flex: 1; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; }
+  .subpart-input:focus { border-color: var(--wine); outline: none; }
+  .readaloud-box { background: var(--wine-light); border-left: 4px solid var(--wine); border-radius: var(--radius-sm); padding: 1.25rem; margin: 0.75rem 0 1rem; }
+  .readaloud-instruction { display: flex; align-items: center; gap: 8px; background: var(--amber-light); border: 1.5px solid var(--amber); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; font-weight: 600; color: #7A4A10; margin-top: 0.5rem; }
+  .question-block { background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .question-block p { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem; line-height: 1.5; }
 
   .result-banner { background: var(--wine-light); border: 2px solid var(--wine); border-radius: var(--radius); padding: 1.25rem; text-align: center; margin-bottom: 1.25rem; }
   .result-banner .result-score { font-size: 42px; font-weight: 800; color: var(--wine-dark); }
@@ -227,28 +235,44 @@
 </head>
 <body>
 
-<!-- ══════════════ LOGIN ══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• LOGIN â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="school-logo">🌟</div>
+    <div class="school-logo">ðŸŒŸ</div>
     <h1>St. Genevieve</h1>
     <p class="tagline">Student Learning Portal</p>
 
-    <div class="field-wrap">
-      <div class="field-label">Student ID</div>
-      <input type="text" id="login-id" placeholder="e.g. SGP-G2-001" autocomplete="off" autocapitalize="characters" style="letter-spacing:0.05em;font-weight:600">
+    <!-- STEP 1: Password -->
+    <div id="login-step-password">
+      <div class="field-wrap">
+        <div class="field-label">Portal Password</div>
+        <input type="password" id="login-password" placeholder="Enter password" autocomplete="off"
+          onkeydown="if(event.key==='Enter') checkPassword()">
+      </div>
+      <button class="btn-primary" onclick="checkPassword()">Continue â†’</button>
+      <p class="login-error" id="password-error">Incorrect password. Please try again.</p>
     </div>
-    <button class="btn-primary" onclick="doLogin()">Enter Portal →</button>
-    <p class="login-error" id="login-error">Student ID not found. Please check with your teacher.</p>
-    <p style="text-align:center;font-size:12px;color:#A89880;margin-top:1.25rem;">Use the Student ID given to you by your teacher.</p>
+
+    <!-- STEP 2: Student ID (hidden until password correct) -->
+    <div id="login-step-id" style="display:none">
+      <div class="field-wrap">
+        <div class="field-label">Student ID</div>
+        <input type="text" id="login-id" placeholder="Enter your Student ID"
+          autocomplete="off" autocapitalize="characters"
+          style="letter-spacing:0.05em;font-weight:600"
+          onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Enter Portal â†’</button>
+      <p class="login-error" id="login-error">Student ID not found. Please check with your teacher.</p>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════ APP ══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• APP â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-logo">🌟</span>
+      <span class="topbar-logo">ðŸŒŸ</span>
       <div>
         <div class="topbar-title">St. Genevieve</div>
         <div class="topbar-sub">Student Portal</div>
@@ -261,10 +285,10 @@
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('dashboard', this)">🏠 Home</div>
-    <div class="nav-tab" onclick="showSection('progress', this)">📈 My Progress</div>
-    <div class="nav-tab" onclick="showSection('subjects', this)">📚 Subjects</div>
-    <div class="nav-tab" onclick="showSection('profile', this)">👤 Profile</div>
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">ðŸ  Home</div>
+    <div class="nav-tab" onclick="showSection('progress', this)">ðŸ“ˆ My Progress</div>
+    <div class="nav-tab" onclick="showSection('subjects', this)">ðŸ“š Subjects</div>
+    <div class="nav-tab" onclick="showSection('profile', this)">ðŸ‘¤ Profile</div>
   </div>
 
   <div class="main">
@@ -272,22 +296,22 @@
     <!-- DASHBOARD -->
     <div class="section active" id="section-dashboard">
       <div class="welcome-banner">
-        <div class="welcome-avatar">🎒</div>
+        <div class="welcome-avatar">ðŸŽ’</div>
         <div class="welcome-text">
           <h2 id="welcome-name">Welcome back!</h2>
-          <p id="welcome-sub">Keep going — every lesson brings you closer to your goals.</p>
+          <p id="welcome-sub">Keep going â€” every lesson brings you closer to your goals.</p>
         </div>
       </div>
 
       <div class="encourage-card" id="encourage-card">
-        <strong>💬 Today's Boost</strong>
+        <strong>ðŸ’¬ Today's Boost</strong>
         <span id="encourage-text"></span>
       </div>
 
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-num" style="color:var(--wine)" id="stat-done">0</div><div class="stat-label">Results Released</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-avg">—</div><div class="stat-label">Average Score</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-best">—</div><div class="stat-label">Best Score</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-avg">â€”</div><div class="stat-label">Average Score</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-best">â€”</div><div class="stat-label">Best Score</div></div>
         <div class="stat-card"><div class="stat-num" style="color:var(--coral)" id="stat-pending">0</div><div class="stat-label">Awaiting Review</div></div>
       </div>
 
@@ -310,7 +334,7 @@
         <div class="subjects-grid" id="subjects-grid"></div>
       </div>
       <div id="exams-view" style="display:none">
-        <div class="back-btn" onclick="backToSubjects()">← Back to subjects</div>
+        <div class="back-btn" onclick="backToSubjects()">â† Back to subjects</div>
         <h2 style="font-size:20px;font-weight:700;margin-bottom:4px" id="exam-subject-title"></h2>
         <p style="font-size:13px;color:var(--gray-400);margin-bottom:1.25rem" id="exam-subject-sub"></p>
         <div id="exams-list"></div>
@@ -320,7 +344,7 @@
     <!-- PROFILE -->
     <div class="section" id="section-profile">
       <div class="profile-card">
-        <div class="profile-avatar">👤</div>
+        <div class="profile-avatar">ðŸ‘¤</div>
         <div class="profile-name" id="profile-name"></div>
         <div class="profile-row">
           <div class="profile-field"><label>Student ID</label><span id="profile-id"></span></div>
@@ -330,7 +354,7 @@
       </div>
       <div class="profile-card" style="background:var(--wine-light);border-color:var(--wine)">
         <p style="font-size:14px;color:var(--wine-dark);line-height:1.6">
-          🌟 <strong>Keep it up!</strong> Your teachers are proud of the effort you put in every day. Learning is a journey, and you are doing great. Remember: mistakes help your brain grow stronger!
+          ðŸŒŸ <strong>Keep it up!</strong> Your teachers are proud of the effort you put in every day. Learning is a journey, and you are doing great. Remember: mistakes help your brain grow stronger!
         </p>
       </div>
     </div>
@@ -338,23 +362,41 @@
   </div>
 </div>
 
-<!-- EXAM MODAL -->
-<div class="modal-overlay" id="exam-modal" style="display:none">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeExam()">✕</button>
+<!-- EXAM MODAL (full screen) -->
+<div class="modal-overlay" id="exam-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#FAF7F2;z-index:1000;overflow-y:auto;">
+  <div style="max-width:780px;margin:0 auto;padding:1.5rem 1rem 4rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;position:sticky;top:0;background:#FAF7F2;padding:0.75rem 0;border-bottom:2px solid var(--gray-200);z-index:10;">
+      <div id="exam-modal-title" style="font-size:18px;font-weight:700;color:var(--wine-dark)"></div>
+      <button onclick="closeExam()" style="background:var(--gray-200);border:none;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer;color:var(--gray-700)">âœ• Close</button>
+    </div>
     <div id="exam-modal-content"></div>
   </div>
 </div>
 
 <script src="portal-data.js"></script>
 <script>
-// ── STATE ──
+// â”€â”€ STATE â”€â”€
 let student = null;
 let currentExam = null;
 let answers = {};
-let examLocked = false; // true once submitted, even if pending
+let examLocked = false;
 
-// ── LOGIN ──
+// â”€â”€ LOGIN: STEP 1 â€” PASSWORD â”€â”€
+function checkPassword() {
+  const val = document.getElementById('login-password').value;
+  const err = document.getElementById('password-error');
+  if (val === PORTAL_PASSWORD) {
+    err.style.display = 'none';
+    document.getElementById('login-step-password').style.display = 'none';
+    document.getElementById('login-step-id').style.display = 'block';
+    setTimeout(() => document.getElementById('login-id').focus(), 50);
+  } else {
+    err.style.display = 'block';
+    document.getElementById('login-password').value = '';
+  }
+}
+
+// â”€â”€ LOGIN: STEP 2 â€” STUDENT ID â”€â”€
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
@@ -376,12 +418,19 @@ async function doLogin() {
 
 function doLogout() {
   student = null;
+  // Reset login back to password step
+  document.getElementById('login-step-password').style.display = 'block';
+  document.getElementById('login-step-id').style.display = 'none';
+  document.getElementById('login-password').value = '';
+  document.getElementById('password-error').style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-id').value = '';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-id').value = '';
 }
 
-// ── NAV ──
+// â”€â”€ NAV â”€â”€
 function showSection(id, tab) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -390,11 +439,11 @@ function showSection(id, tab) {
   if (id === 'subjects') resetSubjectsView();
 }
 
-// ── RENDER ALL ──
+// â”€â”€ RENDER ALL â”€â”€
 async function renderAll() {
-  document.getElementById('topbar-student').textContent = student.name.split(' ')[0] + ' · ' + student.grade;
-  document.getElementById('welcome-name').textContent = 'Welcome, ' + student.name.split(' ')[0] + '! 👋';
-  document.getElementById('welcome-sub').textContent = student.grade + ' · St. Genevieve Primary School';
+  document.getElementById('topbar-student').textContent = student.name.split(' ')[0] + ' Â· ' + student.grade;
+  document.getElementById('welcome-name').textContent = 'Welcome, ' + student.name.split(' ')[0] + '! ðŸ‘‹';
+  document.getElementById('welcome-sub').textContent = student.grade + ' Â· St. Genevieve Primary School';
   document.getElementById('encourage-text').textContent = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
 
   document.getElementById('profile-name').textContent = student.name;
@@ -433,8 +482,8 @@ async function renderStats() {
   const best = pcts.length ? Math.round(Math.max(...pcts)) : null;
 
   document.getElementById('stat-done').textContent = released.length;
-  document.getElementById('stat-avg').textContent = avg !== null ? avg + '%' : '—';
-  document.getElementById('stat-best').textContent = best !== null ? best + '%' : '—';
+  document.getElementById('stat-avg').textContent = avg !== null ? avg + '%' : 'â€”';
+  document.getElementById('stat-best').textContent = best !== null ? best + '%' : 'â€”';
   document.getElementById('stat-pending').textContent = pending.length;
 }
 
@@ -494,7 +543,7 @@ async function renderProgress() {
     return `<div class="subject-progress-card">
       <div class="subj-header">
         <div class="subj-name">${s.icon} ${s.name}</div>
-        <div class="subj-score" style="color:${s.color}">${avg > 0 ? avg + '% avg' : '—'}</div>
+        <div class="subj-score" style="color:${s.color}">${avg > 0 ? avg + '% avg' : 'â€”'}</div>
       </div>
       <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${completePct}%;background:${s.color}"></div></div>
       <p style="font-size:12px;color:var(--gray-400);margin-top:6px">${done.length} of ${myExams.length} results released</p>
@@ -514,19 +563,19 @@ function renderSubjectsGrid() {
       <div class="subj-meta">${myExams.length} exam${myExams.length!==1?'s':''} available</div>
       <div class="exam-count" style="background:${s.color}20;color:${s.color}">${myExams.length} exam${myExams.length!==1?'s':''}</div>
     </div>`;
-  }).join('') + `<div class="subject-card" style="opacity:0.45;pointer-events:none"><div class="subj-icon">🔬</div><div class="subj-title">Science</div><div class="subj-meta">Coming soon</div></div>`;
+  }).join('') + `<div class="subject-card" style="opacity:0.45;pointer-events:none"><div class="subj-icon">ðŸ”¬</div><div class="subj-title">Science</div><div class="subj-meta">Coming soon</div></div>`;
 }
 
-// ── SUBJECTS / EXAMS ──
+// â”€â”€ SUBJECTS / EXAMS â”€â”€
 async function openSubject(subjectId, name, icon) {
   document.getElementById('subjects-view').style.display = 'none';
   document.getElementById('exams-view').style.display = 'block';
   document.getElementById('exam-subject-title').textContent = icon + ' ' + name;
-  document.getElementById('exam-subject-sub').textContent = student.grade + ' · St. Genevieve Primary School';
+  document.getElementById('exam-subject-sub').textContent = student.grade + ' Â· St. Genevieve Primary School';
 
   const exams = getMyExams(subjectId);
   const list = document.getElementById('exams-list');
-  list.innerHTML = '<p style="color:var(--gray-400);font-size:14px">Loading…</p>';
+  list.innerHTML = '<p style="color:var(--gray-400);font-size:14px">Loadingâ€¦</p>';
 
   if (!exams.length) {
     list.innerHTML = '<p style="color:var(--gray-400);font-size:14px">No exams available for your class yet.</p>';
@@ -537,25 +586,25 @@ async function openSubject(subjectId, name, icon) {
   for (const exam of exams) {
     const sub = await Store.getSubmission(student.id, exam.id);
     const dl = getDeadlineLabel(exam);
-    const deadlineHTML = dl ? `<span style="font-size:11px;font-weight:700;color:${dl.col}">⏰ ${dl.text}</span>` : '';
+    const deadlineHTML = dl ? `<span style="font-size:11px;font-weight:700;color:${dl.col}">â° ${dl.text}</span>` : '';
 
     let statusHTML, btnHTML;
     if (sub && sub.status === 'released') {
       const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
-      statusHTML = `<span class="exam-status done">✓ ${pct}%</span>`;
+      statusHTML = `<span class="exam-status done">âœ“ ${pct}%</span>`;
       btnHTML = `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')" style="background:#9B4D62">View Result</button>`;
     } else if (sub && sub.status === 'pending') {
-      statusHTML = `<span class="exam-status waiting">⏳ Awaiting review</span>`;
+      statusHTML = `<span class="exam-status waiting">â³ Awaiting review</span>`;
       btnHTML = `<button class="btn-start-exam" disabled>Submitted</button>`;
     } else {
       statusHTML = `<span class="exam-status pending">Not started</span>`;
-      btnHTML = `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')">Start Exam →</button>`;
+      btnHTML = `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')">Start Exam â†’</button>`;
     }
 
     html += `<div class="exam-card">
       <div class="exam-info">
         <h4>${exam.title}</h4>
-        <p>${exam.desc} · ${exam.questions.length} questions</p>
+        <p>${exam.desc} Â· ${exam.questions.length} questions</p>
         ${deadlineHTML}
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
@@ -577,40 +626,41 @@ function resetSubjectsView() {
   document.getElementById('exams-view').style.display = 'none';
 }
 
-// ── EXAM MODAL ──
+// â”€â”€ EXAM MODAL â”€â”€
 async function startExam(subjectId, examId) {
   const exam = EXAMS[subjectId].find(e => e.id === examId);
   currentExam = { ...exam, subjectId };
   answers = {};
 
+  const titleEl = document.getElementById('exam-modal-title');
+  if (titleEl) titleEl.textContent = exam.title;
+
   const sub = await Store.getSubmission(student.id, examId);
 
   if (sub && sub.status === 'released') {
-    // Show full released result with correct/wrong + remarks
     examLocked = true;
     answers = sub.answers;
-    document.getElementById('exam-modal').style.display = 'flex';
+    document.getElementById('exam-modal').style.display = 'block';
     renderExamModal(sub);
   } else if (sub && sub.status === 'pending') {
-    // Show waiting screen — no score, no answers revealed
     examLocked = true;
-    document.getElementById('exam-modal').style.display = 'flex';
+    document.getElementById('exam-modal').style.display = 'block';
     renderWaitingModal();
   } else {
-    // Fresh attempt
     examLocked = false;
-    document.getElementById('exam-modal').style.display = 'flex';
+    document.getElementById('exam-modal').style.display = 'block';
     renderExamModal(null);
   }
+  window.scrollTo(0, 0);
 }
 
 function renderWaitingModal() {
   const exam = currentExam;
   document.getElementById('exam-modal-content').innerHTML = `
     <h2>${exam.title}</h2>
-    <p class="modal-meta">${student.grade} · ${exam.desc}</p>
+    <p class="modal-meta">${student.grade} Â· ${exam.desc}</p>
     <div class="waiting-banner">
-      <div class="waiting-icon">⏳</div>
+      <div class="waiting-icon">â³</div>
       <div class="waiting-title">Your exam has been submitted!</div>
       <div class="waiting-msg">Your teacher is reviewing your answers. Your score will appear here once it's released. Check back soon!</div>
     </div>
@@ -621,7 +671,7 @@ function renderWaitingModal() {
 function renderExamModal(submission) {
   const exam = currentExam;
   let html = `<h2>${exam.title}</h2>
-  <p class="modal-meta">${student.grade} · ${exam.desc} · ${exam.questions.length} questions</p>`;
+  <p class="modal-meta">${student.grade} Â· ${exam.desc} Â· ${exam.questions.length} questions</p>`;
 
   if (submission && submission.status === 'released') {
     const pct = Math.round((submission.finalScore/submission.finalTotal)*100);
@@ -631,7 +681,7 @@ function renderExamModal(submission) {
       <div class="result-msg">${getResultMsg(pct)}</div>
     </div>`;
     if (submission.remarks) {
-      html += `<div class="remarks-box"><strong>📝 Teacher's Remarks</strong><p>${escapeHTML(submission.remarks)}</p></div>`;
+      html += `<div class="remarks-box"><strong>ðŸ“ Teacher's Remarks</strong><p>${escapeHTML(submission.remarks)}</p></div>`;
     }
   }
 
@@ -640,7 +690,7 @@ function renderExamModal(submission) {
     const type = q.type || 'mcq';
 
     if (q.passage && q.passage !== lastPassage) {
-      html += `<div class="passage-box"><div class="passage-label">📖 Reading Passage</div>${escapeHTML(q.passage)}</div>`;
+      html += `<div class="passage-box"><div class="passage-label">ðŸ“– Reading Passage</div>${escapeHTML(q.passage)}</div>`;
     }
     lastPassage = q.passage || null;
 
@@ -651,7 +701,9 @@ function renderExamModal(submission) {
     } else if (type === 'matching') {
       html += renderMatchingQuestion(q, i, submission);
     } else if (type === 'essay') {
-      html += renderEssayQuestion(i, submission);
+      html += renderEssayQuestion(i, q, submission);
+    } else if (type === 'readaloud') {
+      html += renderReadAloudQuestion(i, q, submission);
     } else {
       html += `<div class="options-list">`;
       q.opts.forEach((opt, j) => {
@@ -688,21 +740,72 @@ function renderExamModal(submission) {
     const type = q.type || 'mcq';
     if (type === 'drawing' && !examLocked) initDrawingCanvas(i);
     if (type === 'matching' && !examLocked) initMatching(q, i);
+    // readaloud and essay need no JS init
   });
 }
 
-// ── ESSAY / SHORT-ANSWER QUESTIONS ──
-function renderEssayQuestion(i, submission) {
+// â”€â”€ SUB-PART DETECTION â”€â”€
+// Detects lines starting with: a) b) 1. 2. i. ii. a. b. etc.
+function parseSubParts(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const pattern = /^([a-zA-Z]\)|[a-zA-Z]\.|[0-9]+[.)]\s*|[ivxIVX]+\.\s*)/;
+  const subLines = lines.filter(l => pattern.test(l));
+  // Only treat as sub-parts if 2+ lines match the pattern
+  return subLines.length >= 2 ? subLines : null;
+}
+
+// â”€â”€ ESSAY / SHORT-ANSWER QUESTIONS â”€â”€
+function renderEssayQuestion(i, q, submission) {
+  const subParts = parseSubParts(q.q);
   if (examLocked) {
-    const text = answers[i];
+    const val = answers[i];
+    if (subParts && typeof val === 'object' && val !== null) {
+      return subParts.map((part, pi) => {
+        const ans = val[pi] || '';
+        return `<div class="subpart-row" style="padding:8px 0;border-bottom:1px solid var(--gray-200)">
+          <span class="subpart-label">${pi + 1}.</span>
+          <span style="font-size:14px;color:var(--gray-700)">${escapeHTML(part)}</span>
+          <span style="font-size:14px;font-weight:600;color:var(--wine-dark);margin-left:8px">${ans ? escapeHTML(String(ans)) : '<em style="color:var(--gray-400)">No answer</em>'}</span>
+        </div>`;
+      }).join('');
+    }
+    const text = typeof val === 'string' ? val : '';
     return text
       ? `<div class="passage-box" style="background:var(--cream);border-left-color:var(--gray-400)">${escapeHTML(text)}</div>`
       : `<p style="color:var(--gray-400);font-size:13px">No answer submitted.</p>`;
   }
-  return `<textarea class="essay-textarea" id="essay-${i}" placeholder="Type your answer here…" oninput="answers[${i}]=this.value">${escapeHTML(answers[i] || '')}</textarea>`;
+
+  if (subParts) {
+    if (!answers[i] || typeof answers[i] !== 'object') answers[i] = {};
+    return subParts.map((part, pi) => `
+      <div class="subpart-row">
+        <span class="subpart-label">${pi + 1}.</span>
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--gray-700);margin-bottom:4px">${escapeHTML(part)}</div>
+          <input class="subpart-input" type="text" placeholder="Your answerâ€¦"
+            value="${escapeHTML(String(answers[i][pi] || ''))}"
+            oninput="if(!answers[${i}]||typeof answers[${i}]!=='object')answers[${i}]={};answers[${i}][${pi}]=this.value">
+        </div>
+      </div>`).join('');
+  }
+
+  return `<textarea class="essay-textarea" id="essay-${i}" placeholder="Write your answer hereâ€¦" oninput="answers[${i}]=this.value">${escapeHTML(answers[i] || '')}</textarea>`;
 }
 
-// ── DRAWING QUESTIONS ──
+// â”€â”€ READ-ALOUD QUESTIONS â”€â”€
+function renderReadAloudQuestion(i, q, submission) {
+  const text = q.readText || q.passage || '';
+  if (examLocked) {
+    return `<div class="readaloud-box" style="opacity:0.8">${text ? escapeHTML(text) : ''}</div>
+      <p style="font-size:13px;color:var(--gray-400);font-style:italic">This was a read-aloud question â€” your teacher scored your reading.</p>`;
+  }
+  return `
+    ${text ? `<div class="readaloud-box">${escapeHTML(text)}</div>` : ''}
+    <div class="readaloud-instruction">ðŸ”Š Read the text above out loud to your teacher. Your teacher will listen and give you a score.</div>
+  `;
+}
+
+// â”€â”€ DRAWING QUESTIONS â”€â”€
 function renderDrawingQuestion(i, submission) {
   if (examLocked) {
     const dataUrl = answers[i];
@@ -759,7 +862,7 @@ function clearCanvas(i) {
   answers[i] = null;
 }
 
-// ── MATCHING QUESTIONS ──
+// â”€â”€ MATCHING QUESTIONS â”€â”€
 // Stored on the exam as q.pairs = [{left, right}, ...] (correct order).
 // Right side is shuffled for display; student clicks a left item then a
 // right item to link them. Saved answer = { leftIndex: shuffledRightIndex }.
@@ -782,7 +885,7 @@ function renderMatchingQuestion(q, i, submission) {
       const matchedRightText = matchedRightIdx !== undefined && matchedRightIdx !== null
         ? (matchShuffles[i] ? (matchShuffles[i].find(x => x.idx === matchedRightIdx) || {}).v : q.pairs[matchedRightIdx] && q.pairs[matchedRightIdx].right)
         : null;
-      return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} → ${matchedRightText ? escapeHTML(matchedRightText) : '<em>no answer</em>'}</div>`;
+      return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} â†’ ${matchedRightText ? escapeHTML(matchedRightText) : '<em>no answer</em>'}</div>`;
     }).join('');
     return `<div>${rows}</div>`;
   }
@@ -845,15 +948,9 @@ function selectAnswer(qi, ai, el) {
 
 async function submitExam() {
   const exam = currentExam;
-  let correct = 0;
-  exam.questions.forEach((q, i) => {
-    const type = q.type || 'mcq';
-    if (type === 'mcq' && answers[i] === q.ans) correct++;
-    // drawing/matching are never auto-graded — they start at 0/incorrect
-    // until the teacher reviews and marks them correct manually.
-  });
-
-  await Store.submitExam(student.id, exam.id, exam.subjectId, answers, correct, exam.questions.length);
+  // No client-side grading â€” the Apps Script backend grades using the
+  // stored correct answers which are never sent to the browser.
+  await Store.submitExam(student.id, exam.id, exam.subjectId, answers);
   examLocked = true;
 
   renderWaitingModal();
@@ -863,10 +960,10 @@ async function submitExam() {
 }
 
 function getResultMsg(pct) {
-  if (pct >= 80) return "🌟 Excellent work! You're a star — keep it up!";
-  if (pct >= 60) return "👍 Good job! A little more practice and you'll be even better!";
-  if (pct >= 40) return "💪 You tried hard! Review the questions and give it another go.";
-  return "🤗 Don't give up! Every try makes you stronger. Ask your teacher for help.";
+  if (pct >= 80) return "ðŸŒŸ Excellent work! You're a star â€” keep it up!";
+  if (pct >= 60) return "ðŸ‘ Good job! A little more practice and you'll be even better!";
+  if (pct >= 40) return "ðŸ’ª You tried hard! Review the questions and give it another go.";
+  return "ðŸ¤— Don't give up! Every try makes you stronger. Ask your teacher for help.";
 }
 
 async function closeExam() {
