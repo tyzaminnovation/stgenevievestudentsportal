@@ -173,27 +173,27 @@
 </head>
 <body>
 
-<!-- ══════════════ LOGIN ══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• LOGIN â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="school-logo">🍎</div>
+    <div class="school-logo">ðŸŽ</div>
     <h1>St. Genevieve</h1>
     <p class="tagline">Teacher Portal</p>
     <div class="field-wrap">
       <div class="field-label">Teacher ID</div>
       <input type="text" id="login-id" placeholder="e.g. SGP-T-G2" autocomplete="off" autocapitalize="characters" style="letter-spacing:0.05em;font-weight:600">
     </div>
-    <button class="btn-primary" onclick="doLogin()">Enter Portal →</button>
+    <button class="btn-primary" onclick="doLogin()">Enter Portal â†’</button>
     <p class="login-error" id="login-error">Teacher ID not found.</p>
     <p style="text-align:center;font-size:12px;color:#A89880;margin-top:1.25rem;">Use the Teacher ID given to you by the school administration.</p>
   </div>
 </div>
 
-<!-- ══════════════ APP ══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• APP â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-logo">🍎</span>
+      <span class="topbar-logo">ðŸŽ</span>
       <div>
         <div class="topbar-title">St. Genevieve</div>
         <div class="topbar-sub">Teacher Portal</div>
@@ -206,11 +206,11 @@
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('dashboard', this)">🏠 Dashboard</div>
-    <div class="nav-tab" onclick="showSection('results', this)">📊 Review Results</div>
-    <div class="nav-tab" onclick="showSection('create', this)">✏️ Create Exam</div>
-    <div class="nav-tab" onclick="showSection('students', this)">👥 Students</div>
-    <div class="nav-tab" onclick="showSection('reports', this)">🧾 Report Cards</div>
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">ðŸ  Dashboard</div>
+    <div class="nav-tab" onclick="showSection('results', this)">ðŸ“Š Review Results</div>
+    <div class="nav-tab" onclick="showSection('create', this)">âœï¸ Create Exam</div>
+    <div class="nav-tab" onclick="showSection('students', this)">ðŸ‘¥ Students</div>
+    <div class="nav-tab" onclick="showSection('reports', this)">ðŸ§¾ Report Cards</div>
   </div>
 
   <div class="main">
@@ -224,7 +224,7 @@
         <div class="stat-card"><div class="stat-num" style="color:var(--wine)" id="stat-students">0</div><div class="stat-label">Students</div></div>
         <div class="stat-card"><div class="stat-num" style="color:var(--coral)" id="stat-pending-count">0</div><div class="stat-label">Awaiting Review</div></div>
         <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-released-count">0</div><div class="stat-label">Released Results</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-class-avg">—</div><div class="stat-label">Class Average</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-class-avg">â€”</div><div class="stat-label">Class Average</div></div>
       </div>
 
       <div class="panel">
@@ -233,7 +233,7 @@
       </div>
 
       <div class="panel">
-        <h3>⏳ Needs your attention</h3>
+        <h3>â³ Needs your attention</h3>
         <div id="pending-preview"></div>
       </div>
     </div>
@@ -254,7 +254,7 @@
     <!-- CREATE EXAM -->
     <div class="section" id="section-create">
       <h2 class="page-title">Create Exam</h2>
-      <p class="page-sub">Build a new exam for your class — it appears on the student portal immediately after saving.</p>
+      <p class="page-sub">Build a new exam for your class â€” it appears on the student portal immediately after saving.</p>
 
       <div class="panel">
         <h3>Existing exams for your class</h3>
@@ -262,7 +262,7 @@
       </div>
 
       <div class="panel">
-        <h3>📥 Import questions</h3>
+        <h3>ðŸ“¥ Import questions</h3>
         <p style="font-size:12px;color:var(--gray-400);margin-bottom:0.75rem">Paste exam questions here in JSON format, then review everything below before saving.</p>
         <textarea class="import-box" id="import-json" placeholder='[{"type":"mcq","q":"5 + 3 = ?","opts":["7","8","9","10"],"ans":1}, {"type":"drawing","q":"Draw a triangle."}, {"type":"matching","q":"Match the animal to its sound.","pairs":[{"left":"Dog","right":"Bark"},{"left":"Cat","right":"Meow"}]}]'></textarea>
         <button class="btn-sm wine" onclick="importQuestionsJSON()">Import into question builder</button>
@@ -297,7 +297,7 @@
 
     <!-- STUDENTS -->
     <div class="section" id="section-students">
-      <h2 class="page-title">Students — <span id="students-grade-label"></span></h2>
+      <h2 class="page-title">Students â€” <span id="students-grade-label"></span></h2>
       <p class="page-sub">Every student enrolled in your class.</p>
       <div class="panel">
         <table class="data-table" id="students-table">
@@ -324,7 +324,7 @@
 <!-- REVIEW MODAL -->
 <div class="modal-overlay" id="review-modal" style="display:none">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeReviewModal()">✕</button>
+    <button class="modal-close" onclick="closeReviewModal()">âœ•</button>
     <div id="review-modal-content"></div>
   </div>
 </div>
@@ -335,7 +335,7 @@ let teacher = null;
 let questionBuilderCount = 0;
 let currentReview = null; // { studentId, examId, exam, submission }
 
-// ── LOGIN ──
+// â”€â”€ LOGIN â”€â”€
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
@@ -372,9 +372,9 @@ function showSection(id, tab) {
 }
 
 async function initApp() {
-  document.getElementById('topbar-teacher').textContent = teacher.name + ' · ' + teacher.grade;
-  document.getElementById('dash-title').textContent = 'Welcome, ' + teacher.name + '! 👋';
-  document.getElementById('dash-sub').textContent = teacher.grade + ' · St. Genevieve Primary School';
+  document.getElementById('topbar-teacher').textContent = teacher.name + ' Â· ' + teacher.grade;
+  document.getElementById('dash-title').textContent = 'Welcome, ' + teacher.name + '! ðŸ‘‹';
+  document.getElementById('dash-sub').textContent = teacher.grade + ' Â· St. Genevieve Primary School';
 
   populateSubjectFilters();
   await renderDashboard();
@@ -402,7 +402,7 @@ function getClassExams() {
   return result;
 }
 
-// ── DASHBOARD ──
+// â”€â”€ DASHBOARD â”€â”€
 async function renderDashboard() {
   const students = getClassStudents();
   const subs = await Store.getAllForGrade(teacher.grade);
@@ -414,7 +414,7 @@ async function renderDashboard() {
   document.getElementById('stat-students').textContent = students.length;
   document.getElementById('stat-pending-count').textContent = pending.length;
   document.getElementById('stat-released-count').textContent = released.length;
-  document.getElementById('stat-class-avg').textContent = avg !== null ? avg + '%' : '—';
+  document.getElementById('stat-class-avg').textContent = avg !== null ? avg + '%' : 'â€”';
 
   // Subject averages
   const subEl = document.getElementById('subject-averages');
@@ -441,7 +441,7 @@ async function renderDashboard() {
   // Pending preview (max 4)
   const previewEl = document.getElementById('pending-preview');
   if (!pending.length) {
-    previewEl.innerHTML = '<p class="empty-state">🎉 Nothing waiting for review right now!</p>';
+    previewEl.innerHTML = '<p class="empty-state">ðŸŽ‰ Nothing waiting for review right now!</p>';
   } else {
     let rows = '';
     pending.slice(0, 5).forEach(sub => {
@@ -452,14 +452,14 @@ async function renderDashboard() {
           <strong style="font-size:14px">${st ? st.name : sub.studentId}</strong>
           <div style="font-size:12px;color:var(--gray-400)">${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</div>
         </div>
-        <button class="btn-sm wine" onclick="showSection('results', document.querySelector('[onclick*=results]'))">Review →</button>
+        <button class="btn-sm wine" onclick="showSection('results', document.querySelector('[onclick*=results]'))">Review â†’</button>
       </div>`;
     });
     previewEl.innerHTML = rows;
   }
 }
 
-// ── REVIEW RESULTS ──
+// â”€â”€ REVIEW RESULTS â”€â”€
 async function renderResultsList() {
   const filter = document.getElementById('results-subject-filter').value;
   const subs = await Store.getAllForGrade(teacher.grade);
@@ -487,7 +487,7 @@ async function renderResultsList() {
       <td>${st ? st.name : sub.studentId}</td>
       <td>${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</td>
       <td>${sub.finalScore}/${sub.finalTotal} (${pct}%)</td>
-      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? '⏳ Pending' : '✓ Released'}</span></td>
+      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? 'â³ Pending' : 'âœ“ Released'}</span></td>
       <td><button class="btn-sm outline" onclick="openReview('${sub.studentId}','${sub.examId}')">${sub.status === 'pending' ? 'Review' : 'View / Edit'}</button></td>
     </tr>`;
   });
@@ -514,10 +514,10 @@ function renderReviewModal() {
   const pct = Math.round((submission.finalScore/submission.finalTotal)*100);
 
   let html = `<h2>${exam.title}</h2>
-  <p class="modal-meta">${student.name} (${student.id}) · ${exam.subjectIcon} ${exam.subjectName} · Submitted ${new Date(submission.submittedAt).toLocaleString('en-KE', {dateStyle:'medium', timeStyle:'short'})}</p>
+  <p class="modal-meta">${student.name} (${student.id}) Â· ${exam.subjectIcon} ${exam.subjectName} Â· Submitted ${new Date(submission.submittedAt).toLocaleString('en-KE', {dateStyle:'medium', timeStyle:'short'})}</p>
   <div style="background:var(--wine-light);border-radius:12px;padding:1rem;text-align:center;margin-bottom:1.25rem">
     <div style="font-size:32px;font-weight:800;color:var(--wine-dark)" id="review-live-score">${submission.finalScore}/${submission.finalTotal} (${pct}%)</div>
-    <div style="font-size:12px;color:var(--wine)">Auto-graded score — adjust below if needed</div>
+    <div style="font-size:12px;color:var(--wine)">Auto-graded score â€” adjust below if needed</div>
   </div>`;
 
   let lastPassage = null;
@@ -526,7 +526,7 @@ function renderReviewModal() {
     const isOverridden = submission.overrides && submission.overrides.hasOwnProperty(i);
 
     if (q.passage && q.passage !== lastPassage) {
-      html += `<div class="passage-box-review"><strong>📖 Reading Passage</strong><br>${escapeHTML(q.passage)}</div>`;
+      html += `<div class="passage-box-review"><strong>ðŸ“– Reading Passage</strong><br>${escapeHTML(q.passage)}</div>`;
     }
     lastPassage = q.passage || null;
 
@@ -540,7 +540,7 @@ function renderReviewModal() {
         let cls = '';
         if (j === q.ans) cls = 'correct-ans';
         if (studentAns === j && j !== q.ans) cls = 'student-wrong';
-        const marker = studentAns === j ? '👉 ' : '';
+        const marker = studentAns === j ? 'ðŸ‘‰ ' : '';
         html += `<div class="review-opt ${cls}">${marker}${escapeHTML(opt)}${j === q.ans ? ' (correct answer)' : ''}</div>`;
       });
       html += `<div class="override-toggle">
@@ -548,14 +548,48 @@ function renderReviewModal() {
         <label><input type="radio" name="override-${i}" ${!realMarkedCorrect ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
       </div>`;
     } else if (type === 'essay') {
-      const text = submission.answers[i];
-      html += text
-        ? `<div class="essay-answer-box">${escapeHTML(text)}</div>`
-        : `<p style="font-size:13px;color:var(--gray-400)">No answer submitted.</p>`;
-      html += `<div class="override-toggle">
-        <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
-        <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
-      </div>`;
+      const studentAns = submission.answers[i];
+      // Check for sub-parts
+      const subParts = parseSubParts_(q.q);
+      if (subParts && typeof studentAns === 'object' && studentAns !== null) {
+        html += `<div style="margin-bottom:8px">`;
+        subParts.forEach((part, pi) => {
+          const partAns = studentAns[pi] || '';
+          const partOverridden = submission.overrides && submission.overrides[`${i}_${pi}`] !== undefined;
+          const partCorrect = partOverridden ? submission.overrides[`${i}_${pi}`] : false;
+          html += `<div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:10px 14px;margin-bottom:8px">
+            <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:4px">${escapeHTML(part)}</div>
+            <div class="essay-answer-box" style="margin-bottom:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</div>
+            <div class="override-toggle">
+              <label><input type="radio" name="override-${i}-${pi}" ${partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},true)"> âœ… Mark correct</label>
+              <label><input type="radio" name="override-${i}-${pi}" ${!partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},false)"> âŒ Mark wrong</label>
+            </div>
+          </div>`;
+        });
+        html += `</div>`;
+      } else {
+        const text = typeof studentAns === 'string' ? studentAns : JSON.stringify(studentAns);
+        html += text
+          ? `<div class="essay-answer-box">${escapeHTML(text)}</div>`
+          : `<p style="font-size:13px;color:var(--gray-400)">No answer submitted.</p>`;
+        html += `<div class="override-toggle">
+          <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> âœ… Mark correct</label>
+          <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> âŒ Mark wrong</label>
+        </div>`;
+      }
+    } else if (type === 'readaloud') {
+      const scoreKey = `ra_${i}`;
+      const currentScore = (submission.overrides && submission.overrides[scoreKey]) || 0;
+      html += `<div class="readaloud-box">${q.readText ? escapeHTML(q.readText) : '<em>No passage â€” student read aloud from their book/paper.</em>'}</div>
+        <div style="margin-top:8px">
+          <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px">ðŸŽ™ï¸ Score this oral reading (enter marks out of the total):</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="number" min="0" max="100" value="${currentScore}"
+              style="width:80px;padding:8px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:15px;font-weight:700"
+              oninput="setReadAloudScore(${i}, this.value)">
+            <span style="font-size:13px;color:var(--gray-400)">marks</span>
+          </div>
+        </div>`;
     } else if (type === 'drawing') {
       const dataUrl = submission.answers[i];
       html += dataUrl
@@ -569,9 +603,9 @@ function renderReviewModal() {
       const studentAns = submission.answers[i] || {};
       let rows = q.pairs.map((p, li) => {
         const rIdx = studentAns[li];
-        const studentRight = (rIdx !== undefined && rIdx !== null) ? (q.pairs[rIdx] ? q.pairs[rIdx].right : '—') : null;
+        const studentRight = (rIdx !== undefined && rIdx !== null) ? (q.pairs[rIdx] ? q.pairs[rIdx].right : 'â€”') : null;
         const ok = studentRight === p.right;
-        return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} → <strong style="color:${studentRight ? (ok?'var(--wine)':'var(--coral)') : 'var(--gray-400)'}">${studentRight ? escapeHTML(studentRight) : 'no answer'}</strong> <span style="color:var(--gray-400)">(correct: ${escapeHTML(p.right)})</span></div>`;
+        return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} â†’ <strong style="color:${studentRight ? (ok?'var(--wine)':'var(--coral)') : 'var(--gray-400)'}">${studentRight ? escapeHTML(studentRight) : 'no answer'}</strong> <span style="color:var(--gray-400)">(correct: ${escapeHTML(p.right)})</span></div>`;
       }).join('');
       html += rows;
       html += `<div class="override-toggle">
@@ -598,6 +632,45 @@ function renderReviewModal() {
   }
 
   document.getElementById('review-modal-content').innerHTML = html;
+}
+
+function parseSubParts_(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const pattern = /^([a-zA-Z]\)|[a-zA-Z]\.|[0-9]+[.)]\s*|[ivxIVX]+\.\s*)/;
+  const subLines = lines.filter(l => pattern.test(l));
+  return subLines.length >= 2 ? subLines : null;
+}
+
+async function setSubPartOverride(qIndex, partIndex, markCorrect) {
+  const key = `${qIndex}_${partIndex}`;
+  if (!reviewingSubmission.overrides) reviewingSubmission.overrides = {};
+  reviewingSubmission.overrides[key] = markCorrect;
+  // Recalculate total correct sub-parts and MCQs
+  await recalcScore();
+}
+
+async function setReadAloudScore(qIndex, score) {
+  const key = `ra_${qIndex}`;
+  if (!reviewingSubmission.overrides) reviewingSubmission.overrides = {};
+  reviewingSubmission.overrides[key] = Number(score) || 0;
+  await Store.overrideAnswer(reviewingSubmission.studentId, reviewingSubmission.examId, qIndex, Number(score) > 0, currentReviewExam);
+}
+
+async function recalcScore() {
+  // Push all sub-part and regular overrides to the backend in one pass
+  const exam = currentReviewExam;
+  for (let i = 0; i < exam.questions.length; i++) {
+    const q = exam.questions[i];
+    const type = q.type || 'mcq';
+    if (type === 'essay') {
+      const subParts = parseSubParts_(q.q);
+      if (subParts) {
+        // Treat as correct if ALL sub-parts are marked correct
+        const allCorrect = subParts.every((_, pi) => reviewingSubmission.overrides[`${i}_${pi}`] === true);
+        await Store.overrideAnswer(reviewingSubmission.studentId, reviewingSubmission.examId, i, allCorrect, exam);
+      }
+    }
+  }
 }
 
 async function setOverride(qIndex, markCorrect) {
@@ -637,7 +710,7 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-// ── CREATE EXAM ──
+// â”€â”€ CREATE EXAM â”€â”€
 function addQuestionBuilder(prefill) {
   questionBuilderCount++;
   const id = questionBuilderCount;
@@ -649,16 +722,17 @@ function addQuestionBuilder(prefill) {
   div.innerHTML = `
     <div class="q-header"><span>Question ${id}</span><button class="remove-q" onclick="document.getElementById('qb-${id}').remove()">Remove</button></div>
     <div class="form-row">
-      <label>Reading passage (optional — leave blank if not a comprehension question)</label>
-      <textarea id="qb-${id}-passage" placeholder="Paste the reading passage text here if this question refers to one…" style="min-height:70px">${prefill ? escapeHTML(prefill.passage || '') : ''}</textarea>
+      <label>Reading passage (optional â€” leave blank if not a comprehension question)</label>
+      <textarea id="qb-${id}-passage" placeholder="Paste the reading passage text here if this question refers to oneâ€¦" style="min-height:70px">${prefill ? escapeHTML(prefill.passage || '') : ''}</textarea>
     </div>
     <div class="form-row qtype-select">
       <label>Question type</label>
       <select id="qb-${id}-type" onchange="renderQBBody(${id})">
         <option value="mcq" ${type==='mcq'?'selected':''}>Multiple choice</option>
         <option value="essay" ${type==='essay'?'selected':''}>Essay / short answer (typed)</option>
+        <option value="readaloud" ${type==='readaloud'?'selected':''}>Read aloud (teacher scores verbally)</option>
         <option value="drawing" ${type==='drawing'?'selected':''}>Drawing (student draws answer)</option>
-        <option value="matching" ${type==='matching'?'selected':''}>Matching (left ↔ right pairs)</option>
+        <option value="matching" ${type==='matching'?'selected':''}>Matching (left â†” right pairs)</option>
       </select>
     </div>
     <div class="form-row"><input type="text" placeholder="Question text" id="qb-${id}-text" value="${prefill ? escapeHTML(prefill.q || '') : ''}"></div>
@@ -685,6 +759,14 @@ function renderQBBody(id, prefill) {
     body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a blank drawing pad to answer this question. You'll grade it manually when reviewing results.</p>`;
   } else if (type === 'essay') {
     body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a text box to type their answer. You'll grade it manually when reviewing results.</p>`;
+  } else if (type === 'readaloud') {
+    const prefillText = (prefill && prefill.readText) || '';
+    body.innerHTML = `
+      <div class="form-row">
+        <label>Text to read aloud (optional â€” paste the passage if needed)</label>
+        <textarea id="qb-${id}-readtext" style="min-height:80px" placeholder="Paste the reading passage here if students need to read it on screenâ€¦">${escapeHTML(prefillText)}</textarea>
+      </div>
+      <p style="font-size:12px;color:var(--gray-400)">The student will see an instruction to read aloud to you. No text box â€” you listen and score manually.</p>`;
   } else if (type === 'matching') {
     const pairs = (prefill && prefill.pairs && prefill.pairs.length) ? prefill.pairs : [{left:'',right:''},{left:'',right:''}];
     body.innerHTML = `<div id="qb-${id}-pairs">` + pairs.map((p, i) => pairRowHTML(id, i, p)).join('') + `</div>
@@ -696,9 +778,9 @@ function renderQBBody(id, prefill) {
 function pairRowHTML(id, i, pair) {
   return `<div class="pair-row" id="qb-${id}-pair-${i}">
     <input type="text" placeholder="Left item" id="qb-${id}-pair${i}-left" value="${escapeHTML(pair.left||'')}">
-    <span class="pair-arrow">↔</span>
+    <span class="pair-arrow">â†”</span>
     <input type="text" placeholder="Right item" id="qb-${id}-pair${i}-right" value="${escapeHTML(pair.right||'')}">
-    <button type="button" class="remove-q" onclick="document.getElementById('qb-${id}-pair-${i}').remove()">✕</button>
+    <button type="button" class="remove-q" onclick="document.getElementById('qb-${id}-pair-${i}').remove()">âœ•</button>
   </div>`;
 }
 
@@ -757,6 +839,13 @@ async function saveNewExam() {
       const q = { type: 'essay', q: qText };
       if (passage) q.passage = passage;
       questions.push(q);
+    } else if (type === 'readaloud') {
+      const readTextEl = document.getElementById(`qb-${id}-readtext`);
+      const readText = readTextEl ? readTextEl.value.trim() : '';
+      const q = { type: 'readaloud', q: qText };
+      if (readText) q.readText = readText;
+      if (passage) q.passage = passage;
+      questions.push(q);
     } else if (type === 'drawing') {
       const q = { type: 'drawing', q: qText };
       if (passage) q.passage = passage;
@@ -786,14 +875,14 @@ async function saveNewExam() {
   EXAMS[subjectId].push(newExam);
 
   msgEl.style.color = 'var(--wine)';
-  msgEl.textContent = 'Saving…';
+  msgEl.textContent = 'Savingâ€¦';
   msgEl.style.display = 'block';
 
   const saved = await saveExamToBackend(subjectId, newExam);
 
   msgEl.textContent = saved
-    ? '✓ Exam saved! It is now visible to students on every device.'
-    : '⚠️ Exam saved on this device, but could not reach the shared backend — check that SCRIPT_URL is set correctly in portal-data.js. Students on other devices won\'t see it yet.';
+    ? 'âœ“ Exam saved! It is now visible to students on every device.'
+    : 'âš ï¸ Exam saved on this device, but could not reach the shared backend â€” check that SCRIPT_URL is set correctly in portal-data.js. Students on other devices won\'t see it yet.';
   msgEl.style.color = saved ? 'var(--wine)' : 'var(--coral)';
 
   document.getElementById('new-exam-title').value = '';
@@ -813,17 +902,34 @@ function renderManageExams() {
     return;
   }
   el.innerHTML = classExams.map(e => `
-    <div class="exam-manage-card">
+    <div class="exam-manage-card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
       <div>
         <h4>${e.subjectIcon} ${e.title}</h4>
-        <p>${e.subjectName} · ${e.desc || 'No description'} · ${e.questions.length} questions</p>
+        <p>${e.subjectName} Â· ${e.desc || 'No description'} Â· ${e.questions.length} questions</p>
       </div>
-      <span class="pill released">${e.subjectName}</span>
+      <button onclick="deleteExam('${e.subjectId}','${e.id}')"
+        style="background:#fff;border:1.5px solid var(--coral);color:var(--coral);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+        ðŸ—‘ Delete
+      </button>
     </div>
   `).join('');
 }
 
-// ── STUDENTS ──
+async function deleteExam(subjectId, examId) {
+  if (!confirm('Are you sure you want to delete this exam? This cannot be undone.')) return;
+  try {
+    await scriptPost_('deleteExam', { subjectId, examId });
+  } catch (e) {
+    console.warn('Backend delete failed (exam may only have been in memory):', e);
+  }
+  // Remove from local EXAMS object
+  if (EXAMS[subjectId]) {
+    EXAMS[subjectId] = EXAMS[subjectId].filter(e => e.id !== examId);
+  }
+  renderManageExams();
+}
+
+// â”€â”€ STUDENTS â”€â”€
 async function renderStudentsTable() {
   document.getElementById('students-grade-label').textContent = teacher.grade;
   const students = getClassStudents();
@@ -840,17 +946,17 @@ async function renderStudentsTable() {
       <td><strong>${st.name}</strong></td>
       <td>${st.id}</td>
       <td>${released.length}</td>
-      <td>${avg !== null ? avg + '%' : '—'}</td>
+      <td>${avg !== null ? avg + '%' : 'â€”'}</td>
     </tr>`;
   }
   tbody.innerHTML = rows;
 }
 
-// ── REPORT CARDS ──
+// â”€â”€ REPORT CARDS â”€â”€
 function renderReportSelector() {
   const sel = document.getElementById('report-student-select');
   const students = getClassStudents();
-  sel.innerHTML = '<option value="">Select a student…</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+  sel.innerHTML = '<option value="">Select a studentâ€¦</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
 }
 
 async function renderReportCard() {
@@ -868,7 +974,7 @@ async function renderReportCard() {
     const exam = classExams.find(e => e.id === sub.examId);
     const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
     rows += `<tr>
-      <td>${exam ? exam.subjectIcon + ' ' + exam.subjectName : '—'}</td>
+      <td>${exam ? exam.subjectIcon + ' ' + exam.subjectName : 'â€”'}</td>
       <td>${exam ? exam.title : sub.examId}</td>
       <td>${sub.finalScore}/${sub.finalTotal}</td>
       <td>${pct}%</td>
@@ -881,7 +987,7 @@ async function renderReportCard() {
 
   areaEl.innerHTML = `
     <div style="margin-bottom:1rem;display:flex;gap:10px">
-      <button class="btn-sm wine" onclick="window.print()">🖨️ Print Report Card</button>
+      <button class="btn-sm wine" onclick="window.print()">ðŸ–¨ï¸ Print Report Card</button>
     </div>
     <div class="report-card" id="report-print-area">
       <div class="report-header">
@@ -898,7 +1004,7 @@ async function renderReportCard() {
         <thead><tr><th>Subject</th><th>Exam</th><th>Score</th><th>Percentage</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>` : '<p class="empty-state">No released results yet for this student.</p>'}
-      ${allRemarks.length ? `<div class="report-remarks"><strong>📝 Teacher's Remarks</strong>${allRemarks.map(r => `<p style="margin-bottom:6px">${escapeHTML(r)}</p>`).join('')}</div>` : ''}
+      ${allRemarks.length ? `<div class="report-remarks"><strong>ðŸ“ Teacher's Remarks</strong>${allRemarks.map(r => `<p style="margin-bottom:6px">${escapeHTML(r)}</p>`).join('')}</div>` : ''}
     </div>
   `;
 }
