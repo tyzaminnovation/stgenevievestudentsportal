@@ -238,7 +238,7 @@
 <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• LOGIN â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="school-logo">ðŸŒŸ</div>
+    <div class="school-logo">&#127775;</div>
     <h1>St. Genevieve</h1>
     <p class="tagline">Student Learning Portal</p>
 
@@ -272,7 +272,7 @@
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-logo">ðŸŒŸ</span>
+      <span class="topbar-logo">&#127775;</span>
       <div>
         <div class="topbar-title">St. Genevieve</div>
         <div class="topbar-sub">Student Portal</div>
@@ -285,10 +285,10 @@
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('dashboard', this)">ðŸ  Home</div>
-    <div class="nav-tab" onclick="showSection('progress', this)">ðŸ“ˆ My Progress</div>
-    <div class="nav-tab" onclick="showSection('subjects', this)">ðŸ“š Subjects</div>
-    <div class="nav-tab" onclick="showSection('profile', this)">ðŸ‘¤ Profile</div>
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">&#127968; Home</div>
+    <div class="nav-tab" onclick="showSection('progress', this)">&#128200; My Progress</div>
+    <div class="nav-tab" onclick="showSection('subjects', this)">&#128218; Subjects</div>
+    <div class="nav-tab" onclick="showSection('profile', this)">&#128100; Profile</div>
   </div>
 
   <div class="main">
@@ -296,7 +296,7 @@
     <!-- DASHBOARD -->
     <div class="section active" id="section-dashboard">
       <div class="welcome-banner">
-        <div class="welcome-avatar">ðŸŽ’</div>
+        <div class="welcome-avatar">&#127890;</div>
         <div class="welcome-text">
           <h2 id="welcome-name">Welcome back!</h2>
           <p id="welcome-sub">Keep going â€” every lesson brings you closer to your goals.</p>
@@ -304,7 +304,7 @@
       </div>
 
       <div class="encourage-card" id="encourage-card">
-        <strong>ðŸ’¬ Today's Boost</strong>
+        <strong>&#128172; Today's Boost</strong>
         <span id="encourage-text"></span>
       </div>
 
@@ -344,7 +344,7 @@
     <!-- PROFILE -->
     <div class="section" id="section-profile">
       <div class="profile-card">
-        <div class="profile-avatar">ðŸ‘¤</div>
+        <div class="profile-avatar">&#128100;</div>
         <div class="profile-name" id="profile-name"></div>
         <div class="profile-row">
           <div class="profile-field"><label>Student ID</label><span id="profile-id"></span></div>
@@ -354,7 +354,7 @@
       </div>
       <div class="profile-card" style="background:var(--wine-light);border-color:var(--wine)">
         <p style="font-size:14px;color:var(--wine-dark);line-height:1.6">
-          ðŸŒŸ <strong>Keep it up!</strong> Your teachers are proud of the effort you put in every day. Learning is a journey, and you are doing great. Remember: mistakes help your brain grow stronger!
+          &#127775; <strong>Keep it up!</strong> Your teachers are proud of the effort you put in every day. Learning is a journey, and you are doing great. Remember: mistakes help your brain grow stronger!
         </p>
       </div>
     </div>
@@ -594,7 +594,7 @@ async function openSubject(subjectId, name, icon) {
       statusHTML = `<span class="exam-status done">âœ“ ${pct}%</span>`;
       btnHTML = `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')" style="background:#9B4D62">View Result</button>`;
     } else if (sub && sub.status === 'pending') {
-      statusHTML = `<span class="exam-status waiting">â³ Awaiting review</span>`;
+      statusHTML = `<span class="exam-status waiting">&#9203; Awaiting review</span>`;
       btnHTML = `<button class="btn-start-exam" disabled>Submitted</button>`;
     } else {
       statusHTML = `<span class="exam-status pending">Not started</span>`;
@@ -660,7 +660,7 @@ function renderWaitingModal() {
     <h2>${exam.title}</h2>
     <p class="modal-meta">${student.grade} Â· ${exam.desc}</p>
     <div class="waiting-banner">
-      <div class="waiting-icon">â³</div>
+      <div class="waiting-icon">&#9203;</div>
       <div class="waiting-title">Your exam has been submitted!</div>
       <div class="waiting-msg">Your teacher is reviewing your answers. Your score will appear here once it's released. Check back soon!</div>
     </div>
@@ -690,7 +690,7 @@ function renderExamModal(submission) {
     const type = q.type || 'mcq';
 
     if (q.passage && q.passage !== lastPassage) {
-      html += `<div class="passage-box"><div class="passage-label">ðŸ“– Reading Passage</div>${escapeHTML(q.passage)}</div>`;
+      html += `<div class="passage-box"><div class="passage-label">&#128214; Reading Passage</div>${escapeHTML(q.passage)}</div>`;
     }
     lastPassage = q.passage || null;
 
@@ -801,7 +801,7 @@ function renderReadAloudQuestion(i, q, submission) {
   }
   return `
     ${text ? `<div class="readaloud-box">${escapeHTML(text)}</div>` : ''}
-    <div class="readaloud-instruction">ðŸ”Š Read the text above out loud to your teacher. Your teacher will listen and give you a score.</div>
+    <div class="readaloud-instruction">&#128266; Read the text above out loud to your teacher. Your teacher will listen and give you a score.</div>
   `;
 }
 
@@ -960,7 +960,7 @@ async function submitExam() {
 }
 
 function getResultMsg(pct) {
-  if (pct >= 80) return "ðŸŒŸ Excellent work! You're a star â€” keep it up!";
+  if (pct >= 80) return "&#127775; Excellent work! You're a star â€” keep it up!";
   if (pct >= 60) return "ðŸ‘ Good job! A little more practice and you'll be even better!";
   if (pct >= 40) return "ðŸ’ª You tried hard! Review the questions and give it another go.";
   return "ðŸ¤— Don't give up! Every try makes you stronger. Ask your teacher for help.";
