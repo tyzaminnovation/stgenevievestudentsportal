@@ -173,27 +173,44 @@
 </head>
 <body>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• LOGIN â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ============== LOGIN ============== -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="school-logo">ðŸŽ</div>
+    <div class="school-logo">&#128218;</div>
     <h1>St. Genevieve</h1>
     <p class="tagline">Teacher Portal</p>
-    <div class="field-wrap">
-      <div class="field-label">Teacher ID</div>
-      <input type="text" id="login-id" placeholder="e.g. SGP-T-G2" autocomplete="off" autocapitalize="characters" style="letter-spacing:0.05em;font-weight:600">
+
+    <!-- STEP 1: Password -->
+    <div id="login-step-password">
+      <div class="field-wrap">
+        <div class="field-label">Portal Password</div>
+        <input type="password" id="login-password" placeholder="Enter password" autocomplete="off"
+          onkeydown="if(event.key==='Enter') checkPassword()">
+      </div>
+      <button class="btn-primary" onclick="checkPassword()">Continue &rarr;</button>
+      <p class="login-error" id="password-error">Incorrect password. Please try again.</p>
     </div>
-    <button class="btn-primary" onclick="doLogin()">Enter Portal â†’</button>
-    <p class="login-error" id="login-error">Teacher ID not found.</p>
-    <p style="text-align:center;font-size:12px;color:#A89880;margin-top:1.25rem;">Use the Teacher ID given to you by the school administration.</p>
+
+    <!-- STEP 2: Teacher ID -->
+    <div id="login-step-id" style="display:none">
+      <div class="field-wrap">
+        <div class="field-label">Teacher ID</div>
+        <input type="text" id="login-id" placeholder="Enter your Teacher ID"
+          autocomplete="off" autocapitalize="characters"
+          style="letter-spacing:0.05em;font-weight:600"
+          onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Enter Portal &rarr;</button>
+      <p class="login-error" id="login-error">Teacher ID not found.</p>
+    </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â• APP â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ============== APP ============== -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-logo">ðŸŽ</span>
+      <span class="topbar-logo"></span>
       <div>
         <div class="topbar-title">St. Genevieve</div>
         <div class="topbar-sub">Teacher Portal</div>
@@ -208,9 +225,9 @@
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showSection('dashboard', this)">&#127968; Dashboard</div>
     <div class="nav-tab" onclick="showSection('results', this)">&#128202; Review Results</div>
-    <div class="nav-tab" onclick="showSection('create', this)">âœï¸ Create Exam</div>
+    <div class="nav-tab" onclick="showSection('create', this)">[edit] Create Exam</div>
     <div class="nav-tab" onclick="showSection('students', this)">&#128101; Students</div>
-    <div class="nav-tab" onclick="showSection('reports', this)">ðŸ§¾ Report Cards</div>
+    <div class="nav-tab" onclick="showSection('reports', this)"> Report Cards</div>
   </div>
 
   <div class="main">
@@ -224,7 +241,7 @@
         <div class="stat-card"><div class="stat-num" style="color:var(--wine)" id="stat-students">0</div><div class="stat-label">Students</div></div>
         <div class="stat-card"><div class="stat-num" style="color:var(--coral)" id="stat-pending-count">0</div><div class="stat-label">Awaiting Review</div></div>
         <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-released-count">0</div><div class="stat-label">Released Results</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-class-avg">â€”</div><div class="stat-label">Class Average</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-class-avg">-</div><div class="stat-label">Class Average</div></div>
       </div>
 
       <div class="panel">
@@ -233,7 +250,7 @@
       </div>
 
       <div class="panel">
-        <h3>â³ Needs your attention</h3>
+        <h3> Needs your attention</h3>
         <div id="pending-preview"></div>
       </div>
     </div>
@@ -254,7 +271,7 @@
     <!-- CREATE EXAM -->
     <div class="section" id="section-create">
       <h2 class="page-title">Create Exam</h2>
-      <p class="page-sub">Build a new exam for your class â€” it appears on the student portal immediately after saving.</p>
+      <p class="page-sub">Build a new exam for your class - it appears on the student portal immediately after saving.</p>
 
       <div class="panel">
         <h3>Existing exams for your class</h3>
@@ -262,7 +279,7 @@
       </div>
 
       <div class="panel">
-        <h3>ðŸ“¥ Import questions</h3>
+        <h3> Import questions</h3>
         <p style="font-size:12px;color:var(--gray-400);margin-bottom:0.75rem">Paste exam questions here in JSON format, then review everything below before saving.</p>
         <textarea class="import-box" id="import-json" placeholder='[{"type":"mcq","q":"5 + 3 = ?","opts":["7","8","9","10"],"ans":1}, {"type":"drawing","q":"Draw a triangle."}, {"type":"matching","q":"Match the animal to its sound.","pairs":[{"left":"Dog","right":"Bark"},{"left":"Cat","right":"Meow"}]}]'></textarea>
         <button class="btn-sm wine" onclick="importQuestionsJSON()">Import into question builder</button>
@@ -297,7 +314,7 @@
 
     <!-- STUDENTS -->
     <div class="section" id="section-students">
-      <h2 class="page-title">Students â€” <span id="students-grade-label"></span></h2>
+      <h2 class="page-title">Students - <span id="students-grade-label"></span></h2>
       <p class="page-sub">Every student enrolled in your class.</p>
       <div class="panel">
         <table class="data-table" id="students-table">
@@ -324,7 +341,7 @@
 <!-- REVIEW MODAL -->
 <div class="modal-overlay" id="review-modal" style="display:none">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeReviewModal()">âœ•</button>
+    <button class="modal-close" onclick="closeReviewModal()">X</button>
     <div id="review-modal-content"></div>
   </div>
 </div>
@@ -335,7 +352,23 @@ let teacher = null;
 let questionBuilderCount = 0;
 let currentReview = null; // { studentId, examId, exam, submission }
 
-// â”€â”€ LOGIN â”€â”€
+// -- LOGIN --
+// â”€â”€ LOGIN: STEP 1 - PASSWORD â”€â”€
+function checkPassword() {
+  const val = document.getElementById('login-password').value;
+  const err = document.getElementById('password-error');
+  if (val === PORTAL_PASSWORD) {
+    err.style.display = 'none';
+    document.getElementById('login-step-password').style.display = 'none';
+    document.getElementById('login-step-id').style.display = 'block';
+    setTimeout(() => document.getElementById('login-id').focus(), 50);
+  } else {
+    err.style.display = 'block';
+    document.getElementById('login-password').value = '';
+  }
+}
+
+// â”€â”€ LOGIN: STEP 2 - TEACHER ID â”€â”€
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
@@ -355,9 +388,14 @@ async function doLogin() {
 
 function doLogout() {
   teacher = null;
+  document.getElementById('login-step-password').style.display = 'block';
+  document.getElementById('login-step-id').style.display = 'none';
+  document.getElementById('login-password').value = '';
+  document.getElementById('password-error').style.display = 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-id').value = '';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
-  document.getElementById('login-id').value = '';
 }
 
 function showSection(id, tab) {
@@ -372,9 +410,9 @@ function showSection(id, tab) {
 }
 
 async function initApp() {
-  document.getElementById('topbar-teacher').textContent = teacher.name + ' Â· ' + teacher.grade;
-  document.getElementById('dash-title').textContent = 'Welcome, ' + teacher.name + '! ðŸ‘‹';
-  document.getElementById('dash-sub').textContent = teacher.grade + ' Â· St. Genevieve Primary School';
+  document.getElementById('topbar-teacher').textContent = teacher.name + ' - ' + teacher.grade;
+  document.getElementById('dash-title').textContent = 'Welcome, ' + teacher.name + '! !';
+  document.getElementById('dash-sub').textContent = teacher.grade + ' - St. Genevieve Primary School';
 
   populateSubjectFilters();
   await renderDashboard();
@@ -402,7 +440,7 @@ function getClassExams() {
   return result;
 }
 
-// â”€â”€ DASHBOARD â”€â”€
+// -- DASHBOARD --
 async function renderDashboard() {
   const students = getClassStudents();
   const subs = await Store.getAllForGrade(teacher.grade);
@@ -414,7 +452,7 @@ async function renderDashboard() {
   document.getElementById('stat-students').textContent = students.length;
   document.getElementById('stat-pending-count').textContent = pending.length;
   document.getElementById('stat-released-count').textContent = released.length;
-  document.getElementById('stat-class-avg').textContent = avg !== null ? avg + '%' : 'â€”';
+  document.getElementById('stat-class-avg').textContent = avg !== null ? avg + '%' : '-';
 
   // Subject averages
   const subEl = document.getElementById('subject-averages');
@@ -441,7 +479,7 @@ async function renderDashboard() {
   // Pending preview (max 4)
   const previewEl = document.getElementById('pending-preview');
   if (!pending.length) {
-    previewEl.innerHTML = '<p class="empty-state">ðŸŽ‰ Nothing waiting for review right now!</p>';
+    previewEl.innerHTML = '<p class="empty-state"> Nothing waiting for review right now!</p>';
   } else {
     let rows = '';
     pending.slice(0, 5).forEach(sub => {
@@ -452,14 +490,14 @@ async function renderDashboard() {
           <strong style="font-size:14px">${st ? st.name : sub.studentId}</strong>
           <div style="font-size:12px;color:var(--gray-400)">${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</div>
         </div>
-        <button class="btn-sm wine" onclick="showSection('results', document.querySelector('[onclick*=results]'))">Review â†’</button>
+        <button class="btn-sm wine" onclick="showSection('results', document.querySelector('[onclick*=results]'))">Review &rarr;</button>
       </div>`;
     });
     previewEl.innerHTML = rows;
   }
 }
 
-// â”€â”€ REVIEW RESULTS â”€â”€
+// -- REVIEW RESULTS --
 async function renderResultsList() {
   const filter = document.getElementById('results-subject-filter').value;
   const subs = await Store.getAllForGrade(teacher.grade);
@@ -487,7 +525,7 @@ async function renderResultsList() {
       <td>${st ? st.name : sub.studentId}</td>
       <td>${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</td>
       <td>${sub.finalScore}/${sub.finalTotal} (${pct}%)</td>
-      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? 'â³ Pending' : 'âœ“ Released'}</span></td>
+      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? ' Pending' : 'Done Released'}</span></td>
       <td><button class="btn-sm outline" onclick="openReview('${sub.studentId}','${sub.examId}')">${sub.status === 'pending' ? 'Review' : 'View / Edit'}</button></td>
     </tr>`;
   });
@@ -514,10 +552,10 @@ function renderReviewModal() {
   const pct = Math.round((submission.finalScore/submission.finalTotal)*100);
 
   let html = `<h2>${exam.title}</h2>
-  <p class="modal-meta">${student.name} (${student.id}) Â· ${exam.subjectIcon} ${exam.subjectName} Â· Submitted ${new Date(submission.submittedAt).toLocaleString('en-KE', {dateStyle:'medium', timeStyle:'short'})}</p>
+  <p class="modal-meta">${student.name} (${student.id}) - ${exam.subjectIcon} ${exam.subjectName} - Submitted ${new Date(submission.submittedAt).toLocaleString('en-KE', {dateStyle:'medium', timeStyle:'short'})}</p>
   <div style="background:var(--wine-light);border-radius:12px;padding:1rem;text-align:center;margin-bottom:1.25rem">
     <div style="font-size:32px;font-weight:800;color:var(--wine-dark)" id="review-live-score">${submission.finalScore}/${submission.finalTotal} (${pct}%)</div>
-    <div style="font-size:12px;color:var(--wine)">Auto-graded score â€” adjust below if needed</div>
+    <div style="font-size:12px;color:var(--wine)">Auto-graded score - adjust below if needed</div>
   </div>`;
 
   let lastPassage = null;
@@ -540,7 +578,7 @@ function renderReviewModal() {
         let cls = '';
         if (j === q.ans) cls = 'correct-ans';
         if (studentAns === j && j !== q.ans) cls = 'student-wrong';
-        const marker = studentAns === j ? 'ðŸ‘‰ ' : '';
+        const marker = studentAns === j ? '>> ' : '';
         html += `<div class="review-opt ${cls}">${marker}${escapeHTML(opt)}${j === q.ans ? ' (correct answer)' : ''}</div>`;
       });
       html += `<div class="override-toggle">
@@ -580,7 +618,7 @@ function renderReviewModal() {
     } else if (type === 'readaloud') {
       const scoreKey = `ra_${i}`;
       const currentScore = (submission.overrides && submission.overrides[scoreKey]) || 0;
-      html += `<div class="readaloud-box">${q.readText ? escapeHTML(q.readText) : '<em>No passage â€” student read aloud from their book/paper.</em>'}</div>
+      html += `<div class="readaloud-box">${q.readText ? escapeHTML(q.readText) : '<em>No passage - student read aloud from their book/paper.</em>'}</div>
         <div style="margin-top:8px">
           <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px">&#127897; Score this oral reading (enter marks out of the total):</label>
           <div style="display:flex;align-items:center;gap:10px">
@@ -603,9 +641,9 @@ function renderReviewModal() {
       const studentAns = submission.answers[i] || {};
       let rows = q.pairs.map((p, li) => {
         const rIdx = studentAns[li];
-        const studentRight = (rIdx !== undefined && rIdx !== null) ? (q.pairs[rIdx] ? q.pairs[rIdx].right : 'â€”') : null;
+        const studentRight = (rIdx !== undefined && rIdx !== null) ? (q.pairs[rIdx] ? q.pairs[rIdx].right : '-') : null;
         const ok = studentRight === p.right;
-        return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} â†’ <strong style="color:${studentRight ? (ok?'var(--wine)':'var(--coral)') : 'var(--gray-400)'}">${studentRight ? escapeHTML(studentRight) : 'no answer'}</strong> <span style="color:var(--gray-400)">(correct: ${escapeHTML(p.right)})</span></div>`;
+        return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} &rarr; <strong style="color:${studentRight ? (ok?'var(--wine)':'var(--coral)') : 'var(--gray-400)'}">${studentRight ? escapeHTML(studentRight) : 'no answer'}</strong> <span style="color:var(--gray-400)">(correct: ${escapeHTML(p.right)})</span></div>`;
       }).join('');
       html += rows;
       html += `<div class="override-toggle">
@@ -710,7 +748,7 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-// â”€â”€ CREATE EXAM â”€â”€
+// -- CREATE EXAM --
 function addQuestionBuilder(prefill) {
   questionBuilderCount++;
   const id = questionBuilderCount;
@@ -722,8 +760,8 @@ function addQuestionBuilder(prefill) {
   div.innerHTML = `
     <div class="q-header"><span>Question ${id}</span><button class="remove-q" onclick="document.getElementById('qb-${id}').remove()">Remove</button></div>
     <div class="form-row">
-      <label>Reading passage (optional â€” leave blank if not a comprehension question)</label>
-      <textarea id="qb-${id}-passage" placeholder="Paste the reading passage text here if this question refers to oneâ€¦" style="min-height:70px">${prefill ? escapeHTML(prefill.passage || '') : ''}</textarea>
+      <label>Reading passage (optional - leave blank if not a comprehension question)</label>
+      <textarea id="qb-${id}-passage" placeholder="Paste the reading passage text here if this question refers to one..." style="min-height:70px">${prefill ? escapeHTML(prefill.passage || '') : ''}</textarea>
     </div>
     <div class="form-row qtype-select">
       <label>Question type</label>
@@ -732,7 +770,7 @@ function addQuestionBuilder(prefill) {
         <option value="essay" ${type==='essay'?'selected':''}>Essay / short answer (typed)</option>
         <option value="readaloud" ${type==='readaloud'?'selected':''}>Read aloud (teacher scores verbally)</option>
         <option value="drawing" ${type==='drawing'?'selected':''}>Drawing (student draws answer)</option>
-        <option value="matching" ${type==='matching'?'selected':''}>Matching (left â†” right pairs)</option>
+        <option value="matching" ${type==='matching'?'selected':''}>Matching (left &harr; right pairs)</option>
       </select>
     </div>
     <div class="form-row"><input type="text" placeholder="Question text" id="qb-${id}-text" value="${prefill ? escapeHTML(prefill.q || '') : ''}"></div>
@@ -763,10 +801,10 @@ function renderQBBody(id, prefill) {
     const prefillText = (prefill && prefill.readText) || '';
     body.innerHTML = `
       <div class="form-row">
-        <label>Text to read aloud (optional â€” paste the passage if needed)</label>
-        <textarea id="qb-${id}-readtext" style="min-height:80px" placeholder="Paste the reading passage here if students need to read it on screenâ€¦">${escapeHTML(prefillText)}</textarea>
+        <label>Text to read aloud (optional - paste the passage if needed)</label>
+        <textarea id="qb-${id}-readtext" style="min-height:80px" placeholder="Paste the reading passage here if students need to read it on screen...">${escapeHTML(prefillText)}</textarea>
       </div>
-      <p style="font-size:12px;color:var(--gray-400)">The student will see an instruction to read aloud to you. No text box â€” you listen and score manually.</p>`;
+      <p style="font-size:12px;color:var(--gray-400)">The student will see an instruction to read aloud to you. No text box - you listen and score manually.</p>`;
   } else if (type === 'matching') {
     const pairs = (prefill && prefill.pairs && prefill.pairs.length) ? prefill.pairs : [{left:'',right:''},{left:'',right:''}];
     body.innerHTML = `<div id="qb-${id}-pairs">` + pairs.map((p, i) => pairRowHTML(id, i, p)).join('') + `</div>
@@ -778,9 +816,9 @@ function renderQBBody(id, prefill) {
 function pairRowHTML(id, i, pair) {
   return `<div class="pair-row" id="qb-${id}-pair-${i}">
     <input type="text" placeholder="Left item" id="qb-${id}-pair${i}-left" value="${escapeHTML(pair.left||'')}">
-    <span class="pair-arrow">â†”</span>
+    <span class="pair-arrow">&harr;</span>
     <input type="text" placeholder="Right item" id="qb-${id}-pair${i}-right" value="${escapeHTML(pair.right||'')}">
-    <button type="button" class="remove-q" onclick="document.getElementById('qb-${id}-pair-${i}').remove()">âœ•</button>
+    <button type="button" class="remove-q" onclick="document.getElementById('qb-${id}-pair-${i}').remove()">X</button>
   </div>`;
 }
 
@@ -875,14 +913,14 @@ async function saveNewExam() {
   EXAMS[subjectId].push(newExam);
 
   msgEl.style.color = 'var(--wine)';
-  msgEl.textContent = 'Savingâ€¦';
+  msgEl.textContent = 'Saving...';
   msgEl.style.display = 'block';
 
   const saved = await saveExamToBackend(subjectId, newExam);
 
   msgEl.textContent = saved
-    ? 'âœ“ Exam saved! It is now visible to students on every device.'
-    : 'âš ï¸ Exam saved on this device, but could not reach the shared backend â€” check that SCRIPT_URL is set correctly in portal-data.js. Students on other devices won\'t see it yet.';
+    ? 'Done Exam saved! It is now visible to students on every device.'
+    : '! Exam saved on this device, but could not reach the shared backend - check that SCRIPT_URL is set correctly in portal-data.js. Students on other devices won\'t see it yet.';
   msgEl.style.color = saved ? 'var(--wine)' : 'var(--coral)';
 
   document.getElementById('new-exam-title').value = '';
@@ -905,7 +943,7 @@ function renderManageExams() {
     <div class="exam-manage-card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
       <div>
         <h4>${e.subjectIcon} ${e.title}</h4>
-        <p>${e.subjectName} Â· ${e.desc || 'No description'} Â· ${e.questions.length} questions</p>
+        <p>${e.subjectName} - ${e.desc || 'No description'} - ${e.questions.length} questions</p>
       </div>
       <button onclick="deleteExam('${e.subjectId}','${e.id}')"
         style="background:#fff;border:1.5px solid var(--coral);color:var(--coral);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
@@ -929,7 +967,7 @@ async function deleteExam(subjectId, examId) {
   renderManageExams();
 }
 
-// â”€â”€ STUDENTS â”€â”€
+// -- STUDENTS --
 async function renderStudentsTable() {
   document.getElementById('students-grade-label').textContent = teacher.grade;
   const students = getClassStudents();
@@ -946,17 +984,17 @@ async function renderStudentsTable() {
       <td><strong>${st.name}</strong></td>
       <td>${st.id}</td>
       <td>${released.length}</td>
-      <td>${avg !== null ? avg + '%' : 'â€”'}</td>
+      <td>${avg !== null ? avg + '%' : '-'}</td>
     </tr>`;
   }
   tbody.innerHTML = rows;
 }
 
-// â”€â”€ REPORT CARDS â”€â”€
+// -- REPORT CARDS --
 function renderReportSelector() {
   const sel = document.getElementById('report-student-select');
   const students = getClassStudents();
-  sel.innerHTML = '<option value="">Select a studentâ€¦</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+  sel.innerHTML = '<option value="">Select a student...</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
 }
 
 async function renderReportCard() {
@@ -974,7 +1012,7 @@ async function renderReportCard() {
     const exam = classExams.find(e => e.id === sub.examId);
     const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
     rows += `<tr>
-      <td>${exam ? exam.subjectIcon + ' ' + exam.subjectName : 'â€”'}</td>
+      <td>${exam ? exam.subjectIcon + ' ' + exam.subjectName : '-'}</td>
       <td>${exam ? exam.title : sub.examId}</td>
       <td>${sub.finalScore}/${sub.finalTotal}</td>
       <td>${pct}%</td>
@@ -987,7 +1025,7 @@ async function renderReportCard() {
 
   areaEl.innerHTML = `
     <div style="margin-bottom:1rem;display:flex;gap:10px">
-      <button class="btn-sm wine" onclick="window.print()">ðŸ–¨ï¸ Print Report Card</button>
+      <button class="btn-sm wine" onclick="window.print()"> Print Report Card</button>
     </div>
     <div class="report-card" id="report-print-area">
       <div class="report-header">
