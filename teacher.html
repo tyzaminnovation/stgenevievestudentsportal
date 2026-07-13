@@ -206,10 +206,10 @@
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('dashboard', this)">ðŸ  Dashboard</div>
-    <div class="nav-tab" onclick="showSection('results', this)">ðŸ“Š Review Results</div>
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">&#127968; Dashboard</div>
+    <div class="nav-tab" onclick="showSection('results', this)">&#128202; Review Results</div>
     <div class="nav-tab" onclick="showSection('create', this)">âœï¸ Create Exam</div>
-    <div class="nav-tab" onclick="showSection('students', this)">ðŸ‘¥ Students</div>
+    <div class="nav-tab" onclick="showSection('students', this)">&#128101; Students</div>
     <div class="nav-tab" onclick="showSection('reports', this)">ðŸ§¾ Report Cards</div>
   </div>
 
@@ -526,7 +526,7 @@ function renderReviewModal() {
     const isOverridden = submission.overrides && submission.overrides.hasOwnProperty(i);
 
     if (q.passage && q.passage !== lastPassage) {
-      html += `<div class="passage-box-review"><strong>ðŸ“– Reading Passage</strong><br>${escapeHTML(q.passage)}</div>`;
+      html += `<div class="passage-box-review"><strong>&#128214; Reading Passage</strong><br>${escapeHTML(q.passage)}</div>`;
     }
     lastPassage = q.passage || null;
 
@@ -561,8 +561,8 @@ function renderReviewModal() {
             <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:4px">${escapeHTML(part)}</div>
             <div class="essay-answer-box" style="margin-bottom:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</div>
             <div class="override-toggle">
-              <label><input type="radio" name="override-${i}-${pi}" ${partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},true)"> âœ… Mark correct</label>
-              <label><input type="radio" name="override-${i}-${pi}" ${!partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},false)"> âŒ Mark wrong</label>
+              <label><input type="radio" name="override-${i}-${pi}" ${partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},true)"> &#9989; Mark correct</label>
+              <label><input type="radio" name="override-${i}-${pi}" ${!partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},false)"> &#10060; Mark wrong</label>
             </div>
           </div>`;
         });
@@ -573,8 +573,8 @@ function renderReviewModal() {
           ? `<div class="essay-answer-box">${escapeHTML(text)}</div>`
           : `<p style="font-size:13px;color:var(--gray-400)">No answer submitted.</p>`;
         html += `<div class="override-toggle">
-          <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> âœ… Mark correct</label>
-          <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> âŒ Mark wrong</label>
+          <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> &#9989; Mark correct</label>
+          <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> &#10060; Mark wrong</label>
         </div>`;
       }
     } else if (type === 'readaloud') {
@@ -582,7 +582,7 @@ function renderReviewModal() {
       const currentScore = (submission.overrides && submission.overrides[scoreKey]) || 0;
       html += `<div class="readaloud-box">${q.readText ? escapeHTML(q.readText) : '<em>No passage â€” student read aloud from their book/paper.</em>'}</div>
         <div style="margin-top:8px">
-          <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px">ðŸŽ™ï¸ Score this oral reading (enter marks out of the total):</label>
+          <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px">&#127897; Score this oral reading (enter marks out of the total):</label>
           <div style="display:flex;align-items:center;gap:10px">
             <input type="number" min="0" max="100" value="${currentScore}"
               style="width:80px;padding:8px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:15px;font-weight:700"
@@ -909,7 +909,7 @@ function renderManageExams() {
       </div>
       <button onclick="deleteExam('${e.subjectId}','${e.id}')"
         style="background:#fff;border:1.5px solid var(--coral);color:var(--coral);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
-        ðŸ—‘ Delete
+        &#128465; Delete
       </button>
     </div>
   `).join('');
@@ -1004,7 +1004,7 @@ async function renderReportCard() {
         <thead><tr><th>Subject</th><th>Exam</th><th>Score</th><th>Percentage</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>` : '<p class="empty-state">No released results yet for this student.</p>'}
-      ${allRemarks.length ? `<div class="report-remarks"><strong>ðŸ“ Teacher's Remarks</strong>${allRemarks.map(r => `<p style="margin-bottom:6px">${escapeHTML(r)}</p>`).join('')}</div>` : ''}
+      ${allRemarks.length ? `<div class="report-remarks"><strong>&#128221; Teacher's Remarks</strong>${allRemarks.map(r => `<p style="margin-bottom:6px">${escapeHTML(r)}</p>`).join('')}</div>` : ''}
     </div>
   `;
 }
