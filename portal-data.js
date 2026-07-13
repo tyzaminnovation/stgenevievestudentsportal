@@ -73,6 +73,11 @@ const ENCOURAGEMENTS = [
   "Learning is a superpower, and you are a superhero in training! 🦸",
 ];
 
+// ───────────────────────── PORTAL PASSWORD ─────────────────────────
+// Shared password for ALL students. Change this to whatever you want.
+// Keep it simple enough for your students to remember!
+const PORTAL_PASSWORD = 'stgen2026';
+
 // ───────────────────────── SUBJECTS ─────────────────────────
 const SUBJECTS = [
   { id: "math",          name: "Mathematics",             icon: "➕", color: "#7A1C2E" },
