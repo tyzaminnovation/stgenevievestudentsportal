@@ -87,6 +87,8 @@ const SUBJECTS = [
   { id: "environmental", name: "Environmental Activities",icon: "🌿", color: "#3A7D44" },
   { id: "creative-arts", name: "Creative Arts",           icon: "🎨", color: "#D4620A" },
   { id: "psychomotor",   name: "Psychomotor Activities",  icon: "🏃", color: "#1A6B8A" },
+  { id: "Kiswahili",   name: "Kiswahili",  icon: "🏃", color: "#1A6B8A" },
+  
   // ADD MORE SUBJECTS HERE
 ];
 
