@@ -406,13 +406,22 @@ async function loadAllExams() {
 // shared backend (not just the local EXAMS object in memory).
 // Since scriptPost_ can no longer read the write response (see comment
 // above scriptPost_), we confirm success by doing a fresh GET afterward
-// and checking the exam actually landed in the sheet.
+// and checking the exam actually landed in the sheet. We retry the
+// verification a couple of times with a short delay in case there's a
+// brief lag between the write finishing and it being readable again.
 async function saveExamToBackend(subjectId, exam) {
   try {
     await scriptPost_('saveExam', { subjectId, exam });
-    const data = await scriptGet_('getExams');
-    const landed = !!(data.ok && data.exams.some(e => e.id === exam.id));
-    if (!landed) console.error('saveExamToBackend: exam not found on backend after save');
+
+    let landed = false;
+    for (let attempt = 0; attempt < 4 && !landed; attempt++) {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 800));
+      const data = await scriptGet_('getExams');
+      const ids = (data.exams || []).map(e => e.id);
+      console.log(`saveExamToBackend verify attempt ${attempt}: ok=${data.ok} examCount=${ids.length} lookingFor=${exam.id} found=${ids.includes(exam.id)}`);
+      landed = !!(data.ok && ids.includes(exam.id));
+    }
+    if (!landed) console.error('saveExamToBackend: exam still not found on backend after 4 verify attempts — see logs above');
     return landed;
   } catch (e) {
     console.error('saveExamToBackend failed:', e);
