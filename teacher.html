@@ -353,7 +353,7 @@ let questionBuilderCount = 0;
 let currentReview = null; // { studentId, examId, exam, submission }
 
 // -- LOGIN --
-// â”€â”€ LOGIN: STEP 1 - PASSWORD â”€â”€
+// Ã¢â€â‚¬Ã¢â€â‚¬ LOGIN: STEP 1 - PASSWORD Ã¢â€â‚¬Ã¢â€â‚¬
 function checkPassword() {
   const val = document.getElementById('login-password').value;
   const err = document.getElementById('password-error');
@@ -368,7 +368,7 @@ function checkPassword() {
   }
 }
 
-// â”€â”€ LOGIN: STEP 2 - TEACHER ID â”€â”€
+// Ã¢â€â‚¬Ã¢â€â‚¬ LOGIN: STEP 2 - TEACHER ID Ã¢â€â‚¬Ã¢â€â‚¬
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
@@ -830,20 +830,30 @@ function addPairRow(id) {
 
 function importQuestionsJSON() {
   const msgEl = document.getElementById('import-msg');
-  const raw = document.getElementById('import-json').value.trim();
+  let raw = document.getElementById('import-json').value.trim();
   if (!raw) { msgEl.textContent = 'Paste some question JSON first.'; msgEl.style.display = 'block'; return; }
+
+  // Fix curly/smart quotes that appear when copying from chat or Word
+  raw = raw
+    .replace(/[\u2018\u2019]/g, "'")   // smart single quotes
+    .replace(/[\u201C\u201D]/g, '"')   // smart double quotes
+    .replace(/[\u2013\u2014]/g, '-');  // em/en dashes
+
   let questions;
   try {
     questions = JSON.parse(raw);
     if (!Array.isArray(questions)) throw new Error('Not an array');
   } catch (e) {
-    msgEl.textContent = 'Could not parse that as valid JSON. Make sure it\'s a [ ] array of question objects.';
+    msgEl.textContent = 'Could not parse the JSON â€” check that it starts with [ and ends with ]. Error: ' + e.message;
     msgEl.style.display = 'block';
     return;
   }
   msgEl.style.display = 'none';
   questions.forEach(q => addQuestionBuilder(q));
   document.getElementById('import-json').value = '';
+  msgEl.style.color = 'var(--wine)';
+  msgEl.textContent = questions.length + ' question(s) imported! Review below then click Save Exam.';
+  msgEl.style.display = 'block';
 }
 
 async function saveNewExam() {
