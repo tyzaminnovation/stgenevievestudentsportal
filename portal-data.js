@@ -274,7 +274,7 @@ async function scriptPost_(action, payload) {
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
-}
+
 
 // In-memory cache of submissions for this page load (refreshed on each
 // write, and on each render call) — avoids hammering the API on every
@@ -399,5 +399,4 @@ async function saveExamToBackend(subjectId, exam) {
     return false;
   }
 }
-  }
-}
+  
