@@ -267,10 +267,13 @@ async function scriptGet_(action, params) {
 async function scriptPost_(action, payload) {
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
+    redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ action, ...payload }),
   });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
+}
 }
 
 // In-memory cache of submissions for this page load (refreshed on each
@@ -388,10 +391,13 @@ async function loadAllExams() {
 // shared backend (not just the local EXAMS object in memory).
 async function saveExamToBackend(subjectId, exam) {
   try {
-    await scriptPost_('saveExam', { subjectId, exam });
+    const result = await scriptPost_('saveExam', { subjectId, exam });
+    if (!result || !result.ok) throw new Error('Backend returned not-ok: ' + JSON.stringify(result));
     return true;
   } catch (e) {
-    console.error('Could not save exam to backend:', e);
+    console.error('saveExamToBackend failed:', e);
     return false;
+  }
+}
   }
 }
