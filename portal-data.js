@@ -264,15 +264,25 @@ async function scriptGet_(action, params) {
 // Sent as text/plain (NOT application/json) on purpose — this avoids a
 // CORS preflight request, which Apps Script web apps don't handle well.
 // The script still parses the body as JSON on its end.
+//
+// IMPORTANT: this is fired with mode:'no-cors'. Apps Script web app POST
+// responses frequently come back without an Access-Control-Allow-Origin
+// header, even when the deployment is configured correctly (Execute as:
+// Me, Who has access: Anyone) — this is a longstanding Apps Script quirk,
+// not a config mistake. With mode:'cors' (the default), the browser
+// blocks reading that response and fetch() throws, even though the
+// write actually reached and ran on the server. GET requests don't have
+// this problem. So writes are fire-and-forget here (we can't read the
+// response body — it comes back opaque), and every caller below follows
+// up with a real GET to confirm and fetch the fresh saved state.
 async function scriptPost_(action, payload) {
-  const res = await fetch(SCRIPT_URL, {
+  await fetch(SCRIPT_URL, {
     method: 'POST',
+    mode: 'no-cors',
     redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ action, ...payload }),
   });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.json();
 }
 
 
@@ -299,14 +309,23 @@ async function allSubmissions_(forceRefresh) {
    pending → teacher review/override → release → student sees
    result works across any device, not just one browser.
    ============================================================ */
+// After a write, scriptPost_ can't hand us the saved row directly anymore
+// (see the comment above scriptPost_), so we force-refresh submissions
+// from a real GET and pull the row back out of that. This is also just a
+// more trustworthy source of truth than an echoed response would be,
+// since it confirms the write actually landed in the Sheet.
+async function refreshedSubmission_(studentId, examId) {
+  const all = await allSubmissions_(true);
+  return all.find(s => s.studentId === studentId && s.examId === examId) || null;
+}
+
 const Store = {
   // autoScore and autoTotal are no longer sent — the Apps Script
   // calculates the score server-side using the stored ans values
   // so students can never read correct answers from the browser.
   async submitExam(studentId, examId, subjectId, answers) {
-    const data = await scriptPost_('submitExam', { studentId, examId, subjectId, answers });
-    await allSubmissions_(true);
-    return data.submission;
+    await scriptPost_('submitExam', { studentId, examId, subjectId, answers });
+    return refreshedSubmission_(studentId, examId);
   },
 
   async getSubmission(studentId, examId) {
@@ -331,27 +350,23 @@ const Store = {
   },
 
   async overrideAnswer(studentId, examId, questionIndex, markCorrect, exam) {
-    const data = await scriptPost_('overrideAnswer', { studentId, examId, questionIndex, markCorrect, questions: exam.questions });
-    await allSubmissions_(true);
-    return data.submission;
+    await scriptPost_('overrideAnswer', { studentId, examId, questionIndex, markCorrect, questions: exam.questions });
+    return refreshedSubmission_(studentId, examId);
   },
 
   async saveRemarks(studentId, examId, remarks) {
-    const data = await scriptPost_('saveRemarks', { studentId, examId, remarks });
-    await allSubmissions_(true);
-    return data.submission;
+    await scriptPost_('saveRemarks', { studentId, examId, remarks });
+    return refreshedSubmission_(studentId, examId);
   },
 
   async releaseResult(studentId, examId) {
-    const data = await scriptPost_('releaseResult', { studentId, examId });
-    await allSubmissions_(true);
-    return data.submission;
+    await scriptPost_('releaseResult', { studentId, examId });
+    return refreshedSubmission_(studentId, examId);
   },
 
   async unreleaseResult(studentId, examId) {
-    const data = await scriptPost_('unreleaseResult', { studentId, examId });
-    await allSubmissions_(true);
-    return data.submission;
+    await scriptPost_('unreleaseResult', { studentId, examId });
+    return refreshedSubmission_(studentId, examId);
   },
 };
 
@@ -389,11 +404,16 @@ async function loadAllExams() {
 
 // Called by teacher.html's saveNewExam() so new exams are saved to the
 // shared backend (not just the local EXAMS object in memory).
+// Since scriptPost_ can no longer read the write response (see comment
+// above scriptPost_), we confirm success by doing a fresh GET afterward
+// and checking the exam actually landed in the sheet.
 async function saveExamToBackend(subjectId, exam) {
   try {
-    const result = await scriptPost_('saveExam', { subjectId, exam });
-    if (!result || !result.ok) throw new Error('Backend returned not-ok: ' + JSON.stringify(result));
-    return true;
+    await scriptPost_('saveExam', { subjectId, exam });
+    const data = await scriptGet_('getExams');
+    const landed = !!(data.ok && data.exams.some(e => e.id === exam.id));
+    if (!landed) console.error('saveExamToBackend: exam not found on backend after save');
+    return landed;
   } catch (e) {
     console.error('saveExamToBackend failed:', e);
     return false;
