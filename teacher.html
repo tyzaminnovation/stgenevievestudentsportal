@@ -353,7 +353,7 @@ let questionBuilderCount = 0;
 let currentReview = null; // { studentId, examId, exam, submission }
 
 // -- LOGIN --
-// Ã¢â€â‚¬Ã¢â€â‚¬ LOGIN: STEP 1 - PASSWORD Ã¢â€â‚¬Ã¢â€â‚¬
+// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LOGIN: STEP 1 - PASSWORD ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 function checkPassword() {
   const val = document.getElementById('login-password').value;
   const err = document.getElementById('password-error');
@@ -368,7 +368,7 @@ function checkPassword() {
   }
 }
 
-// Ã¢â€â‚¬Ã¢â€â‚¬ LOGIN: STEP 2 - TEACHER ID Ã¢â€â‚¬Ã¢â€â‚¬
+// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LOGIN: STEP 2 - TEACHER ID ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
@@ -592,12 +592,15 @@ function renderReviewModal() {
       if (subParts && typeof studentAns === 'object' && studentAns !== null) {
         html += `<div style="margin-bottom:8px">`;
         subParts.forEach((part, pi) => {
-          const partAns = studentAns[pi] || '';
+          const partAns = studentAns[pi];
           const partOverridden = submission.overrides && submission.overrides[`${i}_${pi}`] !== undefined;
           const partCorrect = partOverridden ? submission.overrides[`${i}_${pi}`] : false;
+          const answerDisplay = hasBlanks_(part)
+            ? `<div class="essay-answer-box" style="margin-bottom:8px">${renderBlankLineFilled_(part, partAns)}</div>`
+            : `<div class="essay-answer-box" style="margin-bottom:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</div>`;
           html += `<div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:10px 14px;margin-bottom:8px">
             <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:4px">${escapeHTML(part)}</div>
-            <div class="essay-answer-box" style="margin-bottom:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</div>
+            ${answerDisplay}
             <div class="override-toggle">
               <label><input type="radio" name="override-${i}-${pi}" ${partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},true)"> &#9989; Mark correct</label>
               <label><input type="radio" name="override-${i}-${pi}" ${!partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},false)"> &#10060; Mark wrong</label>
@@ -605,6 +608,12 @@ function renderReviewModal() {
           </div>`;
         });
         html += `</div>`;
+      } else if (!subParts && hasBlanks_(q.q)) {
+        html += `<div class="essay-answer-box">${renderBlankLineFilled_(q.q, studentAns)}</div>`;
+        html += `<div class="override-toggle">
+          <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> &#9989; Mark correct</label>
+          <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> &#10060; Mark wrong</label>
+        </div>`;
       } else {
         const text = typeof studentAns === 'string' ? studentAns : JSON.stringify(studentAns);
         html += text
@@ -674,9 +683,41 @@ function renderReviewModal() {
 
 function parseSubParts_(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  const pattern = /^([a-zA-Z]\)|[a-zA-Z]\.|[0-9]+[.)]\s*|[ivxIVX]+\.\s*)/;
-  const subLines = lines.filter(l => pattern.test(l));
-  return subLines.length >= 2 ? subLines : null;
+  const linePattern = /^([a-zA-Z]\)|[a-zA-Z]\.|[0-9]+[.)]\s*|[ivxIVX]+\.\s*)/;
+  const subLines = lines.filter(l => linePattern.test(l));
+  if (subLines.length >= 2) return subLines;
+
+  // Fallback: markers like a) b) c) found anywhere in a run-on line with
+  // no line breaks (teachers sometimes type them all on one line).
+  const markerPattern = /(?<![A-Za-z])([a-hA-H])\)\s*/g;
+  const matches = [...text.matchAll(markerPattern)];
+  if (matches.length >= 2) {
+    const parts = [];
+    for (let m = 0; m < matches.length; m++) {
+      const start = matches[m].index;
+      const end = m + 1 < matches.length ? matches[m + 1].index : text.length;
+      parts.push(text.slice(start, end).trim());
+    }
+    return parts;
+  }
+  return null;
+}
+
+function hasBlanks_(text) { return /_{3,}/.test(text); }
+
+// Reconstructs a line of text with the student's typed answers shown
+// inline where each blank was, for readable grading.
+function renderBlankLineFilled_(text, val) {
+  const segments = text.split(/_{3,}/);
+  let html = '';
+  segments.forEach((seg, idx) => {
+    html += escapeHTML(seg);
+    if (idx < segments.length - 1) {
+      const ans = (Array.isArray(val) && val[idx]) ? val[idx] : '';
+      html += `<span style="display:inline-block;min-width:36px;padding:1px 6px;margin:0 2px;border-bottom:2px solid var(--gray-400);font-weight:700;color:var(--wine-dark)">${ans ? escapeHTML(String(ans)) : '&mdash;'}</span>`;
+    }
+  });
+  return html;
 }
 
 async function setSubPartOverride(qIndex, partIndex, markCorrect) {
@@ -796,7 +837,7 @@ function renderQBBody(id, prefill) {
   } else if (type === 'drawing') {
     body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a blank drawing pad to answer this question. You'll grade it manually when reviewing results.</p>`;
   } else if (type === 'essay') {
-    body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a text box to type their answer. You'll grade it manually when reviewing results.</p>`;
+    body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a text box to type their answer. You'll grade it manually when reviewing results.<br><strong>Tip:</strong> type <code>___</code> (3+ underscores) anywhere you want a fill-in-the-blank box, e.g. "12 = ___ tens ___ ones". For multi-part questions, start each part with a), b), c)... (on its own line, or run together like "a) ... b) ...") and each part gets its own answer line.</p>`;
   } else if (type === 'readaloud') {
     const prefillText = (prefill && prefill.readText) || '';
     body.innerHTML = `
@@ -844,7 +885,7 @@ function importQuestionsJSON() {
     questions = JSON.parse(raw);
     if (!Array.isArray(questions)) throw new Error('Not an array');
   } catch (e) {
-    msgEl.textContent = 'Could not parse the JSON â€” check that it starts with [ and ends with ]. Error: ' + e.message;
+    msgEl.textContent = 'Could not parse the JSON Ã¢â‚¬â€ check that it starts with [ and ends with ]. Error: ' + e.message;
     msgEl.style.display = 'block';
     return;
   }
