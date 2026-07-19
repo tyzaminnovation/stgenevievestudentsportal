@@ -3,182 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>St. Genevieve Teacher Portal</title>
+<title>St. Genevieve Student Portal</title>
 <style>
   :root {
-    --wine: #7A1C2E;
-    --wine-dark: #4A0D1A;
-    --wine-light: #F5E6E9;
+    --green: #7A1C2E;
+    --green-light: #F5E6E9;
+    --green-dark: #4A0D1A;
     --amber: #C0884A;
     --amber-light: #FDF3E7;
     --purple: #9B4D62;
+    --purple-light: #F7EAED;
     --coral: #B5451B;
     --coral-light: #FAEAE5;
-    --cream: #FAF7F2;
+    --gray-100: #FAF7F2;
     --gray-200: #EDE8E0;
     --gray-400: #A89880;
     --gray-700: #5C4A3A;
     --gray-900: #2C1A10;
     --white: #FFFDF8;
+    --cream: #FAF7F2;
+    --wine: #7A1C2E;
+    --wine-dark: #4A0D1A;
+    --wine-light: #F5E6E9;
     --radius: 12px;
     --radius-sm: 8px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--cream); color: var(--gray-900); min-height: 100vh; }
 
-  /* LOGIN */
-  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, #4A0D1A 0%, #7A1C2E 55%, #B5728A 100%); padding: 1rem; }
-  .login-card { background: var(--white); border-radius: 20px; padding: 2.5rem 2rem; width: 100%; max-width: 400px; box-shadow: 0 24px 64px rgba(74,13,26,0.28); }
-  .school-logo { width: 64px; height: 64px; background: var(--wine-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 1.25rem; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--gray-900);
+    min-height: 100vh;
+  }
+
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #4A0D1A 0%, #7A1C2E 55%, #B5728A 100%);
+    padding: 1rem;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 24px 64px rgba(74,13,26,0.28);
+  }
+
+  .school-logo {
+    width: 64px; height: 64px;
+    background: var(--wine-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 1.25rem;
+  }
+
   .login-card h1 { font-size: 22px; font-weight: 700; text-align: center; color: var(--wine-dark); margin-bottom: 4px; }
   .login-card .tagline { text-align: center; font-size: 13px; color: var(--gray-400); margin-bottom: 2rem; }
+
   .field-label { font-size: 12px; font-weight: 600; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
   .field-wrap { margin-bottom: 1rem; }
-  input[type="text"], textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 15px; background: var(--cream); color: var(--gray-900); outline: none; transition: border-color 0.2s; font-family: inherit; }
-  input:focus, textarea:focus { border-color: var(--wine); background: var(--white); }
-  .btn-primary { width: 100%; padding: 13px; background: var(--wine); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+
+  input[type="text"] {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+    font-size: 15px; background: var(--cream); color: var(--gray-900); outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--wine); background: var(--white); }
+
+  .btn-primary {
+    width: 100%; padding: 13px; background: var(--wine); color: white; border: none;
+    border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: background 0.2s, transform 0.1s; margin-top: 0.5rem;
+  }
   .btn-primary:hover { background: var(--wine-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+
   .login-error { color: var(--coral); font-size: 13px; text-align: center; margin-top: 0.75rem; display: none; }
 
-  /* APP SHELL */
   #app { display: none; min-height: 100vh; }
-  .topbar { background: var(--wine-dark); color: white; padding: 0 1.5rem; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+
+  .topbar {
+    background: var(--wine-dark); color: white; padding: 0 1.5rem; height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
   .topbar-left { display: flex; align-items: center; gap: 10px; }
   .topbar-logo { font-size: 22px; }
-  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-title { font-size: 16px; font-weight: 700; color: white; }
   .topbar-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .teacher-badge { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 600; }
-  .btn-logout { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; }
+  .student-badge { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 5px 12px; font-size: 13px; font-weight: 600; }
+  .btn-logout { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: background 0.2s; }
   .btn-logout:hover { background: rgba(255,255,255,0.25); }
 
   .nav-tabs { background: var(--white); border-bottom: 1.5px solid var(--gray-200); display: flex; padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none; }
   .nav-tabs::-webkit-scrollbar { display: none; }
-  .nav-tab { padding: 14px 18px; font-size: 14px; font-weight: 600; color: var(--gray-400); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .nav-tab { padding: 14px 20px; font-size: 14px; font-weight: 600; color: var(--gray-400); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; }
   .nav-tab.active { color: var(--wine); border-bottom-color: var(--wine); }
   .nav-tab:hover:not(.active) { color: var(--gray-700); }
 
-  .main { padding: 1.5rem; max-width: 1000px; margin: 0 auto; }
+  .main { padding: 1.5rem; max-width: 860px; margin: 0 auto; }
   .section { display: none; }
   .section.active { display: block; }
 
-  h2.page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-  p.page-sub { font-size: 13px; color: var(--gray-400); margin-bottom: 1.25rem; }
+  .welcome-banner { background: linear-gradient(135deg, var(--wine-dark) 0%, var(--wine) 100%); color: white; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; }
+  .welcome-avatar { width: 56px; height: 56px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .welcome-text h2 { font-size: 20px; font-weight: 700; }
+  .welcome-text p { font-size: 13px; opacity: 0.85; margin-top: 3px; }
 
-  /* DASHBOARD STATS */
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
-  .stat-card { background: var(--white); border-radius: var(--radius-sm); padding: 1.1rem; text-align: center; border: 1.5px solid var(--gray-200); }
+  .encourage-card { background: var(--amber-light); border-left: 4px solid var(--amber); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 1.25rem; font-size: 14px; color: #7A1C2E; line-height: 1.55; }
+  .encourage-card strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--amber); margin-bottom: 4px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
+  .stat-card { background: var(--white); border-radius: var(--radius-sm); padding: 1rem; text-align: center; border: 1.5px solid var(--gray-200); }
   .stat-card .stat-num { font-size: 28px; font-weight: 700; margin-bottom: 3px; }
   .stat-card .stat-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
 
-  .panel { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--gray-200); padding: 1.25rem; margin-bottom: 1.25rem; }
-  .panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 1rem; color: var(--gray-700); }
+  .progress-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 0.75rem; color: var(--gray-700); }
+  .subject-progress-card { background: var(--white); border-radius: var(--radius-sm); border: 1.5px solid var(--gray-200); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .subj-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .subj-name { font-size: 15px; font-weight: 600; }
+  .subj-score { font-size: 14px; font-weight: 700; }
+  .progress-bar-bg { background: var(--gray-200); border-radius: 10px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 0.8s ease; }
+  .score-history { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .score-pill { background: var(--cream); border-radius: 20px; padding: 3px 10px; font-size: 11px; color: var(--gray-700); }
 
-  /* TABLE */
-  table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.data-table th { text-align: left; padding: 8px 10px; color: var(--gray-400); font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; border-bottom: 2px solid var(--gray-200); }
-  table.data-table td { padding: 10px 10px; border-bottom: 1px solid var(--gray-200); }
-  table.data-table tr:last-child td { border-bottom: none; }
-  table.data-table tr:hover { background: var(--cream); }
+  .grade-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--wine); background: var(--wine-light); display: inline-block; padding: 3px 10px; border-radius: 20px; margin-bottom: 1rem; }
+  .subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .subject-card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--gray-200); padding: 1.25rem; cursor: pointer; transition: border-color 0.2s, transform 0.15s; }
+  .subject-card:hover { border-color: var(--wine); transform: translateY(-2px); }
+  .subject-card .subj-icon { font-size: 28px; margin-bottom: 10px; }
+  .subject-card .subj-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .subject-card .subj-meta { font-size: 12px; color: var(--gray-400); }
+  .subject-card .exam-count { margin-top: 10px; font-size: 11px; font-weight: 700; color: var(--wine); background: var(--wine-light); display: inline-block; padding: 2px 9px; border-radius: 20px; }
 
-  .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-  .pill.pending { background: var(--amber-light); color: #7A1C2E; }
-  .pill.released { background: var(--wine-light); color: var(--wine-dark); }
-  .pill.none { background: var(--gray-200); color: var(--gray-400); }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--wine); cursor: pointer; font-weight: 600; margin-bottom: 1.25rem; padding: 6px 0; }
+  .back-btn:hover { color: var(--wine-dark); }
 
-  .btn-sm { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: background 0.2s; }
-  .btn-sm.wine { background: var(--wine); color: white; }
-  .btn-sm.wine:hover { background: var(--wine-dark); }
-  .btn-sm.outline { background: transparent; color: var(--wine); border: 1.5px solid var(--wine); }
-  .btn-sm.outline:hover { background: var(--wine-light); }
+  .exam-card { background: var(--white); border-radius: var(--radius-sm); border: 1.5px solid var(--gray-200); padding: 1rem 1.25rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .exam-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .exam-info p { font-size: 12px; color: var(--gray-400); }
+  .exam-status { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+  .exam-status.done { background: var(--wine-light); color: var(--wine-dark); }
+  .exam-status.waiting { background: var(--amber-light); color: #7A1C2E; }
+  .exam-status.pending { background: var(--cream); color: var(--gray-400); border: 1.5px solid var(--gray-200); }
 
-  /* EXAM CARDS for "Create Exam" listing */
-  .exam-manage-card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
-  .exam-manage-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
-  .exam-manage-card p { font-size: 12px; color: var(--gray-400); }
+  .btn-start-exam { padding: 8px 18px; background: var(--wine); color: white; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+  .btn-start-exam:hover { background: var(--wine-dark); }
+  .btn-start-exam:disabled { background: var(--gray-400); cursor: not-allowed; }
 
-  /* FORM */
-  .form-row { margin-bottom: 1rem; }
-  .form-row label { display: block; font-size: 12px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 15px; background: var(--cream); color: var(--gray-900); outline: none; font-family: inherit; }
-  select:focus { border-color: var(--wine); background: var(--white); }
-
-  .question-builder { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 0.75rem; border: 1.5px solid var(--gray-200); }
-  .question-builder .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-  .question-builder .q-header span { font-weight: 700; font-size: 13px; color: var(--wine); }
-  .question-builder .remove-q { background: none; border: none; color: var(--coral); cursor: pointer; font-size: 12px; font-weight: 600; }
-  .opt-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .opt-row input[type="radio"] { accent-color: var(--wine); flex-shrink: 0; }
-  .opt-row input[type="text"] { flex: 1; padding: 8px 10px; font-size: 13px; }
-
-  .btn-add-q { background: var(--white); border: 1.5px dashed var(--gray-400); color: var(--gray-700); border-radius: var(--radius-sm); padding: 10px; width: 100%; cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 1rem; }
-  .btn-add-q:hover { border-color: var(--wine); color: var(--wine); }
-  .qtype-select { margin-bottom: 0.75rem; }
-  .pair-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: center; }
-  .pair-row input[type="text"] { flex: 1; padding: 8px 10px; font-size: 13px; }
-  .pair-row .pair-arrow { color: var(--gray-400); font-size: 13px; }
-  .btn-add-pair { background: none; border: 1.5px dashed var(--gray-400); color: var(--gray-700); border-radius: var(--radius-sm); padding: 6px; width: 100%; cursor: pointer; font-size: 12px; margin-bottom: 0.5rem; }
-  .import-box { width: 100%; min-height: 120px; font-family: monospace; font-size: 12px; padding: 10px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); margin-bottom: 0.5rem; }
-  .passage-box-review { background: var(--wine-light); border-left: 4px solid var(--wine); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
-  .essay-answer-box { background: var(--cream); border-radius: 8px; padding: 0.85rem 1rem; font-size: 13px; white-space: pre-wrap; margin-bottom: 8px; }
-
-  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(74,13,26,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-  .modal-box { background: var(--white); border-radius: 18px; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; }
+  .modal-box { background: var(--white); border-radius: 18px; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; }
   .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--cream); border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--gray-700); }
   .modal-close:hover { background: var(--gray-200); }
   .modal-box h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
   .modal-box .modal-meta { font-size: 13px; color: var(--gray-400); margin-bottom: 1.5rem; }
 
-  .review-q { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
-  .review-q p.q-text { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-  .review-opt { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; font-size: 13px; margin-bottom: 4px; }
-  .review-opt.correct-ans { background: #F5E6E9; color: var(--wine-dark); font-weight: 600; }
-  .review-opt.student-wrong { background: var(--coral-light); color: var(--coral); font-weight: 600; }
-  .override-toggle { margin-top: 8px; font-size: 12px; }
-  .override-toggle label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-right: 16px; color: var(--gray-700); }
-  .override-toggle input { accent-color: var(--wine); }
+  .question-block { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .question-block p { font-size: 15px; font-weight: 600; margin-bottom: 0.75rem; line-height: 1.5; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; }
+  .option-label { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; transition: border-color 0.2s, background 0.2s; }
+  .option-label:hover { border-color: var(--wine); background: var(--wine-light); }
+  .option-label input[type="radio"] { accent-color: var(--wine); width: 16px; height: 16px; flex-shrink: 0; }
+  .option-label.selected { border-color: var(--wine); background: var(--wine-light); }
+  .option-label.correct { border-color: #7A1C2E; background: #F5E6E9; }
+  .option-label.wrong { border-color: var(--coral); background: var(--coral-light); }
 
-  .remarks-area { width: 100%; min-height: 80px; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical; }
-  .remarks-area:focus { border-color: var(--wine); outline: none; }
+  .submit-exam-btn { width: 100%; padding: 13px; background: var(--wine); color: white; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: background 0.2s; }
+  .submit-exam-btn:hover { background: var(--wine-dark); }
+  .draw-canvas { border: 2px solid var(--gray-200); border-radius: var(--radius-sm); background: white; touch-action: none; width: 100%; max-width: 500px; display: block; }
+  .draw-clear-btn { margin-top: 8px; padding: 6px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: 1.5px solid var(--gray-400); background: white; cursor: pointer; }
+  .match-cols { display: flex; gap: 1.5rem; margin-top: 0.5rem; }
+  .match-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .match-item { padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; cursor: pointer; background: white; }
+  .match-item.selected { border-color: var(--wine); background: var(--wine-light); }
+  .match-item.linked { border-color: var(--amber); background: var(--amber-light); }
+  .match-item.disabled { cursor: default; opacity: 0.7; }
+  .match-pairs-readout { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+  .passage-box { background: var(--wine-light); border-left: 4px solid var(--wine); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem; font-size: 14px; line-height: 1.6; color: var(--gray-900); white-space: pre-wrap; }
+  .passage-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--wine); margin-bottom: 6px; }
+  .essay-textarea { width: 100%; min-height: 120px; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; resize: vertical; }
+  .essay-textarea:focus { border-color: var(--wine); outline: none; }
+  .subpart-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .subpart-label { font-size: 14px; font-weight: 600; color: var(--wine-dark); min-width: 28px; }
+  .subpart-input { flex: 1; padding: 10px 12px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; }
+  .subpart-input:focus { border-color: var(--wine); outline: none; }
+  .blank-input { display: inline-block; width: 64px; padding: 4px 6px; margin: 0 3px; border: none; border-bottom: 2.5px solid var(--wine); background: var(--cream); border-radius: 4px 4px 0 0; font-size: 14px; font-family: inherit; font-weight: 600; text-align: center; color: var(--wine-dark); }
+  .blank-input:focus { outline: none; border-bottom-color: var(--wine-dark); background: #fff; }
+  .blank-line { font-size: 14px; line-height: 2.1; color: var(--gray-700); }
+  .blank-answer-filled { display: inline-block; min-width: 40px; padding: 2px 6px; margin: 0 2px; border-bottom: 2px solid var(--gray-400); font-weight: 700; color: var(--wine-dark); text-align: center; }
+  .readaloud-box { background: var(--wine-light); border-left: 4px solid var(--wine); border-radius: var(--radius-sm); padding: 1.25rem; margin: 0.75rem 0 1rem; }
+  .readaloud-instruction { display: flex; align-items: center; gap: 8px; background: var(--amber-light); border: 1.5px solid var(--amber); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; font-weight: 600; color: #7A4A10; margin-top: 0.5rem; }
+  .question-block { background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+  .question-block p { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem; line-height: 1.5; }
 
-  .empty-state { text-align: center; padding: 2rem 1rem; color: var(--gray-400); font-size: 14px; }
+  .result-banner { background: var(--wine-light); border: 2px solid var(--wine); border-radius: var(--radius); padding: 1.25rem; text-align: center; margin-bottom: 1.25rem; }
+  .result-banner .result-score { font-size: 42px; font-weight: 800; color: var(--wine-dark); }
+  .result-banner .result-label { font-size: 14px; color: var(--wine); font-weight: 600; }
+  .result-banner .result-msg { font-size: 13px; color: var(--gray-700); margin-top: 6px; }
 
-  /* REPORT CARD PRINT */
-  .report-card { background: var(--white); border: 2px solid var(--wine); border-radius: var(--radius); padding: 1.5rem; }
-  .report-header { text-align: center; border-bottom: 2px solid var(--wine-light); padding-bottom: 1rem; margin-bottom: 1rem; }
-  .report-header h2 { color: var(--wine-dark); font-size: 20px; }
-  .report-header p { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
-  .report-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 1.25rem; font-size: 13px; }
-  .report-meta-grid div span:first-child { color: var(--gray-400); font-weight: 600; margin-right: 6px; }
-  table.report-table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; }
-  table.report-table th { background: var(--wine-light); color: var(--wine-dark); padding: 8px 10px; font-size: 12px; text-align: left; }
-  table.report-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-200); font-size: 13px; }
-  .report-remarks { background: var(--cream); border-radius: var(--radius-sm); padding: 1rem; font-size: 13px; line-height: 1.6; }
-  .report-remarks strong { display: block; margin-bottom: 6px; color: var(--wine); font-size: 12px; text-transform: uppercase; }
+  .waiting-banner { background: var(--amber-light); border: 2px solid var(--amber); border-radius: var(--radius); padding: 1.5rem; text-align: center; margin-bottom: 1.25rem; }
+  .waiting-banner .waiting-icon { font-size: 36px; margin-bottom: 8px; }
+  .waiting-banner .waiting-title { font-size: 17px; font-weight: 700; color: #7A1C2E; margin-bottom: 4px; }
+  .waiting-banner .waiting-msg { font-size: 13px; color: var(--gray-700); }
 
-  @media print {
-    body * { visibility: hidden; }
-    #report-print-area, #report-print-area * { visibility: visible; }
-    #report-print-area { position: absolute; left: 0; top: 0; width: 100%; }
-  }
+  .remarks-box { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .remarks-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-400); display: block; margin-bottom: 6px; }
+  .remarks-box p { font-size: 14px; color: var(--gray-700); line-height: 1.5; }
+
+  .profile-card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--gray-200); padding: 1.5rem; margin-bottom: 1rem; }
+  .profile-avatar { width: 72px; height: 72px; background: var(--wine-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 1rem; }
+  .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .profile-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
+  .profile-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-400); display: block; margin-bottom: 4px; }
+  .profile-field span { font-size: 15px; font-weight: 600; color: var(--gray-700); }
 
   @media (max-width: 480px) {
     .main { padding: 1rem; }
     .topbar { padding: 0 1rem; }
-    table.data-table { font-size: 12px; }
-    .report-meta-grid { grid-template-columns: 1fr; }
+    .welcome-banner { flex-direction: column; text-align: center; }
+    .exam-card { flex-direction: column; align-items: flex-start; }
+    .modal-box { padding: 1.25rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- ============== LOGIN ============== -->
+<!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â LOGIN Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="school-logo">&#128218;</div>
+    <div class="school-logo">&#127775;</div>
     <h1>St. Genevieve</h1>
-    <p class="tagline">Teacher Portal</p>
+    <p class="tagline">Student Learning Portal</p>
 
     <!-- STEP 1: Password -->
     <div id="login-step-password">
@@ -191,169 +257,135 @@
       <p class="login-error" id="password-error">Incorrect password. Please try again.</p>
     </div>
 
-    <!-- STEP 2: Teacher ID -->
+    <!-- STEP 2: Student ID (hidden until password correct) -->
     <div id="login-step-id" style="display:none">
       <div class="field-wrap">
-        <div class="field-label">Teacher ID</div>
-        <input type="text" id="login-id" placeholder="Enter your Teacher ID"
+        <div class="field-label">Student ID</div>
+        <input type="text" id="login-id" placeholder="Enter your Student ID"
           autocomplete="off" autocapitalize="characters"
           style="letter-spacing:0.05em;font-weight:600"
           onkeydown="if(event.key==='Enter') doLogin()">
       </div>
       <button class="btn-primary" onclick="doLogin()">Enter Portal &rarr;</button>
-      <p class="login-error" id="login-error">Teacher ID not found.</p>
+      <p class="login-error" id="login-error">Student ID not found. Please check with your teacher.</p>
     </div>
   </div>
 </div>
 
-<!-- ============== APP ============== -->
+<!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â APP Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-logo"></span>
+      <span class="topbar-logo">&#127775;</span>
       <div>
         <div class="topbar-title">St. Genevieve</div>
-        <div class="topbar-sub">Teacher Portal</div>
+        <div class="topbar-sub">Student Portal</div>
       </div>
     </div>
     <div class="topbar-right">
-      <span class="teacher-badge" id="topbar-teacher"></span>
+      <span class="student-badge" id="topbar-student"></span>
       <button class="btn-logout" onclick="doLogout()">Log out</button>
     </div>
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('dashboard', this)">&#127968; Dashboard</div>
-    <div class="nav-tab" onclick="showSection('results', this)">&#128202; Review Results</div>
-    <div class="nav-tab" onclick="showSection('create', this)">[edit] Create Exam</div>
-    <div class="nav-tab" onclick="showSection('students', this)">&#128101; Students</div>
-    <div class="nav-tab" onclick="showSection('reports', this)"> Report Cards</div>
+    <div class="nav-tab active" onclick="showSection('dashboard', this)">&#127968; Home</div>
+    <div class="nav-tab" onclick="showSection('progress', this)">&#128200; My Progress</div>
+    <div class="nav-tab" onclick="showSection('subjects', this)">&#128218; Subjects</div>
+    <div class="nav-tab" onclick="showSection('profile', this)">&#128100; Profile</div>
   </div>
 
   <div class="main">
 
     <!-- DASHBOARD -->
     <div class="section active" id="section-dashboard">
-      <h2 class="page-title" id="dash-title">Welcome back!</h2>
-      <p class="page-sub" id="dash-sub"></p>
+      <div class="welcome-banner">
+        <div class="welcome-avatar">&#127890;</div>
+        <div class="welcome-text">
+          <h2 id="welcome-name">Welcome back!</h2>
+          <p id="welcome-sub">Keep going - every lesson brings you closer to your goals.</p>
+        </div>
+      </div>
+
+      <div class="encourage-card" id="encourage-card">
+        <strong>&#128172; Today's Boost</strong>
+        <span id="encourage-text"></span>
+      </div>
 
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-num" style="color:var(--wine)" id="stat-students">0</div><div class="stat-label">Students</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--coral)" id="stat-pending-count">0</div><div class="stat-label">Awaiting Review</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-released-count">0</div><div class="stat-label">Released Results</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-class-avg">-</div><div class="stat-label">Class Average</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--wine)" id="stat-done">0</div><div class="stat-label">Results Released</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#C0884A" id="stat-avg">-</div><div class="stat-label">Average Score</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="stat-best">-</div><div class="stat-label">Best Score</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--coral)" id="stat-pending">0</div><div class="stat-label">Awaiting Review</div></div>
       </div>
 
-      <div class="panel">
-        <h3>Class average by subject</h3>
-        <div id="subject-averages"></div>
-      </div>
-
-      <div class="panel">
-        <h3> Needs your attention</h3>
-        <div id="pending-preview"></div>
+      <div class="progress-section">
+        <h3>Your subjects at a glance</h3>
+        <div id="dashboard-subjects"></div>
       </div>
     </div>
 
-    <!-- REVIEW RESULTS -->
-    <div class="section" id="section-results">
-      <h2 class="page-title">Review Results</h2>
-      <p class="page-sub">Auto-graded submissions appear here. Review, override if needed, add remarks, then release to students.</p>
-      <div class="form-row" style="max-width:300px">
-        <label>Filter by subject</label>
-        <select id="results-subject-filter" onchange="renderResultsList()">
-          <option value="all">All subjects</option>
-        </select>
-      </div>
-      <div id="results-list"></div>
+    <!-- PROGRESS -->
+    <div class="section" id="section-progress">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:1rem;">My Progress</h2>
+      <div id="progress-list"></div>
     </div>
 
-    <!-- CREATE EXAM -->
-    <div class="section" id="section-create">
-      <h2 class="page-title">Create Exam</h2>
-      <p class="page-sub">Build a new exam for your class - it appears on the student portal immediately after saving.</p>
-
-      <div class="panel">
-        <h3>Existing exams for your class</h3>
-        <div id="manage-exams-list"></div>
+    <!-- SUBJECTS -->
+    <div class="section" id="section-subjects">
+      <div id="subjects-view">
+        <div class="grade-label" id="grade-badge"></div>
+        <div class="subjects-grid" id="subjects-grid"></div>
       </div>
-
-      <div class="panel">
-        <h3> Import questions</h3>
-        <p style="font-size:12px;color:var(--gray-400);margin-bottom:0.75rem">Paste exam questions here in JSON format, then review everything below before saving.</p>
-        <textarea class="import-box" id="import-json" placeholder='[{"type":"mcq","q":"5 + 3 = ?","opts":["7","8","9","10"],"ans":1}, {"type":"drawing","q":"Draw a triangle."}, {"type":"matching","q":"Match the animal to its sound.","pairs":[{"left":"Dog","right":"Bark"},{"left":"Cat","right":"Meow"}]}]'></textarea>
-        <button class="btn-sm wine" onclick="importQuestionsJSON()">Import into question builder</button>
-        <p id="import-msg" style="font-size:12px;color:var(--coral);margin-top:0.5rem;display:none;"></p>
-      </div>
-
-      <div class="panel">
-        <h3>New exam</h3>
-        <div class="form-row">
-          <label>Subject</label>
-          <select id="new-exam-subject"></select>
-        </div>
-        <div class="form-row">
-          <label>Exam Title</label>
-          <input type="text" id="new-exam-title" placeholder="e.g. Mid-Term Assessment">
-        </div>
-        <div class="form-row">
-          <label>Description</label>
-          <input type="text" id="new-exam-desc" placeholder="e.g. Covers chapters 1-4">
-        </div>
-        <div class="form-row">
-          <label>Deadline (optional)</label>
-          <input type="text" id="new-exam-deadline" placeholder="YYYY-MM-DD, e.g. 2026-06-26">
-        </div>
-
-        <div id="question-builder-list"></div>
-        <button class="btn-add-q" onclick="addQuestionBuilder()">+ Add Question</button>
-        <button class="btn-primary" onclick="saveNewExam()">Save Exam</button>
-        <p id="create-exam-msg" style="font-size:13px;color:var(--coral);margin-top:0.5rem;display:none;"></p>
+      <div id="exams-view" style="display:none">
+        <div class="back-btn" onclick="backToSubjects()">Ã¢â€ Â Back to subjects</div>
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:4px" id="exam-subject-title"></h2>
+        <p style="font-size:13px;color:var(--gray-400);margin-bottom:1.25rem" id="exam-subject-sub"></p>
+        <div id="exams-list"></div>
       </div>
     </div>
 
-    <!-- STUDENTS -->
-    <div class="section" id="section-students">
-      <h2 class="page-title">Students - <span id="students-grade-label"></span></h2>
-      <p class="page-sub">Every student enrolled in your class.</p>
-      <div class="panel">
-        <table class="data-table" id="students-table">
-          <thead><tr><th>Name</th><th>Student ID</th><th>Results Released</th><th>Average Score</th></tr></thead>
-          <tbody></tbody>
-        </table>
+    <!-- PROFILE -->
+    <div class="section" id="section-profile">
+      <div class="profile-card">
+        <div class="profile-avatar">&#128100;</div>
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-row">
+          <div class="profile-field"><label>Student ID</label><span id="profile-id"></span></div>
+          <div class="profile-field"><label>Class</label><span id="profile-class"></span></div>
+          <div class="profile-field"><label>School</label><span>St. Genevieve Primary</span></div>
+        </div>
       </div>
-    </div>
-
-    <!-- REPORT CARDS -->
-    <div class="section" id="section-reports">
-      <h2 class="page-title">Report Cards</h2>
-      <p class="page-sub">Select a student to view, print, or download their report card.</p>
-      <div class="form-row" style="max-width:340px">
-        <label>Select Student</label>
-        <select id="report-student-select" onchange="renderReportCard()"></select>
+      <div class="profile-card" style="background:var(--wine-light);border-color:var(--wine)">
+        <p style="font-size:14px;color:var(--wine-dark);line-height:1.6">
+          &#127775; <strong>Keep it up!</strong> Your teachers are proud of the effort you put in every day. Learning is a journey, and you are doing great. Remember: mistakes help your brain grow stronger!
+        </p>
       </div>
-      <div id="report-card-area"></div>
     </div>
 
   </div>
 </div>
 
-<!-- REVIEW MODAL -->
-<div class="modal-overlay" id="review-modal" style="display:none">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeReviewModal()">X</button>
-    <div id="review-modal-content"></div>
+<!-- EXAM MODAL (full screen) -->
+<div class="modal-overlay" id="exam-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#FAF7F2;z-index:1000;overflow-y:auto;">
+  <div style="max-width:780px;margin:0 auto;padding:1.5rem 1rem 4rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;position:sticky;top:0;background:#FAF7F2;padding:0.75rem 0;border-bottom:2px solid var(--gray-200);z-index:10;">
+      <div id="exam-modal-title" style="font-size:18px;font-weight:700;color:var(--wine-dark)"></div>
+      <button onclick="closeExam()" style="background:var(--gray-200);border:none;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer;color:var(--gray-700)">Ã¢Å“â€¢ Close</button>
+    </div>
+    <div id="exam-modal-content"></div>
   </div>
 </div>
 
 <script src="portal-data.js"></script>
 <script>
-let teacher = null;
-let questionBuilderCount = 0;
-let currentReview = null; // { studentId, examId, exam, submission }
+// -- STATE --
+let student = null;
+let currentExam = null;
+let answers = {};
+let examLocked = false;
 
-// -- LOGIN --
-// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LOGIN: STEP 1 - PASSWORD ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
+// -- LOGIN: STEP 1 - PASSWORD --
 function checkPassword() {
   const val = document.getElementById('login-password').value;
   const err = document.getElementById('password-error');
@@ -368,26 +400,29 @@ function checkPassword() {
   }
 }
 
-// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LOGIN: STEP 2 - TEACHER ID ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
+// -- LOGIN: STEP 2 - STUDENT ID --
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
-  const found = TEACHERS.find(t => t.id.toUpperCase() === inputId);
+  const found = STUDENTS.find(s => s.id.toUpperCase() === inputId);
+
   if (!found) {
-    err.textContent = 'Teacher ID not found. Please check with the school administration.';
+    err.textContent = 'Student ID not found. Please check with your teacher.';
     err.style.display = 'block';
     return;
   }
   err.style.display = 'none';
-  teacher = { name: found.name, id: found.id, grade: found.grade };
+  student = { name: found.name, id: found.id, grade: found.grade };
+
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   await loadAllExams();
-  initApp();
+  renderAll();
 }
 
 function doLogout() {
-  teacher = null;
+  student = null;
+  // Reset login back to password step
   document.getElementById('login-step-password').style.display = 'block';
   document.getElementById('login-step-id').style.display = 'none';
   document.getElementById('login-password').value = '';
@@ -396,299 +431,336 @@ function doLogout() {
   document.getElementById('login-id').value = '';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
+  document.getElementById('login-id').value = '';
 }
 
+// -- NAV --
 function showSection(id, tab) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('section-' + id).classList.add('active');
   tab.classList.add('active');
-  if (id === 'results') renderResultsList();
-  if (id === 'create') renderManageExams();
-  if (id === 'students') renderStudentsTable();
-  if (id === 'reports') renderReportSelector();
+  if (id === 'subjects') resetSubjectsView();
 }
 
-async function initApp() {
-  document.getElementById('topbar-teacher').textContent = teacher.name + ' - ' + teacher.grade;
-  document.getElementById('dash-title').textContent = 'Welcome, ' + teacher.name + '! !';
-  document.getElementById('dash-sub').textContent = teacher.grade + ' - St. Genevieve Primary School';
+// -- RENDER ALL --
+async function renderAll() {
+  document.getElementById('topbar-student').textContent = student.name.split(' ')[0] + ' - ' + student.grade;
+  document.getElementById('welcome-name').textContent = 'Welcome, ' + student.name.split(' ')[0] + '! !';
+  document.getElementById('welcome-sub').textContent = student.grade + ' - St. Genevieve Primary School';
+  document.getElementById('encourage-text').textContent = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
 
-  populateSubjectFilters();
-  await renderDashboard();
+  document.getElementById('profile-name').textContent = student.name;
+  document.getElementById('profile-id').textContent = student.id;
+  document.getElementById('profile-class').textContent = student.grade;
+  document.getElementById('grade-badge').textContent = student.grade;
+
+  await renderStats();
+  await renderDashboardSubjects();
+  await renderProgress();
+  renderSubjectsGrid();
 }
 
-function populateSubjectFilters() {
-  const filterSel = document.getElementById('results-subject-filter');
-  const newExamSel = document.getElementById('new-exam-subject');
-  filterSel.innerHTML = '<option value="all">All subjects</option>' + SUBJECTS.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
-  newExamSel.innerHTML = SUBJECTS.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
+function getMyExams(subjectId) {
+  if (!EXAMS[subjectId]) return [];
+  return EXAMS[subjectId].filter(e => e.grades.includes(student.grade));
 }
 
-function getClassStudents() {
-  return STUDENTS.filter(s => s.grade === teacher.grade);
+function getDeadlineLabel(exam) {
+  if (!exam.deadline) return null;
+  const d = new Date(exam.deadline);
+  const now = new Date();
+  const diff = Math.ceil((d - now) / (1000*60*60*24));
+  if (diff < 0) return { text: 'Deadline passed', col: '#B5451B' };
+  if (diff === 0) return { text: 'Due today!', col: '#B5451B' };
+  if (diff === 1) return { text: 'Due tomorrow', col: '#C0884A' };
+  return { text: 'Due ' + d.toLocaleDateString('en-KE', {weekday:'long', month:'short', day:'numeric'}), col: '#5C4A3A' };
 }
 
-function getClassExams() {
-  // every exam across all subjects available to this teacher's grade
-  const result = [];
-  SUBJECTS.forEach(s => {
-    (EXAMS[s.id] || []).forEach(e => {
-      if (e.grades.includes(teacher.grade)) result.push({ ...e, subjectId: s.id, subjectName: s.name, subjectIcon: s.icon, subjectColor: s.color });
-    });
-  });
-  return result;
-}
-
-// -- DASHBOARD --
-async function renderDashboard() {
-  const students = getClassStudents();
-  const subs = await Store.getAllForGrade(teacher.grade);
-  const pending = subs.filter(s => s.status === 'pending');
-  const released = subs.filter(s => s.status === 'released');
-  const pcts = released.map(s => (s.finalScore/s.finalTotal)*100);
+async function renderStats() {
+  const allSubs = await Store.getAllForStudent(student.id);
+  const released = allSubs.filter(s => s.status === 'released');
+  const pending = allSubs.filter(s => s.status === 'pending');
+  const pcts = released.map(s => (s.finalScore / s.finalTotal) * 100);
   const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
+  const best = pcts.length ? Math.round(Math.max(...pcts)) : null;
 
-  document.getElementById('stat-students').textContent = students.length;
-  document.getElementById('stat-pending-count').textContent = pending.length;
-  document.getElementById('stat-released-count').textContent = released.length;
-  document.getElementById('stat-class-avg').textContent = avg !== null ? avg + '%' : '-';
-
-  // Subject averages
-  const subEl = document.getElementById('subject-averages');
-  const classExams = getClassExams();
-  let subHtml = '';
-  for (const s of SUBJECTS) {
-    const examsForSub = classExams.filter(e => e.subjectId === s.id);
-    if (!examsForSub.length) continue;
-    const relForSub = released.filter(r => examsForSub.some(e => e.id === r.examId));
-    const subPcts = relForSub.map(r => (r.finalScore/r.finalTotal)*100);
-    const subAvg = subPcts.length ? Math.round(subPcts.reduce((a,b)=>a+b,0)/subPcts.length) : 0;
-    subHtml += `<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px">
-        <span style="font-weight:600">${s.icon} ${s.name}</span>
-        <span style="font-weight:700;color:${s.color}">${subPcts.length ? subAvg + '%' : 'No data yet'}</span>
-      </div>
-      <div style="background:var(--gray-200);height:8px;border-radius:8px;overflow:hidden">
-        <div style="width:${subAvg}%;height:100%;background:${s.color};border-radius:8px"></div>
-      </div>
-    </div>`;
-  }
-  subEl.innerHTML = subHtml || '<p class="empty-state">No subjects set up for this class yet.</p>';
-
-  // Pending preview (max 4)
-  const previewEl = document.getElementById('pending-preview');
-  if (!pending.length) {
-    previewEl.innerHTML = '<p class="empty-state"> Nothing waiting for review right now!</p>';
-  } else {
-    let rows = '';
-    pending.slice(0, 5).forEach(sub => {
-      const st = STUDENTS.find(s => s.id === sub.studentId);
-      const exam = classExams.find(e => e.id === sub.examId);
-      rows += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-200)">
-        <div>
-          <strong style="font-size:14px">${st ? st.name : sub.studentId}</strong>
-          <div style="font-size:12px;color:var(--gray-400)">${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</div>
-        </div>
-        <button class="btn-sm wine" onclick="showSection('results', document.querySelector('[onclick*=results]'))">Review &rarr;</button>
-      </div>`;
-    });
-    previewEl.innerHTML = rows;
-  }
+  document.getElementById('stat-done').textContent = released.length;
+  document.getElementById('stat-avg').textContent = avg !== null ? avg + '%' : '-';
+  document.getElementById('stat-best').textContent = best !== null ? best + '%' : '-';
+  document.getElementById('stat-pending').textContent = pending.length;
 }
 
-// -- REVIEW RESULTS --
-async function renderResultsList() {
-  const filter = document.getElementById('results-subject-filter').value;
-  const subs = await Store.getAllForGrade(teacher.grade);
-  const classExams = getClassExams();
-  const filtered = filter === 'all' ? subs : subs.filter(s => s.subjectId === filter);
+function subjectProgressHTML(name, icon, completePct, avgScore, done, total, color) {
+  return `
+  <div class="subject-progress-card">
+    <div class="subj-header">
+      <div class="subj-name">${icon} ${name}</div>
+      <div class="subj-score" style="color:${color}">${avgScore > 0 ? avgScore + '% avg' : 'No results yet'}</div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${completePct}%;background:${color}"></div></div>
+    <p style="font-size:12px;color:var(--gray-400);margin-top:6px">${done} of ${total} exams have released results</p>
+  </div>`;
+}
 
-  // sort: pending first, then released, newest first
-  filtered.sort((a, b) => {
-    if (a.status !== b.status) return a.status === 'pending' ? -1 : 1;
-    return new Date(b.submittedAt) - new Date(a.submittedAt);
-  });
+async function renderDashboardSubjects() {
+  const el = document.getElementById('dashboard-subjects');
+  const allSubs = await Store.getAllForStudent(student.id);
+  const released = allSubs.filter(s => s.status === 'released');
 
-  const listEl = document.getElementById('results-list');
-  if (!filtered.length) {
-    listEl.innerHTML = '<div class="panel"><p class="empty-state">No submissions yet for this filter.</p></div>';
+  const cards = await Promise.all(SUBJECTS.map(async s => {
+    const myExams = getMyExams(s.id);
+    if (!myExams.length) return '';
+    const done = released.filter(sub => myExams.some(e => e.id === sub.examId));
+    const pct = myExams.length ? Math.round((done.length / myExams.length) * 100) : 0;
+    const avgPct = done.length ? Math.round(done.reduce((a,sub) => a + (sub.finalScore/sub.finalTotal)*100, 0) / done.length) : 0;
+    return subjectProgressHTML(s.name, s.icon, pct, avgPct, done.length, myExams.length, s.color);
+  }));
+  el.innerHTML = cards.join('');
+}
+
+async function renderProgress() {
+  const el = document.getElementById('progress-list');
+  const allSubs = await Store.getAllForStudent(student.id);
+  const released = allSubs.filter(s => s.status === 'released');
+
+  const cards = await Promise.all(SUBJECTS.map(async s => {
+    const myExams = getMyExams(s.id);
+    if (!myExams.length) return '';
+    const done = released.filter(sub => myExams.some(e => e.id === sub.examId));
+    const pcts = done.map(sub => (sub.finalScore/sub.finalTotal)*100);
+    const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : 0;
+    const completePct = myExams.length ? Math.round((done.length / myExams.length) * 100) : 0;
+
+    let historyHTML = '';
+    if (done.length) {
+      historyHTML = '<div class="score-history">' + done.map(sub => {
+        const exam = myExams.find(e => e.id === sub.examId);
+        const p = (sub.finalScore/sub.finalTotal)*100;
+        const col = p >= 70 ? s.color : p >= 50 ? '#C0884A' : '#B5451B';
+        return `<span class="score-pill" style="background:${col}20;color:${col};font-weight:700">${exam ? exam.title : sub.examId}: ${Math.round(p)}%</span>`;
+      }).join('') + '</div>';
+    } else {
+      historyHTML = '<p style="font-size:13px;color:var(--gray-400);margin-top:8px">No results released yet.</p>';
+    }
+
+    return `<div class="subject-progress-card">
+      <div class="subj-header">
+        <div class="subj-name">${s.icon} ${s.name}</div>
+        <div class="subj-score" style="color:${s.color}">${avg > 0 ? avg + '% avg' : '-'}</div>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${completePct}%;background:${s.color}"></div></div>
+      <p style="font-size:12px;color:var(--gray-400);margin-top:6px">${done.length} of ${myExams.length} results released</p>
+      ${historyHTML}
+    </div>`;
+  }));
+  el.innerHTML = cards.join('');
+}
+
+function renderSubjectsGrid() {
+  const grid = document.getElementById('subjects-grid');
+  grid.innerHTML = SUBJECTS.map(s => {
+    const myExams = getMyExams(s.id);
+    return `<div class="subject-card" onclick="openSubject('${s.id}','${s.name}','${s.icon}')" style="border-top:3px solid ${s.color}">
+      <div class="subj-icon">${s.icon}</div>
+      <div class="subj-title">${s.name}</div>
+      <div class="subj-meta">${myExams.length} exam${myExams.length!==1?'s':''} available</div>
+      <div class="exam-count" style="background:${s.color}20;color:${s.color}">${myExams.length} exam${myExams.length!==1?'s':''}</div>
+    </div>`;
+  }).join('') + `<div class="subject-card" style="opacity:0.45;pointer-events:none"><div class="subj-icon"></div><div class="subj-title">Science</div><div class="subj-meta">Coming soon</div></div>`;
+}
+
+// -- SUBJECTS / EXAMS --
+async function openSubject(subjectId, name, icon) {
+  document.getElementById('subjects-view').style.display = 'none';
+  document.getElementById('exams-view').style.display = 'block';
+  document.getElementById('exam-subject-title').textContent = icon + ' ' + name;
+  document.getElementById('exam-subject-sub').textContent = student.grade + ' - St. Genevieve Primary School';
+
+  const exams = getMyExams(subjectId);
+  const list = document.getElementById('exams-list');
+  list.innerHTML = '<p style="color:var(--gray-400);font-size:14px">Loading...</p>';
+
+  if (!exams.length) {
+    list.innerHTML = '<p style="color:var(--gray-400);font-size:14px">No exams available for your class yet.</p>';
     return;
   }
 
-  let rows = '';
-  filtered.forEach(sub => {
-    const st = STUDENTS.find(s => s.id === sub.studentId);
-    const exam = classExams.find(e => e.id === sub.examId);
-    const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
-    rows += `<tr>
-      <td>${st ? st.name : sub.studentId}</td>
-      <td>${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</td>
-      <td>${sub.finalScore}/${sub.finalTotal} (${pct}%)</td>
-      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? ' Pending' : 'Done Released'}</span></td>
-      <td><button class="btn-sm outline" onclick="openReview('${sub.studentId}','${sub.examId}')">${sub.status === 'pending' ? 'Review' : 'View / Edit'}</button></td>
-    </tr>`;
-  });
+  let html = '';
+  for (const exam of exams) {
+    const sub = await Store.getSubmission(student.id, exam.id);
+    const dl = getDeadlineLabel(exam);
+    const deadlineHTML = dl ? `<span style="font-size:11px;font-weight:700;color:${dl.col}"> ${dl.text}</span>` : '';
 
-  listEl.innerHTML = `<div class="panel"><table class="data-table">
-    <thead><tr><th>Student</th><th>Exam</th><th>Score</th><th>Status</th><th></th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
+    let statusHTML, btnHTML;
+    if (sub && sub.status === 'released') {
+      const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
+      statusHTML = `<span class="exam-status done">Done ${pct}%</span>`;
+      btnHTML = `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')" style="background:#9B4D62">View Result</button>`;
+    } else if (sub && sub.status === 'pending') {
+      statusHTML = `<span class="exam-status waiting">&#9203; Awaiting review</span>`;
+      btnHTML = `<button class="btn-start-exam" disabled>Submitted</button>`;
+    } else {
+      statusHTML = `<span class="exam-status pending">Not started</span>`;
+      btnHTML = `<button class="btn-start-exam" onclick="startExam('${subjectId}','${exam.id}')">Start Exam &rarr;</button>`;
+    }
+
+    html += `<div class="exam-card">
+      <div class="exam-info">
+        <h4>${exam.title}</h4>
+        <p>${exam.desc} - ${exam.questions.length} questions</p>
+        ${deadlineHTML}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        ${statusHTML}
+        ${btnHTML}
+      </div>
+    </div>`;
+  }
+  list.innerHTML = html;
 }
 
-async function openReview(studentId, examId) {
-  const sub = await Store.getSubmission(studentId, examId);
-  const classExams = getClassExams();
-  const exam = classExams.find(e => e.id === examId);
-  const student = STUDENTS.find(s => s.id === studentId);
-  currentReview = { studentId, examId, exam, submission: sub, student };
-
-  document.getElementById('review-modal').style.display = 'flex';
-  renderReviewModal();
+function backToSubjects() {
+  document.getElementById('subjects-view').style.display = 'block';
+  document.getElementById('exams-view').style.display = 'none';
 }
 
-function renderReviewModal() {
-  const { exam, submission, student } = currentReview;
-  const pct = Math.round((submission.finalScore/submission.finalTotal)*100);
+function resetSubjectsView() {
+  document.getElementById('subjects-view').style.display = 'block';
+  document.getElementById('exams-view').style.display = 'none';
+}
 
+// -- EXAM MODAL --
+async function startExam(subjectId, examId) {
+  const exam = EXAMS[subjectId].find(e => e.id === examId);
+  currentExam = { ...exam, subjectId };
+  answers = {};
+
+  const titleEl = document.getElementById('exam-modal-title');
+  if (titleEl) titleEl.textContent = exam.title;
+
+  const sub = await Store.getSubmission(student.id, examId);
+
+  if (sub && sub.status === 'released') {
+    examLocked = true;
+    answers = sub.answers;
+    document.getElementById('exam-modal').style.display = 'block';
+    renderExamModal(sub);
+  } else if (sub && sub.status === 'pending') {
+    examLocked = true;
+    document.getElementById('exam-modal').style.display = 'block';
+    renderWaitingModal();
+  } else {
+    examLocked = false;
+    document.getElementById('exam-modal').style.display = 'block';
+    renderExamModal(null);
+  }
+  window.scrollTo(0, 0);
+}
+
+function renderWaitingModal() {
+  const exam = currentExam;
+  document.getElementById('exam-modal-content').innerHTML = `
+    <h2>${exam.title}</h2>
+    <p class="modal-meta">${student.grade} - ${exam.desc}</p>
+    <div class="waiting-banner">
+      <div class="waiting-icon">&#9203;</div>
+      <div class="waiting-title">Your exam has been submitted!</div>
+      <div class="waiting-msg">Your teacher is reviewing your answers. Your score will appear here once it's released. Check back soon!</div>
+    </div>
+    <button class="submit-exam-btn" style="background:#A89880" onclick="closeExam()">Close</button>
+  `;
+}
+
+function renderExamModal(submission) {
+  const exam = currentExam;
   let html = `<h2>${exam.title}</h2>
-  <p class="modal-meta">${student.name} (${student.id}) - ${exam.subjectIcon} ${exam.subjectName} - Submitted ${new Date(submission.submittedAt).toLocaleString('en-KE', {dateStyle:'medium', timeStyle:'short'})}</p>
-  <div style="background:var(--wine-light);border-radius:12px;padding:1rem;text-align:center;margin-bottom:1.25rem">
-    <div style="font-size:32px;font-weight:800;color:var(--wine-dark)" id="review-live-score">${submission.finalScore}/${submission.finalTotal} (${pct}%)</div>
-    <div style="font-size:12px;color:var(--wine)">Auto-graded score - adjust below if needed</div>
-  </div>`;
+  <p class="modal-meta">${student.grade} - ${exam.desc} - ${exam.questions.length} questions</p>`;
+
+  if (submission && submission.status === 'released') {
+    const pct = Math.round((submission.finalScore/submission.finalTotal)*100);
+    html += `<div class="result-banner">
+      <div class="result-score">${pct}%</div>
+      <div class="result-label">${submission.finalScore} / ${submission.finalTotal} correct</div>
+      <div class="result-msg">${getResultMsg(pct)}</div>
+    </div>`;
+    if (submission.remarks) {
+      html += `<div class="remarks-box"><strong>Teacher's Remarks</strong><p>${escapeHTML(submission.remarks)}</p></div>`;
+    }
+  }
 
   let lastPassage = null;
   exam.questions.forEach((q, i) => {
     const type = q.type || 'mcq';
-    const isOverridden = submission.overrides && submission.overrides.hasOwnProperty(i);
 
     if (q.passage && q.passage !== lastPassage) {
-      html += `<div class="passage-box-review"><strong>&#128214; Reading Passage</strong><br>${escapeHTML(q.passage)}</div>`;
+      html += `<div class="passage-box"><div class="passage-label">&#128214; Reading Passage</div>${escapeHTML(q.passage)}</div>`;
     }
     lastPassage = q.passage || null;
 
-    html += `<div class="review-q">
-      <p class="q-text">${i+1}. ${escapeHTML(q.q)}</p>`;
+    html += `<div class="question-block"><p>${i + 1}. ${escapeHTML(q.q)}</p>`;
 
-    if (type === 'mcq') {
-      const studentAns = submission.answers[i];
-      const realMarkedCorrect = isOverridden ? submission.overrides[i] : (studentAns === q.ans);
+    if (type === 'drawing') {
+      html += renderDrawingQuestion(i, submission);
+    } else if (type === 'matching') {
+      html += renderMatchingQuestion(q, i, submission);
+    } else if (type === 'essay') {
+      html += renderEssayQuestion(i, q, submission);
+    } else if (type === 'readaloud') {
+      html += renderReadAloudQuestion(i, q, submission);
+    } else {
+      html += `<div class="options-list">`;
       q.opts.forEach((opt, j) => {
         let cls = '';
-        if (j === q.ans) cls = 'correct-ans';
-        if (studentAns === j && j !== q.ans) cls = 'student-wrong';
-        const marker = studentAns === j ? '>> ' : '';
-        html += `<div class="review-opt ${cls}">${marker}${escapeHTML(opt)}${j === q.ans ? ' (correct answer)' : ''}</div>`;
+        if (submission && submission.status === 'released') {
+          if (j === q.ans) cls = 'correct';
+          if (answers[i] === j && j !== q.ans) cls = 'wrong';
+          const overridden = submission.overrides && submission.overrides.hasOwnProperty(i);
+          if (overridden && submission.overrides[i] && answers[i] === j) cls = 'correct';
+          if (overridden && !submission.overrides[i] && answers[i] === j) cls = 'wrong';
+        } else if (answers[i] === j) {
+          cls = 'selected';
+        }
+        const disabled = examLocked ? 'disabled' : '';
+        html += `<label class="option-label ${cls}" onclick="${examLocked ? '' : `selectAnswer(${i},${j},this)`}">
+          <input type="radio" name="q${i}" ${answers[i]===j?'checked':''} ${disabled}> ${escapeHTML(opt)}
+        </label>`;
       });
-      html += `<div class="override-toggle">
-        <label><input type="radio" name="override-${i}" ${realMarkedCorrect ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
-        <label><input type="radio" name="override-${i}" ${!realMarkedCorrect ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
-      </div>`;
-    } else if (type === 'essay') {
-      const studentAns = submission.answers[i];
-      // Check for sub-parts
-      const subParts = parseSubParts_(q.q);
-      if (subParts && typeof studentAns === 'object' && studentAns !== null) {
-        html += `<div style="margin-bottom:8px">`;
-        subParts.forEach((part, pi) => {
-          const partAns = studentAns[pi];
-          const partOverridden = submission.overrides && submission.overrides[`${i}_${pi}`] !== undefined;
-          const partCorrect = partOverridden ? submission.overrides[`${i}_${pi}`] : false;
-          const answerDisplay = hasBlanks_(part)
-            ? `<div class="essay-answer-box" style="margin-bottom:8px">${renderBlankLineFilled_(part, partAns)}</div>`
-            : `<div class="essay-answer-box" style="margin-bottom:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</div>`;
-          html += `<div style="border:1.5px solid var(--gray-200);border-radius:8px;padding:10px 14px;margin-bottom:8px">
-            <div style="font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:4px">${escapeHTML(part)}</div>
-            ${answerDisplay}
-            <div class="override-toggle">
-              <label><input type="radio" name="override-${i}-${pi}" ${partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},true)"> &#9989; Mark correct</label>
-              <label><input type="radio" name="override-${i}-${pi}" ${!partCorrect ? 'checked' : ''} onchange="setSubPartOverride(${i},${pi},false)"> &#10060; Mark wrong</label>
-            </div>
-          </div>`;
-        });
-        html += `</div>`;
-      } else if (!subParts && hasBlanks_(q.q)) {
-        html += `<div class="essay-answer-box">${renderBlankLineFilled_(q.q, studentAns)}</div>`;
-        html += `<div class="override-toggle">
-          <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> &#9989; Mark correct</label>
-          <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> &#10060; Mark wrong</label>
-        </div>`;
-      } else {
-        const text = typeof studentAns === 'string' ? studentAns : JSON.stringify(studentAns);
-        html += text
-          ? `<div class="essay-answer-box">${escapeHTML(text)}</div>`
-          : `<p style="font-size:13px;color:var(--gray-400)">No answer submitted.</p>`;
-        html += `<div class="override-toggle">
-          <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> &#9989; Mark correct</label>
-          <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> &#10060; Mark wrong</label>
-        </div>`;
-      }
-    } else if (type === 'readaloud') {
-      const scoreKey = `ra_${i}`;
-      const currentScore = (submission.overrides && submission.overrides[scoreKey]) || 0;
-      html += `<div class="readaloud-box">${q.readText ? escapeHTML(q.readText) : '<em>No passage - student read aloud from their book/paper.</em>'}</div>
-        <div style="margin-top:8px">
-          <label style="font-size:13px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px">&#127897; Score this oral reading (enter marks out of the total):</label>
-          <div style="display:flex;align-items:center;gap:10px">
-            <input type="number" min="0" max="100" value="${currentScore}"
-              style="width:80px;padding:8px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:15px;font-weight:700"
-              oninput="setReadAloudScore(${i}, this.value)">
-            <span style="font-size:13px;color:var(--gray-400)">marks</span>
-          </div>
-        </div>`;
-    } else if (type === 'drawing') {
-      const dataUrl = submission.answers[i];
-      html += dataUrl
-        ? `<img src="${dataUrl}" style="max-width:100%;border:1.5px solid var(--gray-200);border-radius:8px;margin-bottom:8px" alt="Student drawing">`
-        : `<p style="font-size:13px;color:var(--gray-400)">No drawing submitted.</p>`;
-      html += `<div class="override-toggle">
-        <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
-        <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
-      </div>`;
-    } else if (type === 'matching') {
-      const studentAns = submission.answers[i] || {};
-      let rows = q.pairs.map((p, li) => {
-        const rIdx = studentAns[li];
-        const studentRight = (rIdx !== undefined && rIdx !== null) ? (q.pairs[rIdx] ? q.pairs[rIdx].right : '-') : null;
-        const ok = studentRight === p.right;
-        return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} &rarr; <strong style="color:${studentRight ? (ok?'var(--wine)':'var(--coral)') : 'var(--gray-400)'}">${studentRight ? escapeHTML(studentRight) : 'no answer'}</strong> <span style="color:var(--gray-400)">(correct: ${escapeHTML(p.right)})</span></div>`;
-      }).join('');
-      html += rows;
-      html += `<div class="override-toggle">
-        <label><input type="radio" name="override-${i}" ${isOverridden && submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, true)"> Mark correct</label>
-        <label><input type="radio" name="override-${i}" ${!isOverridden || !submission.overrides[i] ? 'checked' : ''} onchange="setOverride(${i}, false)"> Mark wrong</label>
-      </div>`;
+      html += `</div>`;
     }
-
     html += `</div>`;
   });
 
-  html += `<div class="form-row" style="margin-top:1rem">
-    <label>Teacher Remarks</label>
-    <textarea class="remarks-area" id="review-remarks" placeholder="e.g. Great improvement this term! Needs more practice with subtraction.">${submission.remarks || ''}</textarea>
-  </div>`;
-
-  if (submission.status === 'released') {
-    html += `<div style="display:flex;gap:10px;margin-top:1rem">
-      <button class="btn-sm wine" style="flex:1;padding:12px" onclick="saveAndRelease()">Save Changes</button>
-      <button class="btn-sm outline" style="flex:1;padding:12px" onclick="unrelease()">Pull Back for Review</button>
-    </div>`;
+  if (!examLocked) {
+    html += `<button class="submit-exam-btn" onclick="submitExam()">Submit Exam</button>`;
   } else {
-    html += `<button class="btn-primary" onclick="saveAndRelease()">Release Result to Student</button>`;
+    html += `<button class="submit-exam-btn" style="background:#A89880" onclick="closeExam()">Close</button>`;
   }
 
-  document.getElementById('review-modal-content').innerHTML = html;
+  document.getElementById('exam-modal-content').innerHTML = html;
+
+  // Canvas + matching need to be wired up AFTER the HTML is in the DOM
+  exam.questions.forEach((q, i) => {
+    const type = q.type || 'mcq';
+    if (type === 'drawing' && !examLocked) initDrawingCanvas(i);
+    if (type === 'matching' && !examLocked) initMatching(q, i);
+    // readaloud and essay need no JS init
+  });
 }
 
-function parseSubParts_(text) {
+// -- SUB-PART DETECTION --
+// Detects lines starting with: a) b) 1. 2. i. ii. a. b. etc.
+// Falls back to finding markers like a) b) c) anywhere in a run-on line
+// of text (teachers sometimes type "a) 9-8=___b) 22-13=___c) ..." all as
+// one line with no spaces even) â€” the lookbehind stops it from matching
+// a stray letter inside a word (e.g. "visa)"), but still catches a
+// marker sitting right after underscores, digits, or punctuation.
+function parseSubParts(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
   const linePattern = /^([a-zA-Z]\)|[a-zA-Z]\.|[0-9]+[.)]\s*|[ivxIVX]+\.\s*)/;
   const subLines = lines.filter(l => linePattern.test(l));
   if (subLines.length >= 2) return subLines;
 
-  // Fallback: markers like a) b) c) found anywhere in a run-on line with
-  // no line breaks (teachers sometimes type them all on one line).
   const markerPattern = /(?<![A-Za-z])([a-hA-H])\)\s*/g;
   const matches = [...text.matchAll(markerPattern)];
   if (matches.length >= 2) {
@@ -703,10 +775,24 @@ function parseSubParts_(text) {
   return null;
 }
 
-function hasBlanks_(text) { return /_{3,}/.test(text); }
+// -- FILL-IN-THE-BLANK RENDERING --
+// Splits a line of text on runs of 3+ underscores and weaves in real
+// <input> fields exactly where each blank was, so the student types
+// directly "on the line" instead of in a separate box below.
+function hasBlanks(text) { return /_{3,}/.test(text); }
 
-// Reconstructs a line of text with the student's typed answers shown
-// inline where each blank was, for readable grading.
+function renderBlankLine_(text, getVal, storeExpr) {
+  const segments = text.split(/_{3,}/);
+  let html = '';
+  segments.forEach((seg, idx) => {
+    html += escapeHTML(seg);
+    if (idx < segments.length - 1) {
+      html += `<input type="text" class="blank-input" value="${escapeHTML(String(getVal(idx) || ''))}" oninput="${storeExpr(idx)}">`;
+    }
+  });
+  return html;
+}
+
 function renderBlankLineFilled_(text, val) {
   const segments = text.split(/_{3,}/);
   let html = '';
@@ -714,73 +800,219 @@ function renderBlankLineFilled_(text, val) {
     html += escapeHTML(seg);
     if (idx < segments.length - 1) {
       const ans = (Array.isArray(val) && val[idx]) ? val[idx] : '';
-      html += `<span style="display:inline-block;min-width:36px;padding:1px 6px;margin:0 2px;border-bottom:2px solid var(--gray-400);font-weight:700;color:var(--wine-dark)">${ans ? escapeHTML(String(ans)) : '&mdash;'}</span>`;
+      html += `<span class="blank-answer-filled">${ans ? escapeHTML(String(ans)) : '&mdash;'}</span>`;
     }
   });
   return html;
 }
 
-async function setSubPartOverride(qIndex, partIndex, markCorrect) {
-  const key = `${qIndex}_${partIndex}`;
-  if (!reviewingSubmission.overrides) reviewingSubmission.overrides = {};
-  reviewingSubmission.overrides[key] = markCorrect;
-  // Recalculate total correct sub-parts and MCQs
-  await recalcScore();
-}
+// -- ESSAY / SHORT-ANSWER QUESTIONS --
+function renderEssayQuestion(i, q, submission) {
+  const subParts = parseSubParts(q.q);
 
-async function setReadAloudScore(qIndex, score) {
-  const key = `ra_${qIndex}`;
-  if (!reviewingSubmission.overrides) reviewingSubmission.overrides = {};
-  reviewingSubmission.overrides[key] = Number(score) || 0;
-  await Store.overrideAnswer(reviewingSubmission.studentId, reviewingSubmission.examId, qIndex, Number(score) > 0, currentReviewExam);
-}
-
-async function recalcScore() {
-  // Push all sub-part and regular overrides to the backend in one pass
-  const exam = currentReviewExam;
-  for (let i = 0; i < exam.questions.length; i++) {
-    const q = exam.questions[i];
-    const type = q.type || 'mcq';
-    if (type === 'essay') {
-      const subParts = parseSubParts_(q.q);
-      if (subParts) {
-        // Treat as correct if ALL sub-parts are marked correct
-        const allCorrect = subParts.every((_, pi) => reviewingSubmission.overrides[`${i}_${pi}`] === true);
-        await Store.overrideAnswer(reviewingSubmission.studentId, reviewingSubmission.examId, i, allCorrect, exam);
-      }
+  if (examLocked) {
+    const val = answers[i];
+    if (subParts && typeof val === 'object' && val !== null) {
+      return subParts.map((part, pi) => {
+        const partAns = val[pi];
+        if (hasBlanks(part)) {
+          return `<div class="subpart-row" style="align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--gray-200)">
+            <span class="subpart-label">${pi + 1}.</span>
+            <div class="blank-line">${renderBlankLineFilled_(part, partAns)}</div>
+          </div>`;
+        }
+        return `<div class="subpart-row" style="padding:8px 0;border-bottom:1px solid var(--gray-200)">
+          <span class="subpart-label">${pi + 1}.</span>
+          <span style="font-size:14px;color:var(--gray-700)">${escapeHTML(part)}</span>
+          <span style="font-size:14px;font-weight:600;color:var(--wine-dark);margin-left:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</span>
+        </div>`;
+      }).join('');
     }
+    if (!subParts && hasBlanks(q.q)) {
+      return `<div class="blank-line">${renderBlankLineFilled_(q.q, val)}</div>`;
+    }
+    const text = typeof val === 'string' ? val : '';
+    return text
+      ? `<div class="passage-box" style="background:var(--cream);border-left-color:var(--gray-400)">${escapeHTML(text)}</div>`
+      : `<p style="color:var(--gray-400);font-size:13px">No answer submitted.</p>`;
   }
+
+  if (subParts) {
+    if (!answers[i] || typeof answers[i] !== 'object') answers[i] = {};
+    return subParts.map((part, pi) => {
+      if (hasBlanks(part)) {
+        if (!Array.isArray(answers[i][pi])) answers[i][pi] = [];
+        const lineHtml = renderBlankLine_(part,
+          (bi) => answers[i][pi][bi],
+          (bi) => `if(!answers[${i}]||typeof answers[${i}]!=='object')answers[${i}]={};if(!Array.isArray(answers[${i}][${pi}]))answers[${i}][${pi}]=[];answers[${i}][${pi}][${bi}]=this.value`);
+        return `<div class="subpart-row" style="align-items:flex-start">
+          <span class="subpart-label">${pi + 1}.</span>
+          <div class="blank-line">${lineHtml}</div>
+        </div>`;
+      }
+      return `<div class="subpart-row">
+        <span class="subpart-label">${pi + 1}.</span>
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--gray-700);margin-bottom:4px">${escapeHTML(part)}</div>
+          <input class="subpart-input" type="text" placeholder="Your answer..."
+            value="${escapeHTML(String(answers[i][pi] || ''))}"
+            oninput="if(!answers[${i}]||typeof answers[${i}]!=='object')answers[${i}]={};answers[${i}][${pi}]=this.value">
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (hasBlanks(q.q)) {
+    if (!Array.isArray(answers[i])) answers[i] = [];
+    const lineHtml = renderBlankLine_(q.q,
+      (bi) => answers[i][bi],
+      (bi) => `if(!Array.isArray(answers[${i}]))answers[${i}]=[];answers[${i}][${bi}]=this.value`);
+    return `<div class="blank-line">${lineHtml}</div>`;
+  }
+
+  return `<textarea class="essay-textarea" id="essay-${i}" placeholder="Write your answer here..." oninput="answers[${i}]=this.value">${escapeHTML(answers[i] || '')}</textarea>`;
 }
 
-async function setOverride(qIndex, markCorrect) {
-  const { studentId, examId, exam } = currentReview;
-  const updated = await Store.overrideAnswer(studentId, examId, qIndex, markCorrect, exam);
-  currentReview.submission = updated;
-  const pct = Math.round((updated.finalScore/updated.finalTotal)*100);
-  document.getElementById('review-live-score').textContent = `${updated.finalScore}/${updated.finalTotal} (${pct}%)`;
+
+// -- READ-ALOUD QUESTIONS --
+function renderReadAloudQuestion(i, q, submission) {
+  const text = q.readText || q.passage || '';
+  if (examLocked) {
+    return `<div class="readaloud-box" style="opacity:0.8">${text ? escapeHTML(text) : ''}</div>
+      <p style="font-size:13px;color:var(--gray-400);font-style:italic">This was a read-aloud question - your teacher scored your reading.</p>`;
+  }
+  return `
+    ${text ? `<div class="readaloud-box">${escapeHTML(text)}</div>` : ''}
+    <div class="readaloud-instruction">&#128266; Read the text above out loud to your teacher. Your teacher will listen and give you a score.</div>
+  `;
 }
 
-async function saveAndRelease() {
-  const { studentId, examId } = currentReview;
-  const remarks = document.getElementById('review-remarks').value;
-  await Store.saveRemarks(studentId, examId, remarks);
-  await Store.releaseResult(studentId, examId);
-  closeReviewModal();
-  await renderDashboard();
-  await renderResultsList();
+// -- DRAWING QUESTIONS --
+function renderDrawingQuestion(i, submission) {
+  if (examLocked) {
+    const dataUrl = answers[i];
+    if (!dataUrl) return `<p style="color:var(--gray-400);font-size:13px">No drawing submitted.</p>`;
+    return `<img src="${dataUrl}" style="max-width:100%;border:1.5px solid var(--gray-200);border-radius:8px" alt="Your drawing">`;
+  }
+  return `
+    <canvas class="draw-canvas" id="canvas-${i}" width="500" height="300"></canvas>
+    <button type="button" class="draw-clear-btn" onclick="clearCanvas(${i})">Clear</button>
+  `;
 }
 
-async function unrelease() {
-  const { studentId, examId } = currentReview;
-  await Store.unreleaseResult(studentId, examId);
-  closeReviewModal();
-  await renderDashboard();
-  await renderResultsList();
+function initDrawingCanvas(i) {
+  const canvas = document.getElementById(`canvas-${i}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#2C1A10';
+  let drawing = false;
+
+  function pos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+
+  function start(e) { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); e.preventDefault(); }
+  function move(e) { if (!drawing) return; const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); saveCanvas(i); e.preventDefault(); }
+  function end() { drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start);
+  canvas.addEventListener('touchmove', move);
+  canvas.addEventListener('touchend', end);
 }
 
-function closeReviewModal() {
-  document.getElementById('review-modal').style.display = 'none';
-  currentReview = null;
+function saveCanvas(i) {
+  const canvas = document.getElementById(`canvas-${i}`);
+  if (canvas) answers[i] = canvas.toDataURL('image/png');
+}
+
+function clearCanvas(i) {
+  const canvas = document.getElementById(`canvas-${i}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  answers[i] = null;
+}
+
+// -- MATCHING QUESTIONS --
+// Stored on the exam as q.pairs = [{left, right}, ...] (correct order).
+// Right side is shuffled for display; student clicks a left item then a
+// right item to link them. Saved answer = { leftIndex: shuffledRightIndex }.
+let matchShuffles = {}; // questionIndex -> shuffled right array (with original index)
+
+function shuffle_(arr) {
+  const a = arr.map((v, idx) => ({ v, idx }));
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderMatchingQuestion(q, i, submission) {
+  if (examLocked) {
+    const studentAns = answers[i] || {};
+    let rows = q.pairs.map((p, li) => {
+      const matchedRightIdx = studentAns[li];
+      const matchedRightText = matchedRightIdx !== undefined && matchedRightIdx !== null
+        ? (matchShuffles[i] ? (matchShuffles[i].find(x => x.idx === matchedRightIdx) || {}).v : q.pairs[matchedRightIdx] && q.pairs[matchedRightIdx].right)
+        : null;
+      return `<div style="font-size:13px;margin-bottom:4px">${escapeHTML(p.left)} &rarr; ${matchedRightText ? escapeHTML(matchedRightText) : '<em>no answer</em>'}</div>`;
+    }).join('');
+    return `<div>${rows}</div>`;
+  }
+
+  if (!matchShuffles[i]) matchShuffles[i] = shuffle_(q.pairs.map(p => p.right));
+  const shuffled = matchShuffles[i];
+
+  let html = `<div class="match-cols">
+    <div class="match-col">${q.pairs.map((p, li) => `<div class="match-item" data-side="left" data-qi="${i}" data-li="${li}" onclick="matchClick(${i},'left',${li})">${escapeHTML(p.left)}</div>`).join('')}</div>
+    <div class="match-col">${shuffled.map((r, si) => `<div class="match-item" data-side="right" data-qi="${i}" data-si="${si}" onclick="matchClick(${i},'right',${si})">${escapeHTML(r.v)}</div>`).join('')}</div>
+  </div>
+  <p class="match-pairs-readout">Tap an item on the left, then its matching item on the right.</p>`;
+  return html;
+}
+
+let matchSelections = {}; // questionIndex -> { left: leftIndex|null }
+
+function initMatching(q, i) {
+  if (!answers[i]) answers[i] = {};
+  if (!matchSelections[i]) matchSelections[i] = { left: null };
+}
+
+function matchClick(qi, side, idx) {
+  if (!matchSelections[qi]) matchSelections[qi] = { left: null };
+  const sel = matchSelections[qi];
+
+  if (side === 'left') {
+    sel.left = idx;
+    document.querySelectorAll(`.match-item[data-qi="${qi}"][data-side="left"]`).forEach(el => el.classList.remove('selected'));
+    document.querySelector(`.match-item[data-qi="${qi}"][data-side="left"][data-li="${idx}"]`).classList.add('selected');
+    return;
+  }
+
+  // side === 'right'
+  if (sel.left === null || sel.left === undefined) return; // must pick left first
+  if (!answers[qi]) answers[qi] = {};
+  answers[qi][sel.left] = idx;
+
+  // visually mark both as linked
+  const leftEl = document.querySelector(`.match-item[data-qi="${qi}"][data-side="left"][data-li="${sel.left}"]`);
+  if (leftEl) { leftEl.classList.remove('selected'); leftEl.classList.add('linked'); }
+  const rightEl = document.querySelector(`.match-item[data-qi="${qi}"][data-side="right"][data-si="${idx}"]`);
+  if (rightEl) rightEl.classList.add('linked');
+
+  sel.left = null;
 }
 
 function escapeHTML(str) {
@@ -789,313 +1021,39 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-// -- CREATE EXAM --
-function addQuestionBuilder(prefill) {
-  questionBuilderCount++;
-  const id = questionBuilderCount;
-  const container = document.getElementById('question-builder-list');
-  const div = document.createElement('div');
-  div.className = 'question-builder';
-  div.id = 'qb-' + id;
-  const type = (prefill && prefill.type) || 'mcq';
-  div.innerHTML = `
-    <div class="q-header"><span>Question ${id}</span><button class="remove-q" onclick="document.getElementById('qb-${id}').remove()">Remove</button></div>
-    <div class="form-row">
-      <label>Reading passage (optional - leave blank if not a comprehension question)</label>
-      <textarea id="qb-${id}-passage" placeholder="Paste the reading passage text here if this question refers to one..." style="min-height:70px">${prefill ? escapeHTML(prefill.passage || '') : ''}</textarea>
-    </div>
-    <div class="form-row qtype-select">
-      <label>Question type</label>
-      <select id="qb-${id}-type" onchange="renderQBBody(${id})">
-        <option value="mcq" ${type==='mcq'?'selected':''}>Multiple choice</option>
-        <option value="essay" ${type==='essay'?'selected':''}>Essay / short answer (typed)</option>
-        <option value="readaloud" ${type==='readaloud'?'selected':''}>Read aloud (teacher scores verbally)</option>
-        <option value="drawing" ${type==='drawing'?'selected':''}>Drawing (student draws answer)</option>
-        <option value="matching" ${type==='matching'?'selected':''}>Matching (left &harr; right pairs)</option>
-      </select>
-    </div>
-    <div class="form-row"><input type="text" placeholder="Question text" id="qb-${id}-text" value="${prefill ? escapeHTML(prefill.q || '') : ''}"></div>
-    <div id="qb-${id}-body"></div>
-  `;
-  container.appendChild(div);
-  renderQBBody(id, prefill);
+function selectAnswer(qi, ai, el) {
+  answers[qi] = ai;
+  const block = el.closest('.question-block');
+  block.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+  el.classList.add('selected');
 }
 
-function renderQBBody(id, prefill) {
-  const typeSel = document.getElementById(`qb-${id}-type`);
-  const type = typeSel.value;
-  const body = document.getElementById(`qb-${id}-body`);
+async function submitExam() {
+  const exam = currentExam;
+  // No client-side grading - the Apps Script backend grades using the
+  // stored correct answers which are never sent to the browser.
+  await Store.submitExam(student.id, exam.id, exam.subjectId, answers);
+  examLocked = true;
 
-  if (type === 'mcq') {
-    const opts = (prefill && prefill.opts) || ['', '', '', ''];
-    const ans = prefill && typeof prefill.ans === 'number' ? prefill.ans : 0;
-    body.innerHTML = [0,1,2,3].map(i => `
-      <div class="opt-row">
-        <input type="radio" name="qb-${id}-correct" value="${i}" ${ans===i?'checked':''}>
-        <input type="text" placeholder="Option ${String.fromCharCode(65+i)}" id="qb-${id}-opt${i}" value="${escapeHTML(opts[i]||'')}">
-      </div>`).join('') + `<p style="font-size:11px;color:var(--gray-400)">Select the radio button next to the correct answer.</p>`;
-  } else if (type === 'drawing') {
-    body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a blank drawing pad to answer this question. You'll grade it manually when reviewing results.</p>`;
-  } else if (type === 'essay') {
-    body.innerHTML = `<p style="font-size:12px;color:var(--gray-400)">The student will get a text box to type their answer. You'll grade it manually when reviewing results.<br><strong>Tip:</strong> type <code>___</code> (3+ underscores) anywhere you want a fill-in-the-blank box, e.g. "12 = ___ tens ___ ones". For multi-part questions, start each part with a), b), c)... (on its own line, or run together like "a) ... b) ...") and each part gets its own answer line.</p>`;
-  } else if (type === 'readaloud') {
-    const prefillText = (prefill && prefill.readText) || '';
-    body.innerHTML = `
-      <div class="form-row">
-        <label>Text to read aloud (optional - paste the passage if needed)</label>
-        <textarea id="qb-${id}-readtext" style="min-height:80px" placeholder="Paste the reading passage here if students need to read it on screen...">${escapeHTML(prefillText)}</textarea>
-      </div>
-      <p style="font-size:12px;color:var(--gray-400)">The student will see an instruction to read aloud to you. No text box - you listen and score manually.</p>`;
-  } else if (type === 'matching') {
-    const pairs = (prefill && prefill.pairs && prefill.pairs.length) ? prefill.pairs : [{left:'',right:''},{left:'',right:''}];
-    body.innerHTML = `<div id="qb-${id}-pairs">` + pairs.map((p, i) => pairRowHTML(id, i, p)).join('') + `</div>
-      <button type="button" class="btn-add-pair" onclick="addPairRow(${id})">+ Add pair</button>
-      <p style="font-size:11px;color:var(--gray-400)">The right-hand side will be shuffled for the student. You'll grade matches manually when reviewing.</p>`;
-  }
+  renderWaitingModal();
+  await renderStats();
+  await renderDashboardSubjects();
+  await renderProgress();
 }
 
-function pairRowHTML(id, i, pair) {
-  return `<div class="pair-row" id="qb-${id}-pair-${i}">
-    <input type="text" placeholder="Left item" id="qb-${id}-pair${i}-left" value="${escapeHTML(pair.left||'')}">
-    <span class="pair-arrow">&harr;</span>
-    <input type="text" placeholder="Right item" id="qb-${id}-pair${i}-right" value="${escapeHTML(pair.right||'')}">
-    <button type="button" class="remove-q" onclick="document.getElementById('qb-${id}-pair-${i}').remove()">X</button>
-  </div>`;
+function getResultMsg(pct) {
+  if (pct >= 80) return "&#127775; Excellent work! You're a star - keep it up!";
+  if (pct >= 60) return "Good job! A little more practice and you'll be even better!";
+  if (pct >= 40) return "You tried hard! Review the questions and give it another go.";
+  return "Don't give up! Every try makes you stronger. Ask your teacher for help.";
 }
 
-function addPairRow(id) {
-  const container = document.getElementById(`qb-${id}-pairs`);
-  const i = container.children.length;
-  container.insertAdjacentHTML('beforeend', pairRowHTML(id, i, {left:'',right:''}));
-}
-
-function importQuestionsJSON() {
-  const msgEl = document.getElementById('import-msg');
-  let raw = document.getElementById('import-json').value.trim();
-  if (!raw) { msgEl.textContent = 'Paste some question JSON first.'; msgEl.style.display = 'block'; return; }
-
-  // Fix curly/smart quotes that appear when copying from chat or Word
-  raw = raw
-    .replace(/[\u2018\u2019]/g, "'")   // smart single quotes
-    .replace(/[\u201C\u201D]/g, '"')   // smart double quotes
-    .replace(/[\u2013\u2014]/g, '-');  // em/en dashes
-
-  let questions;
-  try {
-    questions = JSON.parse(raw);
-    if (!Array.isArray(questions)) throw new Error('Not an array');
-  } catch (e) {
-    msgEl.textContent = 'Could not parse the JSON Ã¢â‚¬â€ check that it starts with [ and ends with ]. Error: ' + e.message;
-    msgEl.style.display = 'block';
-    return;
-  }
-  msgEl.style.display = 'none';
-  questions.forEach(q => addQuestionBuilder(q));
-  document.getElementById('import-json').value = '';
-  msgEl.style.color = 'var(--wine)';
-  msgEl.textContent = questions.length + ' question(s) imported! Review below then click Save Exam.';
-  msgEl.style.display = 'block';
-}
-
-async function saveNewExam() {
-  const msgEl = document.getElementById('create-exam-msg');
-  const subjectId = document.getElementById('new-exam-subject').value;
-  const title = document.getElementById('new-exam-title').value.trim();
-  const desc = document.getElementById('new-exam-desc').value.trim();
-  const deadline = document.getElementById('new-exam-deadline').value.trim();
-
-  if (!title) { msgEl.textContent = 'Please enter an exam title.'; msgEl.style.display = 'block'; return; }
-
-  const builders = document.querySelectorAll('.question-builder');
-  if (!builders.length) { msgEl.textContent = 'Please add at least one question.'; msgEl.style.display = 'block'; return; }
-
-  const questions = [];
-  for (const b of builders) {
-    const id = b.id.replace('qb-', '');
-    const type = document.getElementById(`qb-${id}-type`).value;
-    const qText = document.getElementById(`qb-${id}-text`).value.trim();
-    const passage = document.getElementById(`qb-${id}-passage`).value.trim();
-    if (!qText) { msgEl.textContent = 'Please fill in the question text for every question.'; msgEl.style.display = 'block'; return; }
-
-    if (type === 'mcq') {
-      const opts = [0,1,2,3].map(i => document.getElementById(`qb-${id}-opt${i}`).value.trim());
-      const correctRadio = b.querySelector(`input[name="qb-${id}-correct"]:checked`);
-      if (opts.some(o => !o)) { msgEl.textContent = 'Please fill in all 4 options for every multiple-choice question.'; msgEl.style.display = 'block'; return; }
-      const q = { type: 'mcq', q: qText, opts, ans: parseInt(correctRadio.value) };
-      if (passage) q.passage = passage;
-      questions.push(q);
-    } else if (type === 'essay') {
-      const q = { type: 'essay', q: qText };
-      if (passage) q.passage = passage;
-      questions.push(q);
-    } else if (type === 'readaloud') {
-      const readTextEl = document.getElementById(`qb-${id}-readtext`);
-      const readText = readTextEl ? readTextEl.value.trim() : '';
-      const q = { type: 'readaloud', q: qText };
-      if (readText) q.readText = readText;
-      if (passage) q.passage = passage;
-      questions.push(q);
-    } else if (type === 'drawing') {
-      const q = { type: 'drawing', q: qText };
-      if (passage) q.passage = passage;
-      questions.push(q);
-    } else if (type === 'matching') {
-      const pairContainer = document.getElementById(`qb-${id}-pairs`);
-      const pairRows = pairContainer.querySelectorAll('.pair-row');
-      const pairs = [];
-      for (const row of pairRows) {
-        const left = row.querySelector('input[id$="-left"]').value.trim();
-        const right = row.querySelector('input[id$="-right"]').value.trim();
-        if (!left || !right) { msgEl.textContent = 'Please fill in both sides of every matching pair (or remove empty rows).'; msgEl.style.display = 'block'; return; }
-        pairs.push({ left, right });
-      }
-      if (pairs.length < 2) { msgEl.textContent = 'Matching questions need at least 2 pairs.'; msgEl.style.display = 'block'; return; }
-      const q = { type: 'matching', q: qText, pairs };
-      if (passage) q.passage = passage;
-      questions.push(q);
-    }
-  }
-
-  const examId = subjectId + '-' + teacher.grade.toLowerCase().replace(/\s+/g,'') + '-' + Date.now();
-  const newExam = { id: examId, title, desc: desc || '', grades: [teacher.grade], questions };
-  if (deadline) newExam.deadline = deadline;
-
-  if (!EXAMS[subjectId]) EXAMS[subjectId] = [];
-  EXAMS[subjectId].push(newExam);
-
-  msgEl.style.color = 'var(--wine)';
-  msgEl.textContent = 'Saving...';
-  msgEl.style.display = 'block';
-
-  const saved = await saveExamToBackend(subjectId, newExam);
-
-  msgEl.textContent = saved
-    ? 'Done Exam saved! It is now visible to students on every device.'
-    : '! Exam saved on this device, but could not reach the shared backend - check that SCRIPT_URL is set correctly in portal-data.js. Students on other devices won\'t see it yet.';
-  msgEl.style.color = saved ? 'var(--wine)' : 'var(--coral)';
-
-  document.getElementById('new-exam-title').value = '';
-  document.getElementById('new-exam-desc').value = '';
-  document.getElementById('new-exam-deadline').value = '';
-  document.getElementById('question-builder-list').innerHTML = '';
-  questionBuilderCount = 0;
-
-  renderManageExams();
-}
-
-function renderManageExams() {
-  const el = document.getElementById('manage-exams-list');
-  const classExams = getClassExams();
-  if (!classExams.length) {
-    el.innerHTML = '<p class="empty-state">No exams created yet for your class.</p>';
-    return;
-  }
-  el.innerHTML = classExams.map(e => `
-    <div class="exam-manage-card" style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
-      <div>
-        <h4>${e.subjectIcon} ${e.title}</h4>
-        <p>${e.subjectName} - ${e.desc || 'No description'} - ${e.questions.length} questions</p>
-      </div>
-      <button onclick="deleteExam('${e.subjectId}','${e.id}')"
-        style="background:#fff;border:1.5px solid var(--coral);color:var(--coral);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
-        &#128465; Delete
-      </button>
-    </div>
-  `).join('');
-}
-
-async function deleteExam(subjectId, examId) {
-  if (!confirm('Are you sure you want to delete this exam? This cannot be undone.')) return;
-  try {
-    await scriptPost_('deleteExam', { subjectId, examId });
-  } catch (e) {
-    console.warn('Backend delete failed (exam may only have been in memory):', e);
-  }
-  // Remove from local EXAMS object
-  if (EXAMS[subjectId]) {
-    EXAMS[subjectId] = EXAMS[subjectId].filter(e => e.id !== examId);
-  }
-  renderManageExams();
-}
-
-// -- STUDENTS --
-async function renderStudentsTable() {
-  document.getElementById('students-grade-label').textContent = teacher.grade;
-  const students = getClassStudents();
-  const subs = await Store.getAllForGrade(teacher.grade);
-  const tbody = document.querySelector('#students-table tbody');
-
-  let rows = '';
-  for (const st of students) {
-    const stSubs = subs.filter(s => s.studentId === st.id);
-    const released = stSubs.filter(s => s.status === 'released');
-    const pcts = released.map(s => (s.finalScore/s.finalTotal)*100);
-    const avg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
-    rows += `<tr>
-      <td><strong>${st.name}</strong></td>
-      <td>${st.id}</td>
-      <td>${released.length}</td>
-      <td>${avg !== null ? avg + '%' : '-'}</td>
-    </tr>`;
-  }
-  tbody.innerHTML = rows;
-}
-
-// -- REPORT CARDS --
-function renderReportSelector() {
-  const sel = document.getElementById('report-student-select');
-  const students = getClassStudents();
-  sel.innerHTML = '<option value="">Select a student...</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
-}
-
-async function renderReportCard() {
-  const studentId = document.getElementById('report-student-select').value;
-  const areaEl = document.getElementById('report-card-area');
-  if (!studentId) { areaEl.innerHTML = ''; return; }
-
-  const student = STUDENTS.find(s => s.id === studentId);
-  const subs = (await Store.getAllForStudent(studentId)).filter(s => s.status === 'released');
-  const classExams = getClassExams();
-
-  let rows = '';
-  let allRemarks = [];
-  subs.forEach(sub => {
-    const exam = classExams.find(e => e.id === sub.examId);
-    const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
-    rows += `<tr>
-      <td>${exam ? exam.subjectIcon + ' ' + exam.subjectName : '-'}</td>
-      <td>${exam ? exam.title : sub.examId}</td>
-      <td>${sub.finalScore}/${sub.finalTotal}</td>
-      <td>${pct}%</td>
-    </tr>`;
-    if (sub.remarks) allRemarks.push(`${exam ? exam.title : sub.examId}: ${sub.remarks}`);
-  });
-
-  const pcts = subs.map(s => (s.finalScore/s.finalTotal)*100);
-  const overallAvg = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
-
-  areaEl.innerHTML = `
-    <div style="margin-bottom:1rem;display:flex;gap:10px">
-      <button class="btn-sm wine" onclick="window.print()"> Print Report Card</button>
-    </div>
-    <div class="report-card" id="report-print-area">
-      <div class="report-header">
-        <h2>St. Genevieve Primary School</h2>
-        <p>Official Student Report Card</p>
-      </div>
-      <div class="report-meta-grid">
-        <div><span>Student Name:</span>${student.name}</div>
-        <div><span>Student ID:</span>${student.id}</div>
-        <div><span>Class:</span>${student.grade}</div>
-        <div><span>Overall Average:</span>${overallAvg !== null ? overallAvg + '%' : 'No results yet'}</div>
-      </div>
-      ${rows ? `<table class="report-table">
-        <thead><tr><th>Subject</th><th>Exam</th><th>Score</th><th>Percentage</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>` : '<p class="empty-state">No released results yet for this student.</p>'}
-      ${allRemarks.length ? `<div class="report-remarks"><strong>&#128221; Teacher's Remarks</strong>${allRemarks.map(r => `<p style="margin-bottom:6px">${escapeHTML(r)}</p>`).join('')}</div>` : ''}
-    </div>
-  `;
+async function closeExam() {
+  document.getElementById('exam-modal').style.display = 'none';
+  currentExam = null;
+  const title = document.getElementById('exam-subject-title').textContent;
+  const sub = SUBJECTS.find(s => title.includes(s.name));
+  if (sub) await openSubject(sub.id, sub.name, sub.icon);
 }
 </script>
 </body>
