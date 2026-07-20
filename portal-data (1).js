@@ -29,7 +29,7 @@ const STUDENTS = [
   { name: "Emmanuel",   id: "SGP-G1-002", grade: "Grade 1" },
   { name: "Kai",        id: "SGP-G1-003", grade: "Grade 1" },
   { name: "Dennis M.",  id: "SGP-G1-004", grade: "Grade 1" },
- { name: "Liam O.",  id: "SGP-G1-004", grade: "Grade 1" },
+ { name: "Liam O.",  id: "SGP-G1-006", grade: "Grade 1" },
 
   // ── Grade 2 ──
   { name: "Alva Atieno",    id: "SGP-G2-001", grade: "Grade 2" },
