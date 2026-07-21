@@ -353,7 +353,6 @@ let questionBuilderCount = 0;
 let currentReview = null; // { studentId, examId, exam, submission }
 
 // -- LOGIN --
-// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LOGIN: STEP 1 - PASSWORD ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 function checkPassword() {
   const val = document.getElementById('login-password').value;
   const err = document.getElementById('password-error');
@@ -368,7 +367,6 @@ function checkPassword() {
   }
 }
 
-// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LOGIN: STEP 2 - TEACHER ID ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim().toUpperCase();
   const err = document.getElementById('login-error');
@@ -593,8 +591,9 @@ function renderReviewModal() {
         html += `<div style="margin-bottom:8px">`;
         subParts.forEach((part, pi) => {
           const partAns = studentAns[pi];
-          const partOverridden = submission.overrides && submission.overrides[`${i}_${pi}`] !== undefined;
-          const partCorrect = partOverridden ? submission.overrides[`${i}_${pi}`] : false;
+          const partKey = `${i}_${pi}`;
+          const partOverridden = submission.overrides && submission.overrides[partKey] !== undefined;
+          const partCorrect = partOverridden ? submission.overrides[partKey] : false;
           const answerDisplay = hasBlanks_(part)
             ? `<div class="essay-answer-box" style="margin-bottom:8px">${renderBlankLineFilled_(part, partAns)}</div>`
             : `<div class="essay-answer-box" style="margin-bottom:8px">${partAns ? escapeHTML(String(partAns)) : '<em style="color:var(--gray-400)">No answer</em>'}</div>`;
@@ -633,7 +632,7 @@ function renderReviewModal() {
           <div style="display:flex;align-items:center;gap:10px">
             <input type="number" min="0" max="100" value="${currentScore}"
               style="width:80px;padding:8px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:15px;font-weight:700"
-              oninput="setReadAloudScore(${i}, this.value)">
+              onchange="setReadAloudScore(${i}, this.value)">
             <span style="font-size:13px;color:var(--gray-400)">marks</span>
           </div>
         </div>`;
@@ -720,44 +719,43 @@ function renderBlankLineFilled_(text, val) {
   return html;
 }
 
-async function setSubPartOverride(qIndex, partIndex, markCorrect) {
-  const key = `${qIndex}_${partIndex}`;
-  if (!reviewingSubmission.overrides) reviewingSubmission.overrides = {};
-  reviewingSubmission.overrides[key] = markCorrect;
-  // Recalculate total correct sub-parts and MCQs
-  await recalcScore();
-}
-
-async function setReadAloudScore(qIndex, score) {
-  const key = `ra_${qIndex}`;
-  if (!reviewingSubmission.overrides) reviewingSubmission.overrides = {};
-  reviewingSubmission.overrides[key] = Number(score) || 0;
-  await Store.overrideAnswer(reviewingSubmission.studentId, reviewingSubmission.examId, qIndex, Number(score) > 0, currentReviewExam);
-}
-
-async function recalcScore() {
-  // Push all sub-part and regular overrides to the backend in one pass
-  const exam = currentReviewExam;
-  for (let i = 0; i < exam.questions.length; i++) {
-    const q = exam.questions[i];
-    const type = q.type || 'mcq';
-    if (type === 'essay') {
-      const subParts = parseSubParts_(q.q);
-      if (subParts) {
-        // Treat as correct if ALL sub-parts are marked correct
-        const allCorrect = subParts.every((_, pi) => reviewingSubmission.overrides[`${i}_${pi}`] === true);
-        await Store.overrideAnswer(reviewingSubmission.studentId, reviewingSubmission.examId, i, allCorrect, exam);
-      }
-    }
-  }
-}
-
+// -- OVERRIDES --
+// All three of these now consistently read/write through `currentReview`
+// (the single source of truth for which submission is open) and refresh
+// the on-screen score from whatever the backend returns. Previously two
+// of these referenced variables that were never defined anywhere
+// (`reviewingSubmission`, `currentReviewExam`), which threw a silent
+// JS error the instant you clicked a sub-part or read-aloud mark -
+// so nothing ever actually saved, and marks appeared to "revert."
 async function setOverride(qIndex, markCorrect) {
   const { studentId, examId, exam } = currentReview;
   const updated = await Store.overrideAnswer(studentId, examId, qIndex, markCorrect, exam);
   currentReview.submission = updated;
+  refreshLiveScore(updated);
+}
+
+async function setSubPartOverride(qIndex, partIndex, markCorrect) {
+  const { studentId, examId, exam } = currentReview;
+  const key = `${qIndex}_${partIndex}`;
+  const updated = await Store.overrideAnswer(studentId, examId, key, markCorrect, exam);
+  currentReview.submission = updated;
+  refreshLiveScore(updated);
+}
+
+async function setReadAloudScore(qIndex, score) {
+  const { studentId, examId, exam } = currentReview;
+  const key = `ra_${qIndex}`;
+  const scoreNum = Number(score) || 0;
+  const updated = await Store.overrideAnswer(studentId, examId, key, scoreNum, exam);
+  currentReview.submission = updated;
+  refreshLiveScore(updated);
+}
+
+function refreshLiveScore(updated) {
+  const el = document.getElementById('review-live-score');
+  if (!el) return;
   const pct = Math.round((updated.finalScore/updated.finalTotal)*100);
-  document.getElementById('review-live-score').textContent = `${updated.finalScore}/${updated.finalTotal} (${pct}%)`;
+  el.textContent = `${updated.finalScore}/${updated.finalTotal} (${pct}%)`;
 }
 
 async function saveAndRelease() {
@@ -885,7 +883,7 @@ function importQuestionsJSON() {
     questions = JSON.parse(raw);
     if (!Array.isArray(questions)) throw new Error('Not an array');
   } catch (e) {
-    msgEl.textContent = 'Could not parse the JSON Ã¢â‚¬â€ check that it starts with [ and ends with ]. Error: ' + e.message;
+    msgEl.textContent = 'Could not parse the JSON - check that it starts with [ and ends with ]. Error: ' + e.message;
     msgEl.style.display = 'block';
     return;
   }
