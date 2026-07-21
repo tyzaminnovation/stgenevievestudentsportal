@@ -38,7 +38,7 @@ const STUDENTS = [
   { name: "Kyla Mumbe",     id: "SGP-G2-004", grade: "Grade 2" },
   { name: "Roy Waweru",     id: "SGP-G2-005", grade: "Grade 2" },
   { name: "Patience Myra",  id: "SGP-G2-006", grade: "Grade 2" },
-
+   { name: "Isaac Ray",  id: "SGP-G2-007", grade: "Grade 2" },
   // ── Grade 3 ──
   { name: "Lloyd",     id: "SGP-G3-001", grade: "Grade 3" },
   { name: "Joy",       id: "SGP-G3-002", grade: "Grade 3" },
