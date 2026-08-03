@@ -11,7 +11,7 @@
    ============================================================ */
 
 // ───────────────────────── STUDENTS ─────────────────────────
-const STUDENTS = [
+let STUDENTS = [
   // ── PP2 ──
   { name: "Shadrack",   id: "SGP-PP2-001", grade: "PP2" },
   { name: "Tiffany",    id: "SGP-PP2-002", grade: "PP2" },
@@ -80,7 +80,7 @@ const ENCOURAGEMENTS = [
 const PORTAL_PASSWORD = 'stgen2026';
 
 // ───────────────────────── SUBJECTS ─────────────────────────
-const SUBJECTS = [
+let SUBJECTS = [
   { id: "math",          name: "Mathematics",             icon: "➕", color: "#7A1C2E" },
   { id: "english",       name: "English",                 icon: "📖", color: "#C0884A" },
   { id: "kiswahili",     name: "Kiswahili",               icon: "🇰🇪", color: "#9B4D62" },
@@ -351,10 +351,29 @@ const Store = {
 
   async unreleaseResult(studentId, examId) {
     const data = await scriptPost_('unreleaseResult', { studentId, examId });
-    await allSubmissions_(true);
+   await allSubmissions_(true);
     return data.submission;
   },
+  async addStudent(name, grade) {
+    const data = await scriptPost_('saveStudent', { name, grade });
+    if (data.ok) { STUDENTS.push(data.student); await allSubmissions_(true); }
+    return data.student;
+  },
+  async removeStudent(studentId) {
+    await scriptPost_('deleteStudent', { studentId });
+    STUDENTS = STUDENTS.filter(s => s.id !== studentId);
+  },
+  async addSubject(name) {
+    const data = await scriptPost_('saveSubject', { name });
+    if (data.ok) SUBJECTS.push(data.subject);
+    return data.subject;
+  },
+  async removeSubject(subjectId) {
+    await scriptPost_('deleteSubject', { subjectId });
+    SUBJECTS = SUBJECTS.filter(s => s.id !== subjectId);
+  },
 };
+
 
 /* ============================================================
    EXAM SYNC — merges teacher-created exams (saved to the
@@ -363,7 +382,21 @@ const Store = {
    Call `await loadAllExams()` once on page load, BEFORE
    rendering anything, in both index.html and teacher.html.
    ============================================================ */
+async function loadStudents() {
+  try {
+    const data = await scriptGet_('getStudents');
+    if (data.ok && data.students.length > 0) STUDENTS = data.students;
+  } catch (e) { console.error('Could not load students:', e); }
+}
+
+async function loadSubjects() {
+  try {
+    const data = await scriptGet_('getSubjects');
+    if (data.ok && data.subjects.length > 0) SUBJECTS = data.subjects;
+  } catch (e) { console.error('Could not load subjects:', e); }
+}
 async function loadAllExams() {
+  await Promise.all([loadStudents(), loadSubjects()]);
   try {
     const data = await scriptGet_('getExams');
     if (data.ok) {
