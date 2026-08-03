@@ -229,6 +229,7 @@
     <div class="nav-tab" onclick="showSection('students', this)">&#128101; Students</div>
     <div class="nav-tab" onclick="showSection('reports', this)"> Report Cards</div>
   </div>
+  <div class="nav-tab" onclick="showSection('subjects', this)">Subjects</div>
 
   <div class="main">
 
@@ -313,19 +314,32 @@
     </div>
 
     <!-- STUDENTS -->
-    <div class="section" id="section-students">
-      <h2 class="page-title">Students - <span id="students-grade-label"></span></h2>
-      <p class="page-sub">Every student enrolled in your class.</p>
-      <div class="panel">
-        <table class="data-table" id="students-table">
-          <thead><tr><th>Name</th><th>Student ID</th><th>Results Released</th><th>Average Score</th></tr></thead>
-          <tbody></tbody>
-        </table>
+  <div class="section" id="section-students">
+  <h2 class="page-title">Students — <span id="students-grade-label"></span></h2>
+  <p class="page-sub">Manage students enrolled in your class.</p>
+
+  <div class="panel">
+    <h3>Add New Student</h3>
+    <div style="display:flex;gap:10px;align-items:flex-end">
+      <div style="flex:1">
+        <label class="field-label">Student Name</label>
+        <input type="text" id="new-student-name" placeholder="e.g. John Kamau">
       </div>
+      <button class="btn-sm wine" style="padding:11px 20px" onclick="addStudent()">Add Student</button>
     </div>
+    <p id="student-msg" style="font-size:13px;margin-top:0.5rem;display:none"></p>
+  </div>
+
+  <div class="panel">
+    <table class="data-table" id="students-table">
+      <thead><tr><th>Name</th><th>Student ID</th><th>Results Released</th><th>Average Score</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 
     <!-- REPORT CARDS -->
-    <div class="section" id="section-reports">
+   <div class="section" id="section-reports">
       <h2 class="page-title">Report Cards</h2>
       <p class="page-sub">Select a student to view, print, or download their report card.</p>
       <div class="form-row" style="max-width:340px">
@@ -335,8 +349,27 @@
       <div id="report-card-area"></div>
     </div>
 
-  </div>
-</div>
+    <div class="section" id="section-subjects">
+      <h2 class="page-title">Manage Subjects</h2>
+      <p class="page-sub">Add or remove subjects that appear across all class portals.</p>
+
+      <div class="panel">
+        <h3>Add New Subject</h3>
+        <div style="display:flex;gap:10px;align-items:flex-end">
+          <div style="flex:1">
+            <label class="field-label">Subject Name</label>
+            <input type="text" id="new-subject-name" placeholder="e.g. Science, Art, Music">
+          </div>
+          <button class="btn-sm wine" style="padding:11px 20px" onclick="addSubject()">Add Subject</button>
+        </div>
+        <p id="subject-msg" style="font-size:13px;margin-top:0.5rem;display:none"></p>
+      </div>
+
+      <div class="panel">
+        <h3>Current Subjects</h3>
+        <div id="subjects-list"></div>
+      </div>
+    </div>
 
 <!-- REVIEW MODAL -->
 <div class="modal-overlay" id="review-modal" style="display:none">
@@ -404,6 +437,7 @@ function showSection(id, tab) {
   if (id === 'results') renderResultsList();
   if (id === 'create') renderManageExams();
   if (id === 'students') renderStudentsTable();
+  if (id === 'subjects') renderSubjectsList();
   if (id === 'reports') renderReportSelector();
 }
 
@@ -519,13 +553,14 @@ async function renderResultsList() {
     const st = STUDENTS.find(s => s.id === sub.studentId);
     const exam = classExams.find(e => e.id === sub.examId);
     const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
-    rows += `<tr>
-      <td>${st ? st.name : sub.studentId}</td>
-      <td>${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</td>
-      <td>${sub.finalScore}/${sub.finalTotal} (${pct}%)</td>
-      <td><span class="pill ${sub.status}">${sub.status === 'pending' ? ' Pending' : 'Done Released'}</span></td>
-      <td><button class="btn-sm outline" onclick="openReview('${sub.studentId}','${sub.examId}')">${sub.status === 'pending' ? 'Review' : 'View / Edit'}</button></td>
-    </tr>`;
+   rows += `<tr>
+  <td><strong>${st.name}</strong></td>
+  <td>${st.id}</td>
+  <td>${released.length}</td>
+  <td>${avg !== null ? avg + '%' : '-'}</td>
+  <td><button class="btn-sm outline" style="color:var(--coral);border-color:var(--coral)" 
+    onclick="deleteStudent('${st.id}','${st.name}')">Remove</button></td>
+</tr>`;
   });
 
   listEl.innerHTML = `<div class="panel"><table class="data-table">
@@ -1017,6 +1052,57 @@ async function deleteExam(subjectId, examId) {
 }
 
 // -- STUDENTS --
+  // -- ADD/DELETE STUDENTS --
+async function addStudent() {
+  const name = document.getElementById('new-student-name').value.trim();
+  const msg = document.getElementById('student-msg');
+  if (!name) { msg.textContent = 'Please enter a student name.'; msg.style.color = 'var(--coral)'; msg.style.display = 'block'; return; }
+  msg.textContent = 'Saving...'; msg.style.color = 'var(--gray-400)'; msg.style.display = 'block';
+  const student = await Store.addStudent(name, teacher.grade);
+  document.getElementById('new-student-name').value = '';
+  msg.textContent = `✓ ${student.name} added with ID ${student.id}`;
+  msg.style.color = 'var(--wine)';
+  renderStudentsTable();
+}
+
+async function deleteStudent(studentId, name) {
+  if (!confirm(`Remove ${name} from the class? Their exam records will remain.`)) return;
+  await Store.removeStudent(studentId);
+  renderStudentsTable();
+}
+
+// -- ADD/DELETE SUBJECTS --
+async function addSubject() {
+  const name = document.getElementById('new-subject-name').value.trim();
+  const msg = document.getElementById('subject-msg');
+  if (!name) { msg.textContent = 'Please enter a subject name.'; msg.style.color = 'var(--coral)'; msg.style.display = 'block'; return; }
+  msg.textContent = 'Saving...'; msg.style.color = 'var(--gray-400)'; msg.style.display = 'block';
+  await Store.addSubject(name);
+  document.getElementById('new-subject-name').value = '';
+  msg.textContent = '✓ Subject added!'; msg.style.color = 'var(--wine)';
+  populateSubjectFilters();
+  renderSubjectsList();
+}
+
+async function deleteSubject(subjectId, name) {
+  if (!confirm(`Remove "${name}"? Exams under this subject will still exist but won't show in the subject list.`)) return;
+  await Store.removeSubject(subjectId);
+  populateSubjectFilters();
+  renderSubjectsList();
+}
+
+function renderSubjectsList() {
+  const el = document.getElementById('subjects-list');
+  if (!SUBJECTS.length) { el.innerHTML = '<p class="empty-state">No subjects yet.</p>'; return; }
+  el.innerHTML = SUBJECTS.map(s => `
+    <div class="exam-manage-card">
+      <div><h4>${s.name}</h4><p style="font-size:12px;color:var(--gray-400)">ID: ${s.id}</p></div>
+      <button onclick="deleteSubject('${s.id}','${s.name}')"
+        style="background:#fff;border:1.5px solid var(--coral);color:var(--coral);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">
+        🗑 Delete
+      </button>
+    </div>`).join('');
+}
 async function renderStudentsTable() {
   document.getElementById('students-grade-label').textContent = teacher.grade;
   const students = getClassStudents();
