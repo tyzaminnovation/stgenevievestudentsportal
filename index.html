@@ -384,6 +384,7 @@ let student = null;
 let currentExam = null;
 let answers = {};
 let examLocked = false;
+let progressKey = null;
 
 // -- LOGIN: STEP 1 - PASSWORD --
 async function checkPassword() {
@@ -634,9 +635,13 @@ function resetSubjectsView() {
 // -- EXAM MODAL --
 async function startExam(subjectId, examId) {
   const exam = EXAMS[subjectId].find(e => e.id === examId);
-  currentExam = { ...exam, subjectId };
-  answers = {};
-
+currentExam = { ...exam, subjectId };
+answers = {};
+progressKey = `exam_progress_${student.id}_${examId}`;
+const saved = localStorage.getItem(progressKey);
+if (saved) {
+  try { answers = JSON.parse(saved); } catch(e) { answers = {}; }
+}
   const titleEl = document.getElementById('exam-modal-title');
   if (titleEl) titleEl.textContent = exam.title;
 
@@ -1024,6 +1029,7 @@ function escapeHTML(str) {
 
 function selectAnswer(qi, ai, el) {
   answers[qi] = ai;
+  if (progressKey) localStorage.setItem(progressKey, JSON.stringify(answers));
   const block = el.closest('.question-block');
   block.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
   el.classList.add('selected');
@@ -1033,8 +1039,9 @@ async function submitExam() {
   const exam = currentExam;
   // No client-side grading - the Apps Script backend grades using the
   // stored correct answers which are never sent to the browser.
-  await Store.submitExam(student.id, exam.id, exam.subjectId, answers);
-  examLocked = true;
+await Store.submitExam(student.id, exam.id, exam.subjectId, answers);
+if (progressKey) localStorage.removeItem(progressKey);
+examLocked = true;
 
   renderWaitingModal();
   await renderStats();
