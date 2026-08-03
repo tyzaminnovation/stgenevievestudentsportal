@@ -386,13 +386,14 @@ let answers = {};
 let examLocked = false;
 
 // -- LOGIN: STEP 1 - PASSWORD --
-function checkPassword() {
+async function checkPassword() {
   const val = document.getElementById('login-password').value;
   const err = document.getElementById('password-error');
   if (val === PORTAL_PASSWORD) {
     err.style.display = 'none';
     document.getElementById('login-step-password').style.display = 'none';
     document.getElementById('login-step-id').style.display = 'block';
+    await loadStudents();
     setTimeout(() => document.getElementById('login-id').focus(), 50);
   } else {
     err.style.display = 'block';
