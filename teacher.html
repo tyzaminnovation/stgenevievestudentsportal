@@ -731,7 +731,7 @@ async function setOverride(qIndex, markCorrect) {
   const { studentId, examId, exam } = currentReview;
   const updated = await Store.overrideAnswer(studentId, examId, qIndex, markCorrect, exam);
   currentReview.submission = updated;
-  refreshLiveScore(updated);
+  renderReviewModal();
 }
 
 async function setSubPartOverride(qIndex, partIndex, markCorrect) {
@@ -739,7 +739,7 @@ async function setSubPartOverride(qIndex, partIndex, markCorrect) {
   const key = `${qIndex}_${partIndex}`;
   const updated = await Store.overrideAnswer(studentId, examId, key, markCorrect, exam);
   currentReview.submission = updated;
-  refreshLiveScore(updated);
+  renderReviewModal();
 }
 
 async function setReadAloudScore(qIndex, score) {
@@ -748,7 +748,7 @@ async function setReadAloudScore(qIndex, score) {
   const scoreNum = Number(score) || 0;
   const updated = await Store.overrideAnswer(studentId, examId, key, scoreNum, exam);
   currentReview.submission = updated;
-  refreshLiveScore(updated);
+  renderReviewModal();
 }
 
 function refreshLiveScore(updated) {
