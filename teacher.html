@@ -228,8 +228,8 @@
     <div class="nav-tab" onclick="showSection('create', this)">[edit] Create Exam</div>
     <div class="nav-tab" onclick="showSection('students', this)">&#128101; Students</div>
     <div class="nav-tab" onclick="showSection('reports', this)"> Report Cards</div>
+    <div class="nav-tab" onclick="showSection('subjects', this)">Subjects</div>
   </div>
-  <div class="nav-tab" onclick="showSection('subjects', this)">Subjects</div>
 
   <div class="main">
 
@@ -553,14 +553,13 @@ async function renderResultsList() {
     const st = STUDENTS.find(s => s.id === sub.studentId);
     const exam = classExams.find(e => e.id === sub.examId);
     const pct = Math.round((sub.finalScore/sub.finalTotal)*100);
-   rows += `<tr>
-  <td><strong>${st.name}</strong></td>
-  <td>${st.id}</td>
-  <td>${released.length}</td>
-  <td>${avg !== null ? avg + '%' : '-'}</td>
-  <td><button class="btn-sm outline" style="color:var(--coral);border-color:var(--coral)" 
-    onclick="deleteStudent('${st.id}','${st.name}')">Remove</button></td>
-</tr>`;
+    rows += `<tr>
+      <td><strong>${st ? st.name : sub.studentId}</strong></td>
+      <td>${exam ? exam.subjectIcon + ' ' + exam.title : sub.examId}</td>
+      <td>${sub.finalScore}/${sub.finalTotal} (${pct}%)</td>
+      <td><span class="pill ${sub.status}">${sub.status}</span></td>
+      <td><button class="btn-sm wine" onclick="openReview('${sub.studentId}','${sub.examId}')">Review</button></td>
+    </tr>`;
   });
 
   listEl.innerHTML = `<div class="panel"><table class="data-table">
@@ -757,11 +756,7 @@ function renderBlankLineFilled_(text, val) {
 // -- OVERRIDES --
 // All three of these now consistently read/write through `currentReview`
 // (the single source of truth for which submission is open) and refresh
-// the on-screen score from whatever the backend returns. Previously two
-// of these referenced variables that were never defined anywhere
-// (`reviewingSubmission`, `currentReviewExam`), which threw a silent
-// JS error the instant you clicked a sub-part or read-aloud mark -
-// so nothing ever actually saved, and marks appeared to "revert."
+// the on-screen score from whatever the backend returns.
 async function setOverride(qIndex, markCorrect) {
   const { studentId, examId, exam } = currentReview;
   const updated = await Store.overrideAnswer(studentId, examId, qIndex, markCorrect, exam);
@@ -1120,6 +1115,8 @@ async function renderStudentsTable() {
       <td>${st.id}</td>
       <td>${released.length}</td>
       <td>${avg !== null ? avg + '%' : '-'}</td>
+      <td><button class="btn-sm outline" style="color:var(--coral);border-color:var(--coral)"
+        onclick="deleteStudent('${st.id}','${st.name}')">Remove</button></td>
     </tr>`;
   }
   tbody.innerHTML = rows;
