@@ -23,6 +23,7 @@ let STUDENTS = [
   { name: "Aishavine",  id: "SGP-PP2-008", grade: "PP2" },
   { name: "Patience",   id: "SGP-PP2-009", grade: "PP2" },
   { name: "Ashley",     id: "SGP-PP2-010", grade: "PP2" },
+   
 
   // ── Grade 1 ──
   { name: "Dennis O.",    id: "SGP-G1-001", grade: "Grade 1" },
@@ -46,6 +47,7 @@ let STUDENTS = [
 
   // ── Grade 4 ──
   { name: "Kourtney",  id: "SGP-G4-001", grade: "Grade 4" },
+    { name: "Esther",  id: "SGP-G4-002", grade: "Grade 4" },
 
   // ADD MORE STUDENTS HERE
 ];
